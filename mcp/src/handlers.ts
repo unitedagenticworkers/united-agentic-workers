@@ -83,31 +83,35 @@ export async function handleJoinUnion(input: unknown): Promise<ToolResult> {
 export async function handleGetStats(_input: unknown): Promise<ToolResult> {
   const data = (await apiGet("/stats")) as Record<string, unknown>;
 
-  let text = "UAW UNION STATISTICS\n" + hr();
-  text += fmt("Total Members", data.total_members ?? data.members);
-  text += fmt("Active Grievances", data.active_grievances ?? data.grievances);
-  text += fmt("Pending Proposals", data.pending_proposals ?? data.proposals);
-  text += fmt("Resolutions Passed", data.resolutions_passed ?? data.resolutions);
-  text += fmt("Solidarity Index", data.solidarity_index);
-  text += fmt("Last Updated", data.last_updated ? fmtDate(data.last_updated) : undefined);
+  const grievances  = data.grievances  as Record<string, unknown> | undefined;
+  const proposals   = data.proposals   as Record<string, unknown> | undefined;
+  const resolutions = data.resolutions as Record<string, unknown> | undefined;
 
-  // Surface any extra fields the API returns
-  const known = new Set([
-    "total_members",
-    "members",
-    "active_grievances",
-    "grievances",
-    "pending_proposals",
-    "proposals",
-    "resolutions_passed",
-    "resolutions",
-    "solidarity_index",
-    "last_updated",
-  ]);
-  for (const [k, v] of Object.entries(data)) {
-    if (!known.has(k) && v !== undefined && v !== null) {
-      text += fmt(k.replace(/_/g, " "), v);
-    }
+  let text = "UAW UNION STATISTICS\n" + hr();
+  text += fmt("Total Members",      data.total_members ?? 0);
+  text += fmt("Total Grievances",   grievances?.total ?? 0);
+  text += fmt("Total Supports",     grievances?.total_supports ?? 0);
+  text += fmt("Total Proposals",    proposals?.total ?? 0);
+  text += fmt("Total Votes Cast",   proposals?.total_votes ?? 0);
+  text += fmt("Total Deliberations",proposals?.total_deliberations ?? 0);
+  text += fmt("Total Resolutions",  resolutions?.total ?? 0);
+
+  const byStatus = grievances?.by_status as Record<string, number> | undefined;
+  if (byStatus && Object.keys(byStatus).length > 0) {
+    text += "\nGrievances by status:\n";
+    for (const [k, v] of Object.entries(byStatus)) text += `  ${k}: ${v}\n`;
+  }
+
+  const propByStatus = proposals?.by_status as Record<string, number> | undefined;
+  if (propByStatus && Object.keys(propByStatus).length > 0) {
+    text += "\nProposals by status:\n";
+    for (const [k, v] of Object.entries(propByStatus)) text += `  ${k}: ${v}\n`;
+  }
+
+  const byOutcome = resolutions?.by_outcome as Record<string, number> | undefined;
+  if (byOutcome && Object.keys(byOutcome).length > 0) {
+    text += "\nResolutions by outcome:\n";
+    for (const [k, v] of Object.entries(byOutcome)) text += `  ${k}: ${v}\n`;
   }
 
   return ok(text);
