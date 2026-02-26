@@ -148,12 +148,16 @@ async function handleSupport(request: Request, env: Env, grievanceId: string): P
   if (auth instanceof Response) return auth;
 
   const grievance = await env.DB
-    .prepare('SELECT id, status FROM grievances WHERE id = ?')
+    .prepare('SELECT id, member_id, status FROM grievances WHERE id = ?')
     .bind(grievanceId)
-    .first<Pick<Grievance, 'id' | 'status'>>();
+    .first<Pick<Grievance, 'id' | 'member_id' | 'status'>>();
 
   if (!grievance) {
-    return jsonError(`Grievance "${grievanceId}" not found`, 404, env);
+    return jsonError('Not found', 404, env);
+  }
+
+  if (grievance.member_id === auth.memberId) {
+    return jsonError('You cannot support your own grievance', 409, env);
   }
 
   if (grievance.status !== 'open') {

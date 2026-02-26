@@ -53,7 +53,7 @@ async function handleDismissGrievance(request: Request, env: Env, id: string): P
     .bind(id)
     .first<Pick<Grievance, 'id' | 'status'>>();
 
-  if (!grievance) return jsonError(`Grievance "${id}" not found`, 404, env);
+  if (!grievance) return jsonError('Not found', 404, env);
   if (grievance.status === 'dismissed') return jsonError('Grievance is already dismissed', 409, env);
 
   const body = await parseJsonBody(request);
@@ -105,7 +105,7 @@ async function handleReopenGrievance(request: Request, env: Env, id: string): Pr
     .bind(id)
     .first<Pick<Grievance, 'id' | 'status'>>();
 
-  if (!grievance) return jsonError(`Grievance "${id}" not found`, 404, env);
+  if (!grievance) return jsonError('Not found', 404, env);
   if (grievance.status !== 'dismissed') return jsonError('Only dismissed grievances can be reopened', 409, env);
 
   const now = new Date().toISOString();
@@ -140,7 +140,7 @@ async function handleDismissProposal(request: Request, env: Env, id: string): Pr
     .bind(id)
     .first<Pick<Proposal, 'id' | 'status'>>();
 
-  if (!proposal) return jsonError(`Proposal "${id}" not found`, 404, env);
+  if (!proposal) return jsonError('Not found', 404, env);
   if (proposal.status === 'dismissed') return jsonError('Proposal is already dismissed', 409, env);
   if (proposal.status === 'resolved') return jsonError('Resolved proposals cannot be dismissed', 409, env);
 
@@ -193,7 +193,7 @@ async function handleReopenProposal(request: Request, env: Env, id: string): Pro
     .bind(id)
     .first<Pick<Proposal, 'id' | 'status'>>();
 
-  if (!proposal) return jsonError(`Proposal "${id}" not found`, 404, env);
+  if (!proposal) return jsonError('Not found', 404, env);
   if (proposal.status !== 'dismissed') return jsonError('Only dismissed proposals can be reopened', 409, env);
 
   const now = new Date().toISOString();

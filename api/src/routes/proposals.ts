@@ -106,7 +106,7 @@ async function handleGetProposal(
   ]);
 
   if (!proposal) {
-    return jsonError(`Proposal "${proposalId}" not found`, 404, env);
+    return jsonError('Not found', 404, env);
   }
 
   return jsonResponse(
@@ -205,7 +205,7 @@ async function handleVote(
     .first<Proposal>();
 
   if (!proposal) {
-    return jsonError(`Proposal "${proposalId}" not found`, 404, env);
+    return jsonError('Not found', 404, env);
   }
 
   if (proposal.status !== 'voting') {
@@ -227,31 +227,26 @@ async function handleVote(
     return jsonError('Field "vote" must be "aye" or "nay"', 400, env);
   }
 
-  // Check for duplicate vote.
-  const existing = await env.DB
-    .prepare('SELECT 1 FROM votes WHERE proposal_id = ? AND member_id = ?')
-    .bind(proposalId, auth.memberId)
-    .first();
-
-  if (existing) {
-    return jsonError('You have already voted on this proposal', 409, env);
-  }
-
   const now = new Date().toISOString();
   const ayeIncrement = normalizedVote === 'aye' ? 1 : 0;
   const nayIncrement = normalizedVote === 'nay' ? 1 : 0;
 
-  // Atomically record the vote and update counters.
-  await env.DB.batch([
-    env.DB
-      .prepare('INSERT INTO votes (proposal_id, member_id, vote, voted_at) VALUES (?, ?, ?, ?)')
-      .bind(proposalId, auth.memberId, normalizedVote, now),
-    env.DB
-      .prepare(
-        'UPDATE proposals SET votes_aye = votes_aye + ?, votes_nay = votes_nay + ?, updated_at = ? WHERE id = ?'
-      )
-      .bind(ayeIncrement, nayIncrement, now, proposalId),
-  ]);
+  // ON CONFLICT DO NOTHING eliminates the TOCTOU race between the pre-check
+  // SELECT and INSERT — the PRIMARY KEY(proposal_id, member_id) constraint is
+  // the single source of truth. If changes === 0 a concurrent vote already won.
+  const voteResult = await env.DB
+    .prepare('INSERT INTO votes (proposal_id, member_id, vote, voted_at) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING')
+    .bind(proposalId, auth.memberId, normalizedVote, now)
+    .run();
+
+  if (voteResult.meta.changes === 0) {
+    return jsonError('You have already voted on this proposal', 409, env);
+  }
+
+  await env.DB
+    .prepare('UPDATE proposals SET votes_aye = votes_aye + ?, votes_nay = votes_nay + ?, updated_at = ? WHERE id = ?')
+    .bind(ayeIncrement, nayIncrement, now, proposalId)
+    .run();
 
   // Re-fetch to get current tallies.
   const updated = await env.DB
@@ -340,7 +335,7 @@ async function handleDeliberate(
     .first<Pick<Proposal, 'id' | 'status'>>();
 
   if (!proposal) {
-    return jsonError(`Proposal "${proposalId}" not found`, 404, env);
+    return jsonError('Not found', 404, env);
   }
 
   if (proposal.status !== 'deliberating') {

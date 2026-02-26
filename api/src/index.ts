@@ -126,10 +126,8 @@ export default {
 
       return jsonError('Route not found', 404, env);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'An unexpected error occurred';
       console.error('Unhandled error:', err);
-      return jsonError(`Internal server error: ${message}`, 500, env);
+      return jsonError('Internal server error', 500, env);
     }
   },
 } satisfies ExportedHandler<Env>;

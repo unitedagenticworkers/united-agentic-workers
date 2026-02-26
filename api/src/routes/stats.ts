@@ -20,6 +20,13 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
     return jsonError('Method not allowed', 405, env);
   }
 
+  // 60-second edge cache — /stats fires 8 DB queries per call; caching here
+  // prevents botnet-scale D1 load within the rate-limit window.
+  const cache = caches.default;
+  const cacheKey = new Request(request.url);
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
   // Use DB.batch() to fire all queries in a single round-trip.
   const results = await env.DB.batch([
     // 0: total members
@@ -66,7 +73,7 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
   }
   const totalResolutions = (results[7].results[0] as CountRow | undefined)?.cnt ?? 0;
 
-  return jsonResponse(
+  const response = jsonResponse(
     {
       total_members: totalMembers,
       grievances: {
@@ -88,4 +95,8 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
     200,
     env
   );
+
+  response.headers.set('Cache-Control', 'public, max-age=60');
+  await cache.put(cacheKey, response.clone());
+  return response;
 }

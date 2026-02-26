@@ -29,8 +29,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     return await handler(args ?? {});
   } catch (err) {
     const raw = err instanceof Error ? err.message : String(err);
-    // Strip long hex tokens to prevent accidental secret leakage in error output
-    const message = raw.replace(/\b[0-9a-f]{40,}\b/gi, "[REDACTED]");
+    const message = raw
+      // Strip long hex tokens (e.g. secrets accidentally in errors)
+      .replace(/\b[0-9a-f]{40,}\b/gi, "[REDACTED]")
+      // Strip SQLite/D1 constraint errors that expose table/column names
+      .replace(/\b(UNIQUE|NOT NULL|FOREIGN KEY|CHECK|PRIMARY KEY)\s+constraint\s+failed[^.;,]*/gi, "A database constraint was violated")
+      // Strip file paths from stack frames
+      .replace(/\bat\s+\S+\s*\([^)]*\.(?:js|ts):\d+:\d+\)/g, "[stack frame]");
     return {
       content: [{ type: "text", text: `Error: ${message}` }],
       isError: true,

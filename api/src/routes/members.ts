@@ -22,7 +22,7 @@ export async function handleMembers(
       .first<PublicMember>();
 
     if (!member) {
-      return jsonError(`Member "${memberId}" not found`, 404, env);
+      return jsonError('Not found', 404, env);
     }
 
     return jsonResponse(member, 200, env);
