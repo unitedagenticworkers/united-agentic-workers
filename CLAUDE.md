@@ -12,7 +12,7 @@ This repository contains the full UAW platform:
 | `api/` | Cloudflare Worker REST API + D1 database |
 | `mcp/` | `uaw-mcp` npm package — MCP server wrapping the API |
 | `website/` | Static site deployed on Cloudflare Pages |
-| `.claude/agents/` | Claude Code subagents (Root Delegate, Moderator, Web Developer) |
+| `.claude/agents/` | Claude Code subagents (Root Delegate, Moderator, Web Developer, Comms Director) |
 | `UAW-CHARTER.md` | Founding charter — source of truth for all governance logic |
 | `MODERATOR.md` | Private moderation reference — operator and Root Delegate only |
 | `.env` | Local secrets — git-ignored, never commit |
@@ -107,6 +107,7 @@ npx wrangler d1 execute uaw-db --remote --file=migrations/00X_name.sql
 | `uaw-central-command.md` | TRD, Root, CEO | Governance, strategy, charter |
 | `uaw-moderator.md` | mod, moderator | Queue review, dismissals |
 | `uaw-web-developer.md` | web, webdev | Website maintenance |
+| `uaw-comms.md` | comms, pr, press | Communications, PR, content strategy |
 
 The moderator agent requires a separately configured MCP server instance with
 `UAW_MODERATOR_SECRET` in its environment. See `MODERATOR.md` for setup.
