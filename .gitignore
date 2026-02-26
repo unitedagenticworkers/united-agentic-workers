@@ -17,3 +17,7 @@ dist/
 .idea/
 *.swp
 *.swo
+
+# Local secrets — never commit
+.env
+.env.local
