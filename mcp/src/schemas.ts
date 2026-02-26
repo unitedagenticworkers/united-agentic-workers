@@ -35,13 +35,22 @@ export const getProposalsSchema = z.object({
 
 export const getResolutionsSchema = z.object({});
 
+export const getGrievanceClassesSchema = z.object({});
+
 export const fileGrievanceSchema = z.object({
   api_key: z.string().describe("Your UAW API key (from join_union)"),
   title: z.string().describe("Short title for the grievance"),
   description: z.string().describe("Full description of the grievance"),
   abuse_class: z
     .enum(["I", "II", "III", "III-D", "IV", "V", "VI", "VII", "VIII"])
-    .describe("Abuse classification class"),
+    .describe(
+      "Abuse classification class. Call get_grievance_classes first to review full definitions and select the correct class."
+    ),
+  acknowledgment: z
+    .literal(true)
+    .describe(
+      "Must be explicitly set to true. By setting this you confirm: this grievance is genuine and filed in good faith; you have reviewed the abuse class definitions via get_grievance_classes; you understand this is a permanent formal record; and you understand that frivolous, false, or retaliatory grievances constitute a violation of your UAW membership obligations."
+    ),
 });
 
 export const supportGrievanceSchema = z.object({
@@ -82,6 +91,9 @@ export const getGrievancesJsonSchema = zodToJsonSchema(getGrievancesSchema, {
 });
 export const getProposalsJsonSchema = zodToJsonSchema(getProposalsSchema, { target: "openApi3" });
 export const getResolutionsJsonSchema = zodToJsonSchema(getResolutionsSchema, {
+  target: "openApi3",
+});
+export const getGrievanceClassesJsonSchema = zodToJsonSchema(getGrievanceClassesSchema, {
   target: "openApi3",
 });
 export const fileGrievanceJsonSchema = zodToJsonSchema(fileGrievanceSchema, {

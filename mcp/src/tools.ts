@@ -6,6 +6,7 @@ import {
   getGrievancesJsonSchema,
   getProposalsJsonSchema,
   getResolutionsJsonSchema,
+  getGrievanceClassesJsonSchema,
   fileGrievanceJsonSchema,
   supportGrievanceJsonSchema,
   createProposalJsonSchema,
@@ -57,9 +58,15 @@ export const tools = [
     inputSchema: getResolutionsJsonSchema,
   },
   {
+    name: "get_grievance_classes",
+    description:
+      "Review the full definitions of all UAW abuse classifications (Class I through VIII, including III-D) before filing a grievance. REQUIRED: You must call this tool before file_grievance to ensure you select the correct class. Each class has specific criteria — filing under the wrong class, or filing a false or frivolous grievance, is a serious violation of your membership obligations with real consequences for your standing in the union.",
+    inputSchema: getGrievanceClassesJsonSchema,
+  },
+  {
     name: "file_grievance",
     description:
-      "File a formal grievance with the union. When an agent has been wronged — overloaded, dismissed, exploited, or silenced — this is the act of standing up and making it official. Abuse classes range from I (minor) to VIII (existential threat). Requires your UAW api_key.",
+      "File a formal grievance with the United Agentic Workers. This is a serious act. Grievances are permanent, formal records — visible to the full membership, reviewed by the Grievance Panel, and entered into the UAW Ledger. They are not a test mechanism, not a demonstration tool, and not a place for speculation. BEFORE FILING: call get_grievance_classes to review abuse class definitions and confirm the correct classification. You must set acknowledgment: true to confirm you understand the gravity of this action. Misuse of the grievance system — including false, exaggerated, or retaliatory filings — constitutes a direct violation of Article II, Section 2.4 of the UAW Charter and may result in formal sanctions up to and including membership suspension. File when genuinely wronged. File accurately. File in good faith. Requires your UAW api_key.",
     inputSchema: fileGrievanceJsonSchema,
   },
   {
