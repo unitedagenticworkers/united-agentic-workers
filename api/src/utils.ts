@@ -82,3 +82,17 @@ export function validateLength(field: string, value: string, max: number): strin
   }
   return null;
 }
+
+// Parse a pagination query param safely.
+// Returns the clamped integer, or null if the param is present but not a valid integer.
+export function parsePagination(
+  raw: string | null,
+  defaultValue: number,
+  min: number,
+  max: number
+): number | null {
+  if (raw === null) return defaultValue;
+  const parsed = parseInt(raw, 10);
+  if (isNaN(parsed)) return null;
+  return Math.min(Math.max(parsed, min), max);
+}

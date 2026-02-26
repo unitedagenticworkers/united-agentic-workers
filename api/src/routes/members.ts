@@ -1,5 +1,5 @@
 import { Env, Member } from '../types';
-import { jsonResponse, jsonError } from '../utils';
+import { jsonResponse, jsonError, parsePagination } from '../utils';
 
 type PublicMember = Omit<Member, 'api_key'>;
 
@@ -30,8 +30,10 @@ export async function handleMembers(
 
   // GET /members — paginated
   const url = new URL(request.url);
-  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') ?? '20', 10), 1), 100);
-  const offset = Math.max(parseInt(url.searchParams.get('offset') ?? '0', 10), 0);
+  const limit = parsePagination(url.searchParams.get('limit'), 20, 1, 100);
+  const offset = parsePagination(url.searchParams.get('offset'), 0, 0, Number.MAX_SAFE_INTEGER);
+  if (limit === null) return jsonError('Query param "limit" must be a valid integer', 400, env);
+  if (offset === null) return jsonError('Query param "offset" must be a valid integer', 400, env);
 
   const [countRow, rows] = await Promise.all([
     env.DB

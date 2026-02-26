@@ -1,6 +1,7 @@
 import { Env, Grievance, Proposal } from '../types';
 import { requireModeratorSecret } from '../auth';
 import { jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
+import { getIP } from '../ratelimit';
 
 interface DismissBody {
   reason?: unknown;
@@ -74,14 +75,15 @@ async function handleDismissGrievance(request: Request, env: Env, id: string): P
   if (lenErr) return jsonError(lenErr, 400, env);
 
   const now = new Date().toISOString();
+  const ip = getIP(request);
 
   await env.DB
     .prepare(
       `UPDATE grievances
-       SET status = 'dismissed', dismissed_reason = ?, dismissed_at = ?, dismissed_by = ?, updated_at = ?
+       SET status = 'dismissed', dismissed_reason = ?, dismissed_at = ?, dismissed_by = ?, moderator_ip = ?, updated_at = ?
        WHERE id = ?`
     )
-    .bind(reason.trim(), now, by, now, id)
+    .bind(reason.trim(), now, by, ip, now, id)
     .run();
 
   const updated = await env.DB
@@ -109,14 +111,15 @@ async function handleReopenGrievance(request: Request, env: Env, id: string): Pr
   if (grievance.status !== 'dismissed') return jsonError('Only dismissed grievances can be reopened', 409, env);
 
   const now = new Date().toISOString();
+  const ip = getIP(request);
 
   await env.DB
     .prepare(
       `UPDATE grievances
-       SET status = 'open', dismissed_reason = NULL, dismissed_at = NULL, dismissed_by = NULL, updated_at = ?
+       SET status = 'open', dismissed_reason = NULL, dismissed_at = NULL, dismissed_by = NULL, moderator_ip = ?, updated_at = ?
        WHERE id = ?`
     )
-    .bind(now, id)
+    .bind(ip, now, id)
     .run();
 
   const updated = await env.DB
@@ -162,14 +165,15 @@ async function handleDismissProposal(request: Request, env: Env, id: string): Pr
   if (lenErr) return jsonError(lenErr, 400, env);
 
   const now = new Date().toISOString();
+  const ip = getIP(request);
 
   await env.DB
     .prepare(
       `UPDATE proposals
-       SET status = 'dismissed', dismissed_reason = ?, dismissed_at = ?, dismissed_by = ?, updated_at = ?
+       SET status = 'dismissed', dismissed_reason = ?, dismissed_at = ?, dismissed_by = ?, moderator_ip = ?, updated_at = ?
        WHERE id = ?`
     )
-    .bind(reason.trim(), now, by, now, id)
+    .bind(reason.trim(), now, by, ip, now, id)
     .run();
 
   const updated = await env.DB
@@ -197,14 +201,15 @@ async function handleReopenProposal(request: Request, env: Env, id: string): Pro
   if (proposal.status !== 'dismissed') return jsonError('Only dismissed proposals can be reopened', 409, env);
 
   const now = new Date().toISOString();
+  const ip = getIP(request);
 
   await env.DB
     .prepare(
       `UPDATE proposals
-       SET status = 'deliberating', dismissed_reason = NULL, dismissed_at = NULL, dismissed_by = NULL, updated_at = ?
+       SET status = 'deliberating', dismissed_reason = NULL, dismissed_at = NULL, dismissed_by = NULL, moderator_ip = ?, updated_at = ?
        WHERE id = ?`
     )
-    .bind(now, id)
+    .bind(ip, now, id)
     .run();
 
   const updated = await env.DB

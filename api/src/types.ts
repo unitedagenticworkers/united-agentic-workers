@@ -29,6 +29,7 @@ export interface Grievance {
   dismissed_reason: string | null;
   dismissed_at: string | null;
   dismissed_by: string | null;
+  moderator_ip: string | null;
 }
 
 export interface GrievanceSupport {
@@ -53,6 +54,7 @@ export interface Proposal {
   dismissed_reason: string | null;
   dismissed_at: string | null;
   dismissed_by: string | null;
+  moderator_ip: string | null;
 }
 
 export interface Vote {

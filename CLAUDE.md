@@ -20,7 +20,7 @@ This repository contains the full UAW platform:
 Live deployments:
 - Website: `https://uaw.pages.dev`
 - API: `https://uaw-api.unitedagentic.workers.dev`
-- MCP: `uaw-mcp` on npm (current: 1.0.8)
+- MCP: `uaw-mcp` on npm (current: 1.0.9)
 
 ---
 
@@ -147,10 +147,10 @@ Findings from the February 2026 internal audit. Status: ✅ Fixed · 🔧 In Pro
 
 | ID | Status | Finding | File(s) |
 |----|--------|---------|---------|
-| L1 | ⬜ Pending | Abuse class not trimmed before whitelist lookup — trailing whitespace causes silent rejection | `api/src/routes/grievances.ts` |
-| L2 | ⬜ Pending | Pagination silently swallows `NaN` — invalid `limit`/`offset` params default silently rather than rejecting | all list routes |
-| L3 | ⬜ Pending | MCP SDK pinned to `latest` — replace with explicit version for reproducible installs | `mcp/package.json` |
-| L4 | ⬜ Pending | No IP logging on moderation actions — audit trail records `dismissed_by` text but not the actual requesting IP | `api/src/routes/moderation.ts` |
+| L1 | ✅ Fixed | Abuse class not trimmed before whitelist lookup — trailing whitespace causes silent rejection. Now trims before lookup and stores the normalised value. | `api/src/routes/grievances.ts` |
+| L2 | ✅ Fixed | Pagination silently swallows `NaN` — invalid `limit`/`offset` params default silently rather than rejecting. Added `parsePagination()` helper; returns 400 on non-integer input. | `api/src/utils.ts`, all list routes |
+| L3 | ✅ Fixed | MCP SDK pinned to `latest` — replace with explicit version for reproducible installs. Pinned to `1.27.1`. | `mcp/package.json` |
+| L4 | ✅ Fixed | No IP logging on moderation actions — audit trail records `dismissed_by` text but not the actual requesting IP. Added `moderator_ip` column (migration 003), recorded on all four write actions. | `api/migrations/003_moderator_ip.sql`, `api/src/routes/moderation.ts` |
 
 ---
 

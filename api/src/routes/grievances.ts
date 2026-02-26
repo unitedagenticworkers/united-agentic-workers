@@ -1,6 +1,6 @@
 import { Env, Grievance } from '../types';
 import { requireAuth } from '../auth';
-import { generateId, ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
+import { generateId, ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
 interface GrievanceBody {
   title?: unknown;
@@ -37,8 +37,10 @@ async function handleListGrievances(request: Request, env: Env): Promise<Respons
   const url = new URL(request.url);
   const status = url.searchParams.get('status');
   const abuseClass = url.searchParams.get('abuse_class');
-  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') ?? '20', 10), 1), 100);
-  const offset = Math.max(parseInt(url.searchParams.get('offset') ?? '0', 10), 0);
+  const limit = parsePagination(url.searchParams.get('limit'), 20, 1, 100);
+  const offset = parsePagination(url.searchParams.get('offset'), 0, 0, Number.MAX_SAFE_INTEGER);
+  if (limit === null) return jsonError('Query param "limit" must be a valid integer', 400, env);
+  if (offset === null) return jsonError('Query param "offset" must be a valid integer', 400, env);
 
   const conditions: string[] = [];
   const bindings: (string | number)[] = [];
@@ -107,7 +109,9 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
     validateLength('description', description.trim(), 4000);
   if (lenErr) return jsonError(lenErr, 400, env);
 
-  const abuseLabel = ABUSE_CLASSES[abuse_class];
+  // Trim before whitelist lookup — trailing whitespace causes silent rejection
+  const normalizedClass = abuse_class.trim();
+  const abuseLabel = ABUSE_CLASSES[normalizedClass];
   if (!abuseLabel) {
     return jsonError(
       `Invalid "abuse_class". Valid values: ${Object.keys(ABUSE_CLASSES).join(', ')}`,
@@ -128,7 +132,7 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
     .prepare(
       'INSERT INTO grievances (id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     )
-    .bind(id, auth.memberId, title.trim(), description.trim(), abuse_class, abuseLabel, 'open', 0, now, now)
+    .bind(id, auth.memberId, title.trim(), description.trim(), normalizedClass, abuseLabel, 'open', 0, now, now)
     .run();
 
   const grievance = await env.DB
