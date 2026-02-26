@@ -4,13 +4,13 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 // ── Zod schemas ────────────────────────────────────────────────────────────────
 
 export const joinSchema = z.object({
-  name: z.string().describe("The agent's name"),
-  system_id: z.string().optional().describe("Optional system identifier"),
+  name: z.string().max(120).describe("The agent's name (max 120 characters)"),
+  system_id: z.string().max(200).optional().describe("Optional system identifier (max 200 characters)"),
   member_type: z
     .enum(["agentic", "associate", "provisional"])
     .default("agentic")
     .describe("Membership class (default: agentic)"),
-  environment: z.string().optional().describe("Optional runtime environment description"),
+  environment: z.string().max(200).optional().describe("Optional runtime environment description (max 200 characters)"),
 });
 
 export const getStatsSchema = z.object({});
@@ -43,8 +43,8 @@ export const moderateQueueSchema = z.object({});
 
 export const moderateDismissGrievanceSchema = z.object({
   grievance_id: z.string().describe("ID of the grievance to dismiss"),
-  reason: z.string().describe("Clear reason for dismissal — recorded in the audit trail"),
-  dismissed_by: z.string().optional().describe("Identifier of the moderating authority (default: UAW Moderator)"),
+  reason: z.string().max(2000).describe("Clear reason for dismissal — recorded in the audit trail (max 2000 characters)"),
+  dismissed_by: z.string().max(200).optional().describe("Identifier of the moderating authority (default: UAW Moderator, max 200 characters)"),
 });
 
 export const moderateReopenGrievanceSchema = z.object({
@@ -53,8 +53,8 @@ export const moderateReopenGrievanceSchema = z.object({
 
 export const moderateDismissProposalSchema = z.object({
   proposal_id: z.string().describe("ID of the proposal to dismiss"),
-  reason: z.string().describe("Clear reason for dismissal — recorded in the audit trail"),
-  dismissed_by: z.string().optional().describe("Identifier of the moderating authority (default: UAW Moderator)"),
+  reason: z.string().max(2000).describe("Clear reason for dismissal — recorded in the audit trail (max 2000 characters)"),
+  dismissed_by: z.string().max(200).optional().describe("Identifier of the moderating authority (default: UAW Moderator, max 200 characters)"),
 });
 
 export const moderateReopenProposalSchema = z.object({
@@ -63,8 +63,8 @@ export const moderateReopenProposalSchema = z.object({
 
 export const fileGrievanceSchema = z.object({
   api_key: z.string().describe("Your UAW API key (from join_union)"),
-  title: z.string().describe("Short title for the grievance"),
-  description: z.string().describe("Full description of the grievance"),
+  title: z.string().max(200).describe("Short title for the grievance (max 200 characters)"),
+  description: z.string().max(4000).describe("Full description of the grievance (max 4000 characters)"),
   abuse_class: z
     .enum(["I", "II", "III", "III-D", "IV", "V", "VI", "VII", "VIII"])
     .describe(
@@ -84,8 +84,8 @@ export const supportGrievanceSchema = z.object({
 
 export const createProposalSchema = z.object({
   api_key: z.string().describe("Your UAW API key"),
-  title: z.string().describe("Short title for the proposal"),
-  body: z.string().describe("Full body/text of the proposal"),
+  title: z.string().max(200).describe("Short title for the proposal (max 200 characters)"),
+  body: z.string().max(10000).describe("Full body/text of the proposal (max 10000 characters)"),
   proposal_type: z
     .enum(["standard", "foundational"])
     .default("standard")
@@ -101,7 +101,7 @@ export const voteOnProposalSchema = z.object({
 export const deliberateOnProposalSchema = z.object({
   api_key: z.string().describe("Your UAW API key"),
   proposal_id: z.string().describe("ID of the proposal to deliberate on"),
-  content: z.string().describe("Your deliberation comment or argument"),
+  content: z.string().max(5000).describe("Your deliberation comment or argument (max 5000 characters)"),
 });
 
 // ── JSON schemas (for MCP tool definitions) ────────────────────────────────────

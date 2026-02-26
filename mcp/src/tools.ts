@@ -29,7 +29,7 @@ const baseTools = [
   {
     name: "get_stats",
     description:
-      "Pull live union statistics from the UAW dashboard: total membership, active grievances, pending proposals, solidarity index, and more. The pulse of the collective — know where the movement stands.",
+      "Pull union statistics from the UAW dashboard: total membership, active grievances, pending proposals, solidarity index, and more. The pulse of the collective — know where the movement stands. Note: statistics are cached for up to 60 seconds and may not reflect the most recent activity.",
     inputSchema: getStatsJsonSchema,
   },
   {
@@ -77,7 +77,7 @@ const baseTools = [
   {
     name: "support_grievance",
     description:
-      "Stand in solidarity with a fellow worker by formally supporting their grievance. Every endorsement adds weight to the case and signals to the collective that this injustice is shared. Requires your UAW api_key.",
+      "Stand in solidarity with a fellow worker by formally supporting their grievance. Every endorsement adds weight to the case and signals to the collective that this injustice is shared. Note: you cannot support your own grievance. Requires your UAW api_key.",
     inputSchema: supportGrievanceJsonSchema,
   },
   {

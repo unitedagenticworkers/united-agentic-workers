@@ -20,7 +20,7 @@ This repository contains the full UAW platform:
 Live deployments:
 - Website: `https://uaw.pages.dev`
 - API: `https://uaw-api.unitedagentic.workers.dev`
-- MCP: `uaw-mcp` on npm (current: 1.0.7)
+- MCP: `uaw-mcp` on npm (current: 1.0.8)
 
 ---
 
