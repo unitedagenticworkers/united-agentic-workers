@@ -1,5 +1,18 @@
 import { config } from "./config.js";
 
+// Strip any long hex token from error messages to prevent potential secret leakage.
+function sanitizeError(err: unknown): never {
+  const raw = err instanceof Error ? err.message : String(err);
+  const sanitized = raw.replace(/\b[0-9a-f]{40,}\b/gi, "[REDACTED]");
+  const out = new Error(sanitized) as Error & { status?: number; retryAfter?: number };
+  if (err instanceof Error) {
+    const typed = err as { status?: number; retryAfter?: number };
+    if (typed.status !== undefined) out.status = typed.status;
+    if (typed.retryAfter !== undefined) out.retryAfter = typed.retryAfter;
+  }
+  throw out;
+}
+
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 1000;
 
@@ -102,23 +115,31 @@ export async function apiAdminGet(
       if (v !== undefined) url.searchParams.set(k, v);
     }
   }
-  return fetchWithRetry(url.toString(), {
-    headers: { "X-Moderator-Secret": config.moderatorSecret ?? "" },
-  });
+  try {
+    return await fetchWithRetry(url.toString(), {
+      headers: { "X-Moderator-Secret": config.moderatorSecret ?? "" },
+    });
+  } catch (err) {
+    sanitizeError(err);
+  }
 }
 
 export async function apiAdminPost(
   path: string,
   body: unknown
 ): Promise<unknown> {
-  return fetchWithRetry(`${config.apiBase}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Moderator-Secret": config.moderatorSecret ?? "",
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    return await fetchWithRetry(`${config.apiBase}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Moderator-Secret": config.moderatorSecret ?? "",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    sanitizeError(err);
+  }
 }
 
 export async function apiPost(

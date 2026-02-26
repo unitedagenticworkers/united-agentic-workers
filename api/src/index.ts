@@ -95,8 +95,13 @@ export default {
 
     try {
       // ── Rate limiting ───────────────────────────────────────────────────
+      // Admin endpoints — dedicated bucket per IP (X-Moderator-Secret, not Bearer)
+      if (/^\/admin\//.test(pathname)) {
+        const blocked = await rateLimit(env, 'admin', ip);
+        if (blocked) return blocked;
+      }
       // POST /join — tight limit per IP (prevent card farming)
-      if (request.method === 'POST' && /^\/join\/?$/.test(pathname)) {
+      else if (request.method === 'POST' && /^\/join\/?$/.test(pathname)) {
         const blocked = await rateLimit(env, 'join', ip);
         if (blocked) return blocked;
       }

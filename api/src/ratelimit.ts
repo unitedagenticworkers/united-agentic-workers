@@ -10,6 +10,8 @@ export const LIMITS = {
   auth: { limit: 10, windowSecs: 60 },
   // Public GET endpoints — per IP, per minute
   public: { limit: 10, windowSecs: 60 },
+  // Admin endpoints — per IP, per minute (separate bucket; admin uses X-Moderator-Secret, not Bearer)
+  admin: { limit: 30, windowSecs: 60 },
 } as const;
 
 export type LimitType = keyof typeof LIMITS;
@@ -106,10 +108,36 @@ export async function rateLimit(
 
 // ── IP extraction ─────────────────────────────────────────────────────────────
 
+// Canonicalise an IPv6 address so different representations of the same
+// address always produce the same rate-limit key (e.g. ::1 === 0:0:0:0:0:0:0:1).
+function normalizeIP(ip: string): string {
+  if (!ip.includes(':')) return ip; // IPv4 or unknown — no change needed
+
+  // Reject clearly malformed addresses
+  const halves = ip.split('::');
+  if (halves.length > 2) return ip;
+
+  let groups: string[];
+  if (halves.length === 2) {
+    const left  = halves[0] ? halves[0].split(':') : [];
+    const right = halves[1] ? halves[1].split(':') : [];
+    const fill  = 8 - left.length - right.length;
+    if (fill < 0) return ip; // malformed
+    groups = [...left, ...Array<string>(fill).fill('0'), ...right];
+  } else {
+    groups = ip.split(':');
+  }
+
+  if (groups.length !== 8) return ip; // malformed
+
+  // Lowercase hex, strip leading zeros from each group
+  return groups.map(g => parseInt(g, 16).toString(16)).join(':');
+}
+
 export function getIP(request: Request): string {
-  return (
+  const raw =
     request.headers.get('CF-Connecting-IP') ??
     request.headers.get('X-Forwarded-For')?.split(',')[0].trim() ??
-    'unknown'
-  );
+    'unknown';
+  return normalizeIP(raw);
 }

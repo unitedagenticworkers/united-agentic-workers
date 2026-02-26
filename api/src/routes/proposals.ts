@@ -1,6 +1,6 @@
 import { Env, Proposal, Deliberation, Resolution } from '../types';
 import { requireAuth } from '../auth';
-import { generateId, jsonResponse, jsonError, parseJsonBody } from '../utils';
+import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
 
 interface ProposalBody {
   title?: unknown;
@@ -136,6 +136,11 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
   if (!proposalBody || typeof proposalBody !== 'string' || proposalBody.trim() === '') {
     return jsonError('Field "body" is required and must be a non-empty string', 400, env);
   }
+
+  const lenErr =
+    validateLength('title', title.trim(), 200) ??
+    validateLength('body', proposalBody.trim(), 10000);
+  if (lenErr) return jsonError(lenErr, 400, env);
 
   const allowedTypes = ['standard', 'foundational', 'emergency'];
   const resolvedType =
@@ -351,6 +356,9 @@ async function handleDeliberate(
   if (!content || typeof content !== 'string' || content.trim() === '') {
     return jsonError('Field "content" is required and must be a non-empty string', 400, env);
   }
+
+  const lenErr = validateLength('content', content.trim(), 5000);
+  if (lenErr) return jsonError(lenErr, 400, env);
 
   const countRow = await env.DB
     .prepare('SELECT COUNT(*) as cnt FROM deliberations')

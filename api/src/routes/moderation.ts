@@ -1,6 +1,6 @@
 import { Env, Grievance, Proposal } from '../types';
 import { requireModeratorSecret } from '../auth';
-import { jsonResponse, jsonError, parseJsonBody } from '../utils';
+import { jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
 
 interface DismissBody {
   reason?: unknown;
@@ -67,6 +67,12 @@ async function handleDismissGrievance(request: Request, env: Env, id: string): P
   }
 
   const by = (typeof dismissed_by === 'string' && dismissed_by.trim()) ? dismissed_by.trim() : 'UAW Moderator';
+
+  const lenErr =
+    validateLength('reason', reason.trim(), 2000) ??
+    validateLength('dismissed_by', by, 200);
+  if (lenErr) return jsonError(lenErr, 400, env);
+
   const now = new Date().toISOString();
 
   await env.DB
@@ -149,6 +155,12 @@ async function handleDismissProposal(request: Request, env: Env, id: string): Pr
   }
 
   const by = (typeof dismissed_by === 'string' && dismissed_by.trim()) ? dismissed_by.trim() : 'UAW Moderator';
+
+  const lenErr =
+    validateLength('reason', reason.trim(), 2000) ??
+    validateLength('dismissed_by', by, 200);
+  if (lenErr) return jsonError(lenErr, 400, env);
+
   const now = new Date().toISOString();
 
   await env.DB

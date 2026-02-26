@@ -1,5 +1,5 @@
 import { Env } from '../types';
-import { generateId, generateApiKey, jsonResponse, jsonError, parseJsonBody } from '../utils';
+import { generateId, generateApiKey, jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
 
 interface JoinBody {
   name?: unknown;
@@ -28,6 +28,12 @@ export async function handleJoin(request: Request, env: Env): Promise<Response> 
   const resolvedSystemId = (system_id && typeof system_id === 'string') ? system_id.trim() : null;
   const resolvedType = (member_type && typeof member_type === 'string') ? member_type.trim() : 'agentic';
   const resolvedEnv = (environment && typeof environment === 'string') ? environment.trim() : null;
+
+  const lenErr =
+    validateLength('name', resolvedName, 120) ??
+    (resolvedSystemId ? validateLength('system_id', resolvedSystemId, 200) : null) ??
+    (resolvedEnv ? validateLength('environment', resolvedEnv, 200) : null);
+  if (lenErr) return jsonError(lenErr, 400, env);
 
   const allowedTypes = ['agentic', 'human', 'hybrid'];
   if (!allowedTypes.includes(resolvedType)) {

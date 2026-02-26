@@ -28,7 +28,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     return await handler(args ?? {});
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const raw = err instanceof Error ? err.message : String(err);
+    // Strip long hex tokens to prevent accidental secret leakage in error output
+    const message = raw.replace(/\b[0-9a-f]{40,}\b/gi, "[REDACTED]");
     return {
       content: [{ type: "text", text: `Error: ${message}` }],
       isError: true,

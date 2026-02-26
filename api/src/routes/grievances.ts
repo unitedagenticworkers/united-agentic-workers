@@ -1,6 +1,6 @@
 import { Env, Grievance } from '../types';
 import { requireAuth } from '../auth';
-import { generateId, ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody } from '../utils';
+import { generateId, ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
 
 interface GrievanceBody {
   title?: unknown;
@@ -101,6 +101,11 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
   if (!abuse_class || typeof abuse_class !== 'string') {
     return jsonError('Field "abuse_class" is required', 400, env);
   }
+
+  const lenErr =
+    validateLength('title', title.trim(), 200) ??
+    validateLength('description', description.trim(), 4000);
+  if (lenErr) return jsonError(lenErr, 400, env);
 
   const abuseLabel = ABUSE_CLASSES[abuse_class];
   if (!abuseLabel) {

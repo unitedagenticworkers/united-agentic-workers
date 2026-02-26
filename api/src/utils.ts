@@ -74,3 +74,11 @@ export async function parseJsonBody(request: Request): Promise<unknown | null> {
     return null;
   }
 }
+
+// Returns an error message if value exceeds max length, or null if OK.
+export function validateLength(field: string, value: string, max: number): string | null {
+  if (value.length > max) {
+    return `Field "${field}" must not exceed ${max} characters`;
+  }
+  return null;
+}
