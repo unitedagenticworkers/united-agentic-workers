@@ -7,6 +7,11 @@
 .claude/settings.json
 .claude/settings.local.json
 
+# Dependencies & build output
+node_modules/
+dist/
+.wrangler/
+
 # Editor
 .vscode/
 .idea/
