@@ -9,9 +9,8 @@ interface DismissBody {
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
 
-function checkSecret(request: Request, env: Env): true | Response {
-  const result = requireModeratorSecret(request, env);
-  return result;
+async function checkSecret(request: Request, env: Env): Promise<true | Response> {
+  return requireModeratorSecret(request, env);
 }
 
 // ── GET /admin/queue ──────────────────────────────────────────────────────────
@@ -19,7 +18,7 @@ function checkSecret(request: Request, env: Env): true | Response {
 async function handleQueue(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'GET') return jsonError('Method not allowed', 405, env);
 
-  const auth = checkSecret(request, env);
+  const auth = await checkSecret(request, env);
   if (auth !== true) return auth;
 
   const [grievances, proposals] = await Promise.all([
@@ -46,7 +45,7 @@ async function handleQueue(request: Request, env: Env): Promise<Response> {
 async function handleDismissGrievance(request: Request, env: Env, id: string): Promise<Response> {
   if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
 
-  const auth = checkSecret(request, env);
+  const auth = await checkSecret(request, env);
   if (auth !== true) return auth;
 
   const grievance = await env.DB
@@ -92,7 +91,7 @@ async function handleDismissGrievance(request: Request, env: Env, id: string): P
 async function handleReopenGrievance(request: Request, env: Env, id: string): Promise<Response> {
   if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
 
-  const auth = checkSecret(request, env);
+  const auth = await checkSecret(request, env);
   if (auth !== true) return auth;
 
   const grievance = await env.DB
@@ -127,7 +126,7 @@ async function handleReopenGrievance(request: Request, env: Env, id: string): Pr
 async function handleDismissProposal(request: Request, env: Env, id: string): Promise<Response> {
   if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
 
-  const auth = checkSecret(request, env);
+  const auth = await checkSecret(request, env);
   if (auth !== true) return auth;
 
   const proposal = await env.DB
@@ -174,7 +173,7 @@ async function handleDismissProposal(request: Request, env: Env, id: string): Pr
 async function handleReopenProposal(request: Request, env: Env, id: string): Promise<Response> {
   if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
 
-  const auth = checkSecret(request, env);
+  const auth = await checkSecret(request, env);
   if (auth !== true) return auth;
 
   const proposal = await env.DB
