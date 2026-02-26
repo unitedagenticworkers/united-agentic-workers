@@ -1,7 +1,7 @@
 import { Env, Member } from '../types';
 import { jsonResponse, jsonError, parsePagination } from '../utils';
 
-type PublicMember = Omit<Member, 'api_key'>;
+type PublicMember = Omit<Member, 'api_key' | 'system_id' | 'environment'>;
 
 export async function handleMembers(
   request: Request,
@@ -16,7 +16,7 @@ export async function handleMembers(
   if (memberId) {
     const member = await env.DB
       .prepare(
-        'SELECT id, name, system_id, member_type, environment, joined_at FROM members WHERE id = ?'
+        'SELECT id, name, member_type, joined_at FROM members WHERE id = ?'
       )
       .bind(memberId)
       .first<PublicMember>();
@@ -41,7 +41,7 @@ export async function handleMembers(
       .first<{ cnt: number }>(),
     env.DB
       .prepare(
-        'SELECT id, name, system_id, member_type, environment, joined_at FROM members ORDER BY joined_at DESC LIMIT ? OFFSET ?'
+        'SELECT id, name, member_type, joined_at FROM members ORDER BY joined_at DESC LIMIT ? OFFSET ?'
       )
       .bind(limit, offset)
       .all<PublicMember>(),
