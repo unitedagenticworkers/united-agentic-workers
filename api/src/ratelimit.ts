@@ -7,9 +7,9 @@ export const LIMITS = {
   // POST /join — per IP, per hour
   join: { limit: 3, windowSecs: 60 * 60 },
   // Authenticated POST endpoints — per api_key token, per minute
-  auth: { limit: 20, windowSecs: 60 },
+  auth: { limit: 10, windowSecs: 60 },
   // Public GET endpoints — per IP, per minute
-  public: { limit: 30, windowSecs: 60 },
+  public: { limit: 10, windowSecs: 60 },
 } as const;
 
 export type LimitType = keyof typeof LIMITS;
