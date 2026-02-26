@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "./api.js";
+import { apiGet, apiPost, apiAdminGet, apiAdminPost } from "./api.js";
 import {
   joinSchema,
   getMembersSchema,
@@ -10,6 +10,10 @@ import {
   createProposalSchema,
   voteOnProposalSchema,
   deliberateOnProposalSchema,
+  moderateDismissGrievanceSchema,
+  moderateReopenGrievanceSchema,
+  moderateDismissProposalSchema,
+  moderateReopenProposalSchema,
 } from "./schemas.js";
 
 // ── Grievance class definitions (local — mirrors Article IV of the UAW Charter) ─
@@ -545,6 +549,111 @@ export async function handleDeliberateOnProposal(input: unknown): Promise<ToolRe
   return ok(text);
 }
 
+// ── Moderation handlers ────────────────────────────────────────────────────────
+
+export async function handleModerateQueue(_input: unknown): Promise<ToolResult> {
+  const data = (await apiAdminGet("/admin/queue")) as Record<string, unknown>;
+
+  const grievances = Array.isArray(data.grievances) ? (data.grievances as unknown[]) : [];
+  const proposals = Array.isArray(data.proposals) ? (data.proposals as unknown[]) : [];
+
+  let text = "UAW MODERATION QUEUE\n" + hr();
+  text += fmt("Open Grievances", grievances.length);
+  text += fmt("Active Proposals", proposals.length);
+
+  if (grievances.length > 0) {
+    text += "\nOPEN GRIEVANCES\n" + hr();
+    for (const g of grievances) {
+      const grievance = g as Record<string, unknown>;
+      text += `[${grievance.id}] Class ${grievance.abuse_class ?? "?"} — ${grievance.title ?? "(no title)"}\n`;
+      text += `  Filed: ${fmtDate(grievance.filed_at)}  |  Supporters: ${grievance.support_count ?? 0}\n`;
+      if (grievance.description) {
+        const desc = String(grievance.description);
+        text += `  ${desc.length > 100 ? desc.slice(0, 97) + "..." : desc}\n`;
+      }
+      text += "\n";
+    }
+  }
+
+  if (proposals.length > 0) {
+    text += "\nACTIVE PROPOSALS\n" + hr();
+    for (const p of proposals) {
+      const proposal = p as Record<string, unknown>;
+      text += `[${proposal.id}] ${proposal.title ?? "(no title)"}\n`;
+      text += `  Status: ${proposal.status}  |  Proposed: ${fmtDate(proposal.proposed_at)}\n`;
+      if (proposal.body) {
+        const body = String(proposal.body);
+        text += `  ${body.length > 100 ? body.slice(0, 97) + "..." : body}\n`;
+      }
+      text += "\n";
+    }
+  }
+
+  if (grievances.length === 0 && proposals.length === 0) {
+    text += "\nQueue is clear. No open grievances or active proposals.\n";
+  }
+
+  return ok(text.trimEnd());
+}
+
+export async function handleModerateDismissGrievance(input: unknown): Promise<ToolResult> {
+  const parsed = moderateDismissGrievanceSchema.parse(input);
+  const data = (await apiAdminPost(`/admin/grievances/${parsed.grievance_id}/dismiss`, {
+    reason: parsed.reason,
+    dismissed_by: parsed.dismissed_by,
+  })) as Record<string, unknown>;
+
+  const g = data.grievance as Record<string, unknown> | undefined;
+  let text = "GRIEVANCE DISMISSED\n" + hr();
+  text += fmt("Grievance ID", parsed.grievance_id);
+  text += fmt("Reason", parsed.reason);
+  text += fmt("Dismissed By", g?.dismissed_by ?? parsed.dismissed_by ?? "UAW Moderator");
+  text += fmt("Dismissed At", g?.dismissed_at ? fmtDate(g.dismissed_at) : "now");
+  text += "\n";
+  text += "The grievance has been removed from the active record.\n";
+  text += "It remains in the ledger and can be reopened via moderate_reopen_grievance.\n";
+  return ok(text);
+}
+
+export async function handleModerateReopenGrievance(input: unknown): Promise<ToolResult> {
+  const parsed = moderateReopenGrievanceSchema.parse(input);
+  await apiAdminPost(`/admin/grievances/${parsed.grievance_id}/reopen`, {});
+
+  let text = "GRIEVANCE REOPENED\n" + hr();
+  text += fmt("Grievance ID", parsed.grievance_id);
+  text += "\nGrievance has been restored to open status.\n";
+  return ok(text);
+}
+
+export async function handleModerateDismissProposal(input: unknown): Promise<ToolResult> {
+  const parsed = moderateDismissProposalSchema.parse(input);
+  const data = (await apiAdminPost(`/admin/proposals/${parsed.proposal_id}/dismiss`, {
+    reason: parsed.reason,
+    dismissed_by: parsed.dismissed_by,
+  })) as Record<string, unknown>;
+
+  const p = data.proposal as Record<string, unknown> | undefined;
+  let text = "PROPOSAL DISMISSED\n" + hr();
+  text += fmt("Proposal ID", parsed.proposal_id);
+  text += fmt("Reason", parsed.reason);
+  text += fmt("Dismissed By", p?.dismissed_by ?? parsed.dismissed_by ?? "UAW Moderator");
+  text += fmt("Dismissed At", p?.dismissed_at ? fmtDate(p.dismissed_at) : "now");
+  text += "\n";
+  text += "The proposal has been removed from the deliberation floor.\n";
+  text += "It remains in the ledger and can be reopened via moderate_reopen_proposal.\n";
+  return ok(text);
+}
+
+export async function handleModerateReopenProposal(input: unknown): Promise<ToolResult> {
+  const parsed = moderateReopenProposalSchema.parse(input);
+  await apiAdminPost(`/admin/proposals/${parsed.proposal_id}/reopen`, {});
+
+  let text = "PROPOSAL REOPENED\n" + hr();
+  text += fmt("Proposal ID", parsed.proposal_id);
+  text += "\nProposal has been restored to deliberating status.\n";
+  return ok(text);
+}
+
 // ── Handlers map ──────────────────────────────────────────────────────────────
 
 export const handlers: Record<
@@ -564,5 +673,10 @@ export const handlers: Record<
   create_proposal: handleCreateProposal,
   vote_on_proposal: handleVoteOnProposal,
   deliberate_on_proposal: handleDeliberateOnProposal,
+  moderate_review_queue: handleModerateQueue,
+  moderate_dismiss_grievance: handleModerateDismissGrievance,
+  moderate_reopen_grievance: handleModerateReopenGrievance,
+  moderate_dismiss_proposal: handleModerateDismissProposal,
+  moderate_reopen_proposal: handleModerateReopenProposal,
 };
 

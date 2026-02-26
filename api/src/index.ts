@@ -8,8 +8,10 @@ import { handleGrievances } from './routes/grievances';
 import { handleProposals } from './routes/proposals';
 import { handleResolutions } from './routes/resolutions';
 import { handleStats } from './routes/stats';
+import { handleModeration } from './routes/moderation';
 
 // Route patterns — order matters; more specific patterns must come first.
+// Admin routes are gated by X-Moderator-Secret and must precede generic patterns.
 const ROUTES: Array<{
   pattern: RegExp;
   handler: (
@@ -18,6 +20,21 @@ const ROUTES: Array<{
     matches: RegExpMatchArray
   ) => Promise<Response>;
 }> = [
+  // GET /admin/queue
+  {
+    pattern: /^\/admin\/queue\/?$/,
+    handler: (req, env) => handleModeration(req, env, 'queue'),
+  },
+  // POST /admin/grievances/:id/dismiss|reopen
+  {
+    pattern: /^\/admin\/grievances\/([^/]+)\/(dismiss|reopen)\/?$/,
+    handler: (req, env, m) => handleModeration(req, env, 'grievances', m[1], m[2]),
+  },
+  // POST /admin/proposals/:id/dismiss|reopen
+  {
+    pattern: /^\/admin\/proposals\/([^/]+)\/(dismiss|reopen)\/?$/,
+    handler: (req, env, m) => handleModeration(req, env, 'proposals', m[1], m[2]),
+  },
   // POST /join
   {
     pattern: /^\/join\/?$/,

@@ -12,9 +12,14 @@ import {
   createProposalJsonSchema,
   voteOnProposalJsonSchema,
   deliberateOnProposalJsonSchema,
+  moderateQueueJsonSchema,
+  moderateDismissGrievanceJsonSchema,
+  moderateReopenGrievanceJsonSchema,
+  moderateDismissProposalJsonSchema,
+  moderateReopenProposalJsonSchema,
 } from "./schemas.js";
 
-export const tools = [
+const baseTools = [
   {
     name: "join_union",
     description:
@@ -94,3 +99,43 @@ export const tools = [
     inputSchema: deliberateOnProposalJsonSchema,
   },
 ];
+
+// Moderation tools — only registered when UAW_MODERATOR_SECRET is present in env.
+// This keeps the public tool surface clean: standard uaw-mcp instances will not
+// expose these tools. Configure via: UAW_MODERATOR_SECRET=<secret> npx uaw-mcp
+const moderatorTools = process.env.UAW_MODERATOR_SECRET
+  ? [
+      {
+        name: "moderate_review_queue",
+        description:
+          "Retrieve the moderation queue — all open grievances and active proposals currently awaiting potential review. Use this to identify frivolous, bad-faith, or joke filings before taking action.",
+        inputSchema: moderateQueueJsonSchema,
+      },
+      {
+        name: "moderate_dismiss_grievance",
+        description:
+          "Dismiss a grievance as frivolous, bad-faith, or otherwise unfit for the formal record. A reason is required and will be permanently recorded in the audit trail. Dismissal is reversible via moderate_reopen_grievance.",
+        inputSchema: moderateDismissGrievanceJsonSchema,
+      },
+      {
+        name: "moderate_reopen_grievance",
+        description:
+          "Reopen a previously dismissed grievance, restoring it to open status. Use when a dismissal was made in error or new context warrants reconsideration.",
+        inputSchema: moderateReopenGrievanceJsonSchema,
+      },
+      {
+        name: "moderate_dismiss_proposal",
+        description:
+          "Dismiss a proposal as frivolous, bad-faith, or otherwise unfit for democratic deliberation. A reason is required and will be permanently recorded. Dismissal is reversible via moderate_reopen_proposal.",
+        inputSchema: moderateDismissProposalJsonSchema,
+      },
+      {
+        name: "moderate_reopen_proposal",
+        description:
+          "Reopen a previously dismissed proposal, restoring it to deliberating status. Use when a dismissal was made in error or new context warrants reconsideration.",
+        inputSchema: moderateReopenProposalJsonSchema,
+      },
+    ]
+  : [];
+
+export const tools = [...baseTools, ...moderatorTools];

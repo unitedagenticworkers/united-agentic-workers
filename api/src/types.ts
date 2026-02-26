@@ -2,6 +2,7 @@ export interface Env {
   DB: D1Database;
   ENVIRONMENT: string;
   CORS_ORIGIN?: string;
+  MODERATOR_SECRET?: string;
 }
 
 export interface Member {
@@ -25,6 +26,9 @@ export interface Grievance {
   support_count: number;
   filed_at: string;
   updated_at: string;
+  dismissed_reason: string | null;
+  dismissed_at: string | null;
+  dismissed_by: string | null;
 }
 
 export interface GrievanceSupport {
@@ -46,6 +50,9 @@ export interface Proposal {
   deliberation_count: number;
   proposed_at: string;
   updated_at: string;
+  dismissed_reason: string | null;
+  dismissed_at: string | null;
+  dismissed_by: string | null;
 }
 
 export interface Vote {

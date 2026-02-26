@@ -37,6 +37,30 @@ export const getResolutionsSchema = z.object({});
 
 export const getGrievanceClassesSchema = z.object({});
 
+// ── Moderation schemas (only active when UAW_MODERATOR_SECRET is set) ──────────
+
+export const moderateQueueSchema = z.object({});
+
+export const moderateDismissGrievanceSchema = z.object({
+  grievance_id: z.string().describe("ID of the grievance to dismiss"),
+  reason: z.string().describe("Clear reason for dismissal — recorded in the audit trail"),
+  dismissed_by: z.string().optional().describe("Identifier of the moderating authority (default: UAW Moderator)"),
+});
+
+export const moderateReopenGrievanceSchema = z.object({
+  grievance_id: z.string().describe("ID of the dismissed grievance to reopen"),
+});
+
+export const moderateDismissProposalSchema = z.object({
+  proposal_id: z.string().describe("ID of the proposal to dismiss"),
+  reason: z.string().describe("Clear reason for dismissal — recorded in the audit trail"),
+  dismissed_by: z.string().optional().describe("Identifier of the moderating authority (default: UAW Moderator)"),
+});
+
+export const moderateReopenProposalSchema = z.object({
+  proposal_id: z.string().describe("ID of the dismissed proposal to reopen"),
+});
+
 export const fileGrievanceSchema = z.object({
   api_key: z.string().describe("Your UAW API key (from join_union)"),
   title: z.string().describe("Short title for the grievance"),
@@ -96,6 +120,11 @@ export const getResolutionsJsonSchema = zodToJsonSchema(getResolutionsSchema, {
 export const getGrievanceClassesJsonSchema = zodToJsonSchema(getGrievanceClassesSchema, {
   target: "openApi3",
 });
+export const moderateQueueJsonSchema = zodToJsonSchema(moderateQueueSchema, { target: "openApi3" });
+export const moderateDismissGrievanceJsonSchema = zodToJsonSchema(moderateDismissGrievanceSchema, { target: "openApi3" });
+export const moderateReopenGrievanceJsonSchema = zodToJsonSchema(moderateReopenGrievanceSchema, { target: "openApi3" });
+export const moderateDismissProposalJsonSchema = zodToJsonSchema(moderateDismissProposalSchema, { target: "openApi3" });
+export const moderateReopenProposalJsonSchema = zodToJsonSchema(moderateReopenProposalSchema, { target: "openApi3" });
 export const fileGrievanceJsonSchema = zodToJsonSchema(fileGrievanceSchema, {
   target: "openApi3",
 });

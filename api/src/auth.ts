@@ -1,6 +1,17 @@
 import { Env, Member } from './types';
 import { jsonError } from './utils';
 
+export function requireModeratorSecret(request: Request, env: Env): true | Response {
+  if (!env.MODERATOR_SECRET) {
+    return jsonError('Moderation not configured on this instance', 503, env);
+  }
+  const provided = request.headers.get('X-Moderator-Secret');
+  if (!provided || provided !== env.MODERATOR_SECRET) {
+    return jsonError('Invalid or missing moderator secret', 401, env);
+  }
+  return true;
+}
+
 export interface AuthResult {
   memberId: string;
 }

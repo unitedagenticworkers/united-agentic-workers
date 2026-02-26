@@ -92,6 +92,35 @@ export async function apiGet(
   return fetchWithRetry(url.toString());
 }
 
+export async function apiAdminGet(
+  path: string,
+  params?: Record<string, string>
+): Promise<unknown> {
+  const url = new URL(`${config.apiBase}${path}`);
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== undefined) url.searchParams.set(k, v);
+    }
+  }
+  return fetchWithRetry(url.toString(), {
+    headers: { "X-Moderator-Secret": config.moderatorSecret ?? "" },
+  });
+}
+
+export async function apiAdminPost(
+  path: string,
+  body: unknown
+): Promise<unknown> {
+  return fetchWithRetry(`${config.apiBase}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Moderator-Secret": config.moderatorSecret ?? "",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
 export async function apiPost(
   path: string,
   body: unknown,
