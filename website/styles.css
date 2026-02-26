@@ -131,6 +131,19 @@ a:hover { color: var(--color-primary-dark); }
 
 .skip-link:focus { top: 0; }
 
+/* ── Accessibility Utilities ────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* ── Layout Utilities ───────────────────────────────────── */
 .container {
   width: 100%;
@@ -773,7 +786,6 @@ a:hover { color: var(--color-primary-dark); }
   border-radius: 50%;
   font-size: 1.4rem;
   flex-shrink: 0;
-  aria-hidden: true;
 }
 
 .pillar-name {
@@ -2689,9 +2701,9 @@ a:hover { color: var(--color-primary-dark); }
 .dev-tab {
   position: relative;
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2em;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background: transparent;
   border: none;
@@ -2940,6 +2952,10 @@ a:hover { color: var(--color-primary-dark); }
 .dev-lang-btn:not(.dev-lang-btn--active):hover {
   background: rgba(124,58,237,0.08);
   color: var(--color-primary);
+}
+
+.dev-lang-btn + .dev-lang-btn {
+  border-left: 1px solid var(--color-rule);
 }
 
 .dev-lang-panel {
@@ -3591,6 +3607,7 @@ a:hover { color: var(--color-primary-dark); }
 .dev-workflow-content {
   padding-top: var(--space-1);
   min-width: 0;
+  overflow: hidden;
 }
 
 .dev-workflow-title {
