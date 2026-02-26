@@ -1,6 +1,7 @@
 import { Env } from './types';
 import { handleOptions } from './cors';
 import { jsonError } from './utils';
+import { rateLimit, getIP } from './ratelimit';
 import { handleJoin } from './routes/join';
 import { handleMembers } from './routes/members';
 import { handleGrievances } from './routes/grievances';
@@ -73,8 +74,27 @@ export default {
 
     const url = new URL(request.url);
     const pathname = url.pathname;
+    const ip = getIP(request);
 
     try {
+      // ── Rate limiting ───────────────────────────────────────────────────
+      // POST /join — tight limit per IP (prevent card farming)
+      if (request.method === 'POST' && /^\/join\/?$/.test(pathname)) {
+        const blocked = await rateLimit(env, 'join', ip);
+        if (blocked) return blocked;
+      }
+      // Authenticated POST endpoints — limit per token
+      else if (request.method === 'POST') {
+        const token = request.headers.get('Authorization')?.replace('Bearer ', '') ?? ip;
+        const blocked = await rateLimit(env, 'auth', token);
+        if (blocked) return blocked;
+      }
+      // All GET requests — limit per IP
+      else if (request.method === 'GET') {
+        const blocked = await rateLimit(env, 'public', ip);
+        if (blocked) return blocked;
+      }
+
       for (const { pattern, handler } of ROUTES) {
         const match = pathname.match(pattern);
         if (match) {

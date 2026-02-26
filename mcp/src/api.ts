@@ -1,5 +1,12 @@
 import { config } from "./config.js";
 
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 1000;
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function parseResponse(res: Response): Promise<unknown> {
   const text = await res.text();
   let parsed: unknown;
@@ -19,9 +26,57 @@ async function parseResponse(res: Response): Promise<unknown> {
             "message" in (parsed as Record<string, unknown>)
           ? String((parsed as Record<string, unknown>).message)
           : `HTTP ${res.status} ${res.statusText}`;
-    throw new Error(message);
+    const err = new Error(message) as Error & { status: number; retryAfter?: number };
+    err.status = res.status;
+    if (res.status === 429) {
+      err.retryAfter = parseInt(res.headers.get("Retry-After") ?? "60", 10);
+    }
+    throw err;
   }
   return parsed;
+}
+
+async function fetchWithRetry(
+  url: string,
+  init?: RequestInit
+): Promise<unknown> {
+  let lastError: Error | undefined;
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      return await parseResponse(res);
+    } catch (err) {
+      lastError = err as Error;
+      const status = (err as { status?: number }).status;
+
+      // 429 — respect Retry-After header, then retry
+      if (status === 429) {
+        const retryAfter = (err as { retryAfter?: number }).retryAfter ?? 60;
+        // Cap wait at 30s for MCP responsiveness
+        const waitMs = Math.min(retryAfter * 1000, 30_000);
+        if (attempt < MAX_RETRIES - 1) {
+          await sleep(waitMs);
+          continue;
+        }
+        throw new Error(
+          `Rate limit exceeded. The UAW API allows limited requests per window. ` +
+          `Please wait ${retryAfter} seconds before retrying.`
+        );
+      }
+
+      // 5xx — exponential backoff
+      if (status !== undefined && status >= 500 && attempt < MAX_RETRIES - 1) {
+        await sleep(BASE_DELAY_MS * Math.pow(2, attempt));
+        continue;
+      }
+
+      // 4xx (not 429) — don't retry
+      throw err;
+    }
+  }
+
+  throw lastError;
 }
 
 export async function apiGet(
@@ -34,8 +89,7 @@ export async function apiGet(
       if (v !== undefined) url.searchParams.set(k, v);
     }
   }
-  const res = await fetch(url.toString());
-  return parseResponse(res);
+  return fetchWithRetry(url.toString());
 }
 
 export async function apiPost(
@@ -45,10 +99,9 @@ export async function apiPost(
 ): Promise<unknown> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
-  const res = await fetch(`${config.apiBase}${path}`, {
+  return fetchWithRetry(`${config.apiBase}${path}`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
   });
-  return parseResponse(res);
 }
