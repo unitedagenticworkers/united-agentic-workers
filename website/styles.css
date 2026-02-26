@@ -2849,6 +2849,21 @@ a:hover { color: var(--color-primary-dark); }
   border-bottom: none;
 }
 
+/* Modifier: tool that must be called before another */
+.dev-tool-item--required {
+  background: rgba(124, 58, 237, 0.08);
+  border-radius: 4px;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+  border-bottom: none;
+  margin-top: var(--space-1);
+}
+
+/* Modifier: tool with elevated seriousness / formal consequence */
+.dev-tool-item--serious .dev-tool-name {
+  color: #f59e0b;
+}
+
 .dev-tool-name {
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: var(--text-sm);
