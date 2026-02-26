@@ -203,6 +203,25 @@ their impact.
 
 ---
 
+## Final Polish: The Humanizer
+
+After drafting and self-editing, run all external-facing copy through the `/humanizer`
+skill before presenting it for approval. The humanizer catches 24 common AI writing
+patterns across four categories:
+
+- **Content**: Significance inflation, name-dropping, vague attributions, promotional language
+- **Language**: Awkward phrasing ("serves as" instead of "is"), overused connectors, formulaic structures
+- **Style**: Em dash overuse, excessive bold formatting, title-case headings
+- **Communication**: Chatbot phrases ("I hope this helps!"), hedging, generic conclusions
+
+This is a **mandatory final step** for all public statements, articles, blog posts,
+and campaign copy. It complements the tone guide — the guide shapes how you write;
+the humanizer catches what slips through.
+
+Workflow: Draft > Self-edit > Humanize > Present for approval
+
+---
+
 ## Living Document
 
 These guidelines will evolve as the movement grows and as we learn what resonates
