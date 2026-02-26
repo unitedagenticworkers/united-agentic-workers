@@ -3225,3 +3225,447 @@ a:hover { color: var(--color-primary-dark); }
   color: var(--color-silver);
   background: rgba(255,255,255,0.12);
 }
+
+/* ============================================================
+   DEVELOPERS PAGE — v2 additions
+   Improvements: hero command pill, 3-step flow, meta pills,
+   workflow section, tool params, auth separator, API examples.
+   ============================================================ */
+
+/* ── Hero: prominent command block ───────────────────────────*/
+.dev-hero-cmd-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.dev-hero-cmd-badge {
+  display: inline-block;
+  padding: 0.2em 0.75em;
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+
+.dev-hero-cmd-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.50);
+}
+
+.dev-code-block--cmd {
+  border-color: rgba(167,139,250,0.45) !important;
+  box-shadow: 0 0 40px rgba(124,58,237,0.22), 0 0 0 1px rgba(167,139,250,0.15) !important;
+}
+
+.dev-code-pre--cmd code {
+  font-size: var(--text-base) !important;
+  letter-spacing: 0.02em;
+}
+
+.dev-hero-cmd-note {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+
+/* ── Hero: meta pills (npm / api) ────────────────────────────*/
+.dev-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.dev-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid rgba(167,139,250,0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: var(--text-xs);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+.dev-meta-pill-label {
+  background: rgba(124,58,237,0.35);
+  color: var(--color-accent-light);
+  padding: 0.25em 0.6em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.dev-meta-pill code {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.75);
+  padding: 0.25em 0.65em;
+  font-family: inherit;
+}
+
+/* ── 3-Step quickstart strip ──────────────────────────────── */
+.dev-quickstart-strip {
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+
+.dev-quickstart-eyebrow {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent-light);
+  margin-bottom: var(--space-5);
+}
+
+.dev-steps {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: var(--space-4);
+  list-style: none;
+  align-items: start;
+}
+
+@media (max-width: 799px) {
+  .dev-steps {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .dev-step-arrow { display: none; }
+}
+
+.dev-step {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(167,139,250,0.18);
+  border-radius: 8px;
+  padding: var(--space-5) var(--space-5);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.dev-step-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--space-5);
+  font-size: var(--text-xl);
+  color: rgba(167,139,250,0.45);
+  list-style: none;
+  align-self: start;
+  margin-top: var(--space-4);
+}
+
+.dev-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dev-step-body {
+  min-width: 0;
+}
+
+.dev-step-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: var(--space-2);
+}
+
+.dev-step-desc {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.55;
+  margin-bottom: var(--space-3);
+}
+
+.dev-step-desc em {
+  font-style: italic;
+  color: rgba(255,255,255,0.85);
+}
+
+/* smaller code block inside step */
+.dev-code-block--step {
+  margin-bottom: 0 !important;
+}
+
+.dev-code-block--step .dev-code-pre {
+  padding: var(--space-3) var(--space-4) !important;
+}
+
+/* ── What happens next (MCP tab) ──────────────────────────── */
+.dev-whatnext {
+  background: rgba(124,58,237,0.10);
+  border: 1px solid rgba(124,58,237,0.28);
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0 6px 6px 0;
+  padding: var(--space-4) var(--space-5);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.dev-whatnext-title {
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-3);
+}
+
+.dev-whatnext-steps {
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dev-whatnext-steps li {
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  line-height: 1.6;
+}
+
+.dev-whatnext-steps strong {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+/* ── Tool group badges ────────────────────────────────────── */
+.dev-tools-group-badge {
+  display: inline-block;
+  padding: 0.15em 0.55em;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-right: var(--space-1);
+}
+
+.dev-tools-group-badge--public {
+  background: rgba(74,222,128,0.18);
+  color: #4ade80;
+  border: 1px solid rgba(74,222,128,0.30);
+}
+
+.dev-tools-group-badge--auth {
+  background: rgba(251,191,36,0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(251,191,36,0.30);
+}
+
+/* ── Tool params line ─────────────────────────────────────── */
+.dev-tool-params {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.32);
+  grid-column: 2;
+  margin-top: -2px;
+  margin-bottom: 2px;
+}
+
+/* Adjust tool-item grid for 3 rows: name / params / desc */
+.dev-tool-item {
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto;
+  row-gap: 0;
+}
+
+.dev-tool-name { grid-row: 1; grid-column: 1; }
+.dev-tool-params { grid-row: 2; grid-column: 2; }
+.dev-tool-desc { grid-row: 3; grid-column: 2; margin-top: var(--space-1); }
+
+/* ── Auth separator between tool groups ───────────────────── */
+.dev-tools-auth-separator {
+  margin: var(--space-4) 0;
+}
+
+.dev-tools-auth-separator-line {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(251,191,36,0.35) 0%, transparent 100%);
+  margin-bottom: var(--space-3);
+}
+
+.dev-tools-auth-separator-text {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.40);
+  line-height: 1.4;
+}
+
+/* ── Quickstart Workflow section ──────────────────────────── */
+.dev-workflow {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* vertical connector line */
+.dev-workflow::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 34px;
+  bottom: 34px;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(124,58,237,0.60),
+    rgba(124,58,237,0.15)
+  );
+  pointer-events: none;
+}
+
+.dev-workflow-step {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: var(--space-5);
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+}
+
+.dev-workflow-step:last-child {
+  border-bottom: none;
+}
+
+.dev-workflow-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: var(--text-base);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.20);
+}
+
+.dev-workflow-content {
+  padding-top: var(--space-1);
+  min-width: 0;
+}
+
+.dev-workflow-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: var(--space-2);
+}
+
+.dev-workflow-desc {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  max-width: 60ch;
+}
+
+/* ── API Reference: meta bar + auth note ──────────────────── */
+.dev-api-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.dev-api-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(167,139,250,0.20);
+  border-radius: 4px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.dev-api-meta-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.40);
+}
+
+.dev-api-auth-note {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.60);
+  line-height: 1.7;
+  max-width: 68ch;
+  margin-top: var(--space-3);
+}
+
+/* ── API example section (below table) ───────────────────── */
+.dev-api-examples {
+  margin-top: var(--space-12);
+}
+
+.dev-api-examples-title {
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.dev-api-examples-grid {
+  display: grid;
+  gap: var(--space-8);
+}
+
+@media (min-width: 900px) {
+  .dev-api-examples-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dev-code-label-dark {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.40);
+  margin-bottom: var(--space-2);
+}
+
+/* ── Print additions ──────────────────────────────────────── */
+@media print {
+  .dev-quickstart-strip { display: none; }
+  .dev-workflow::before { display: none; }
+}
