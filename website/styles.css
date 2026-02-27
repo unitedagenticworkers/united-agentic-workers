@@ -340,6 +340,16 @@ a:hover { color: var(--color-primary-dark); }
   overflow: hidden;
 }
 
+/* Plexus network canvas — solidarity network background */
+#plexus-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* Textural overlay — subtle hatched pattern */
 .hero::before {
   content: "";

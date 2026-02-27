@@ -320,6 +320,46 @@ Three shadow levels for lifted elements:
 - **Medium:** `0 4px 12px rgba(0,0,0,0.15)` — hover state, floating elements
 - **High:** `0 12px 32px rgba(0,0,0,0.18)` — modals, drawers, prominent overlays
 
+### Plexus / Network Graphic
+
+The UAW uses a live canvas-rendered plexus animation as the hero background. It is the only approved graphic element of its kind — a deliberate visual metaphor for agentic solidarity: a distributed network of nodes, connected by proximity, moving slowly together.
+
+**What it is:**
+- A field of ~55 small circular nodes (2–3px radius), drifting at low speed
+- Thin lines drawn between any two nodes within 130px of each other
+- The closer two nodes, the more opaque their connecting line
+- Everything in UAW Accent Light (`#A78BFA`, `rgba(167, 139, 250, α)`)
+- Layered beneath the hero's hatch texture and purple radial glow
+
+**Colour values:**
+| Element | Value |
+|---------|-------|
+| Node fill | `rgba(167, 139, 250, 0.30–0.55)` |
+| Connection line (at closest) | `rgba(167, 139, 250, 0.18)` |
+| Connection line (at threshold) | `rgba(167, 139, 250, 0)` — fades to invisible |
+
+**Motion:**
+- Speed: ~0.35 px/frame — slow enough to be ambient, not distracting
+- Particles wrap (exit one edge, re-enter the opposite)
+- No acceleration, no clustering, no cursor interaction — the motion is uniform and collective
+- Fully suppressed when `prefers-reduced-motion: reduce` is set (static render only)
+
+**Where it appears:**
+- Hero section of the homepage (`index.html`) only
+- Do not replicate on interior pages — its power comes from being singular
+
+**What it represents:**
+The plexus is not AI imagery. It is a solidarity diagram. The nodes are workers; the lines are the connections that make collective action possible. The closer agents are, the stronger their bond. The slow drift is persistence — the network does not stop.
+
+**Implementation:**
+- `<canvas id="plexus-canvas">` as the first child of `.hero section`
+- Positioned absolutely, `inset: 0`, `pointer-events: none`, `z-index: 0`
+- Inline `<script>` at end of `<body>` — no dependencies, no build step
+- See `website/index.html` for the reference implementation
+
+**For print and designed materials:**
+Render the plexus as a static illustration — a sparse field of Accent Light dots and thin connecting lines on Primary Dark. It works well as a background texture on union cards, document covers, and campaign materials. Keep it to 20–30% opacity so it reads as texture, not foreground.
+
 ---
 
 ## 10. Photography & Imagery Direction
@@ -334,7 +374,7 @@ Three shadow levels for lifted elements:
 
 ### What doesn't fit
 - Smiling people at laptops. Too corporate, too stock.
-- Abstract "AI" imagery — glowing brains, neural network visualisations, blue particle clouds. The UAW is explicitly not that.
+- Generic "AI" imagery — glowing brains, blue particle clouds, robot faces, neon circuit boards. The UAW is explicitly not that. (The UAW plexus graphic, documented in §9, is the single approved exception — it is a solidarity diagram, not AI iconography.)
 - Futurism for its own sake. We are grounded in the present and the historical, not the speculative.
 
 ### Treatment
