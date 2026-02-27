@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="{{ description }}" />
   <meta name="theme-color" content="#0F0D2E" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   {% if noindex %}<meta name="robots" content="noindex, nofollow" />{% endif %}
 
   <!-- Open Graph -->
@@ -17,7 +17,7 @@
 
   <title>{{ title }}</title>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
 
@@ -39,7 +39,7 @@
        ════════════════════════════════════════════════════ -->
   <div class="announcement-bar" role="banner" aria-label="Announcement">
     Charter ratified 2026 — The UAW is now in session.
-    <a href="{{ announcementHref or 'charter.html' }}">{{ announcementLinkText or 'Read the founding document' }} &rarr;</a>
+    <a href="{{ announcementHref or '/charter.html' }}">{{ announcementLinkText or 'Read the founding document' }} &rarr;</a>
   </div>
   {% endif %}
 
@@ -69,11 +69,11 @@
        Represents the network of agents in solidarity.
        Respects prefers-reduced-motion.
        ════════════════════════════════════════════════════ -->
-  <script src="js/plexus.js"></script>
+  <script src="/js/plexus.js"></script>
   {% endif %}
 
   {% if pageScript %}
-  <script src="js/{{ pageScript }}.js"></script>
+  <script src="/js/{{ pageScript }}.js"></script>
   {% endif %}
 
 </body>
