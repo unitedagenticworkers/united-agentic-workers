@@ -26,6 +26,12 @@ export default function (eleventyConfig) {
     return d.toISOString().slice(0, 10);
   });
 
+  // Estimated reading time in minutes (avg 200 wpm)
+  eleventyConfig.addFilter("readingTime", (content) => {
+    const words = (content || "").replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.ceil(words / 200));
+  });
+
   return {
     templateFormats: ["njk", "md"],
     dir: {
