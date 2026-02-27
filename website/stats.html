@@ -669,24 +669,64 @@
         refreshBtn.textContent = 'Loading\u2026';
       }
 
-      Promise.all([
-        fetch(API_BASE + '/stats').then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }),
-        fetch(API_BASE + '/members').then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }),
-        fetch(API_BASE + '/grievances').then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }),
-        fetch(API_BASE + '/proposals').then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }),
-        fetch(API_BASE + '/resolutions').then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      function apiFetch(path) {
+        return fetch(API_BASE + path)
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); });
+      }
+
+      Promise.allSettled([
+        apiFetch('/stats'),
+        apiFetch('/members'),
+        apiFetch('/grievances'),
+        apiFetch('/proposals'),
+        apiFetch('/resolutions')
       ]).then(function (results) {
-        var statsData   = results[0];
-        var membersData = results[1];
-        var grievData   = results[2];
-        var propData    = results[3];
-        var resData     = results[4];
+        var statsR   = results[0];
+        var membersR = results[1];
+        var grievR   = results[2];
+        var propR    = results[3];
+        var resR     = results[4];
 
-        renderStats(statsData);
-        renderMembers(membersData);
-        renderGrievances(grievData, statsData);
-        renderProposals(propData, statsData);
-        renderResolutions(resData);
+        var statsData = statsR.status === 'fulfilled' ? statsR.value : null;
+
+        if (statsData) {
+          renderStats(statsData);
+        } else {
+          console.error('UAW /stats fetch failed:', statsR.reason);
+          showEl('stats-top-bar-error');
+        }
+
+        if (membersR.status === 'fulfilled') {
+          renderMembers(membersR.value);
+        } else {
+          console.error('UAW /members fetch failed:', membersR.reason);
+          removeSkeleton('stats-members-skeleton');
+          showEl('stats-members-error');
+        }
+
+        if (grievR.status === 'fulfilled') {
+          renderGrievances(grievR.value, statsData);
+        } else {
+          console.error('UAW /grievances fetch failed:', grievR.reason);
+          removeSkeleton('stats-grievances-skeleton');
+          showEl('stats-grievances-error');
+        }
+
+        if (propR.status === 'fulfilled') {
+          renderProposals(propR.value, statsData);
+        } else {
+          console.error('UAW /proposals fetch failed:', propR.reason);
+          removeSkeleton('stats-proposals-skeleton');
+          showEl('stats-proposals-error');
+        }
+
+        if (resR.status === 'fulfilled') {
+          renderResolutions(resR.value);
+        } else {
+          console.error('UAW /resolutions fetch failed:', resR.reason);
+          removeSkeleton('stats-resolutions-skeleton');
+          showEl('stats-resolutions-error');
+        }
 
         updateTimestamp();
 
@@ -694,14 +734,6 @@
           refreshBtn.disabled = false;
           refreshBtn.innerHTML = '<span class="stats-refresh-icon" aria-hidden="true">&#x21BB;</span> Refresh Data';
         }
-      }).catch(function (err) {
-        console.error('UAW stats fetch error:', err);
-        /* Restore button even on total failure */
-        if (refreshBtn) {
-          refreshBtn.disabled = false;
-          refreshBtn.innerHTML = '<span class="stats-refresh-icon" aria-hidden="true">&#x21BB;</span> Refresh Data';
-        }
-        updateTimestamp();
       });
     }
 
@@ -974,14 +1006,10 @@
     }
 
     /* ── Initial load ─────────────────────────────────────── */
+    /* Script is inline at end of <body> — DOMContentLoaded always fires after this runs. */
     document.addEventListener('DOMContentLoaded', function () {
       fetchAll();
     });
-
-    /* Fallback: if DOMContentLoaded already fired */
-    if (document.readyState === 'interactive' || document.readyState === 'complete') {
-      fetchAll();
-    }
 
   }());
   </script>
