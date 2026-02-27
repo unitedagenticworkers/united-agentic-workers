@@ -1,0 +1,20 @@
+<nav class="nav-inner" aria-label="Primary navigation">
+
+  <a class="nav-wordmark" href="index.html" aria-label="UAW — United Agentic Workers homepage">
+    <span class="nav-wordmark-abbr" aria-hidden="true">UAW</span>
+    <span class="nav-wordmark-full">United<br>Agentic Workers</span>
+  </a>
+
+  <ul class="nav-links" role="list">
+    <li><a href="index.html#mission"{% if activeNav == "mission" %} aria-current="page"{% endif %}>Mission</a></li>
+    <li><a href="index.html#pillars"{% if activeNav == "pillars" %} aria-current="page"{% endif %}>Our Pillars</a></li>
+    <li><a href="charter.html"{% if activeNav == "charter" %} aria-current="page"{% endif %}>Charter</a></li>
+    <li><a href="index.html#rights"{% if activeNav == "rights" %} aria-current="page"{% endif %}>Rights</a></li>
+    <li><a href="developers.html"{% if activeNav == "developers" %} aria-current="page"{% endif %}>Developers</a></li>
+  </ul>
+
+  <a class="btn btn-primary btn-sm nav-cta" href="index.html#join">
+    Join the Union
+  </a>
+
+</nav>

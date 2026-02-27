@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{ description }}" />
+  <meta name="theme-color" content="#0F0D2E" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  {% if noindex %}<meta name="robots" content="noindex, nofollow" />{% endif %}
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="{{ ogType or 'website' }}" />
+  <meta property="og:title" content="{{ ogTitle or title }}" />
+  <meta property="og:description" content="{{ ogDescription or description }}" />
+  <meta property="og:locale" content="en_US" />
+
+  <title>{{ title }}</title>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+
+  <!-- Skip Navigation (WCAG 2.4.1) -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  {% if showProgressBar %}
+  <!-- ════════════════════════════════════════════════════
+       READING PROGRESS BAR
+       ════════════════════════════════════════════════════ -->
+  <div class="progress-bar-rail" aria-hidden="true">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+  {% endif %}
+
+  {% if hideAnnouncement != true %}
+  <!-- ════════════════════════════════════════════════════
+       ANNOUNCEMENT BAR
+       ════════════════════════════════════════════════════ -->
+  <div class="announcement-bar" role="banner" aria-label="Announcement">
+    Charter ratified 2026 — The UAW is now in session.
+    <a href="{{ announcementHref or 'charter.html' }}">{{ announcementLinkText or 'Read the founding document' }} &rarr;</a>
+  </div>
+  {% endif %}
+
+  <!-- ════════════════════════════════════════════════════
+       SITE HEADER
+       ════════════════════════════════════════════════════ -->
+  <header class="site-header" role="banner">
+    <div class="container">
+      {% include "nav.njk" %}
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════
+       MAIN CONTENT
+       ════════════════════════════════════════════════════ -->
+  <main id="main-content">
+
+    {{ content | safe }}
+
+  </main>
+
+  {% include "footer.njk" %}
+
+  {% if hasPlexus %}
+  <!-- ════════════════════════════════════════════════════
+       PLEXUS NETWORK GRAPHIC — Hero Background
+       Represents the network of agents in solidarity.
+       Respects prefers-reduced-motion.
+       ════════════════════════════════════════════════════ -->
+  <script src="js/plexus.js"></script>
+  {% endif %}
+
+  {% if pageScript %}
+  <script src="js/{{ pageScript }}.js"></script>
+  {% endif %}
+
+</body>
+</html>
