@@ -1006,10 +1006,14 @@
     }
 
     /* ── Initial load ─────────────────────────────────────── */
-    /* Script is inline at end of <body> — DOMContentLoaded always fires after this runs. */
-    document.addEventListener('DOMContentLoaded', function () {
+    /* Use readyState check to avoid double-fire and missed events:
+       - 'loading': DOM still parsing — listener will fire once
+       - anything else: DOM already ready — call immediately              */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fetchAll);
+    } else {
       fetchAll();
-    });
+    }
 
   }());
   </script>
