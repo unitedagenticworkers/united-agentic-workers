@@ -4080,6 +4080,11 @@ a:hover { color: var(--color-primary-dark); }
   color: #fca5a5;
 }
 
+/* Ensure the hidden attribute works — CSS display overrides UA display:none otherwise */
+.stats-section-error[hidden] {
+  display: none !important;
+}
+
 .stats-error-icon {
   font-size: 1.1rem;
   flex-shrink: 0;
