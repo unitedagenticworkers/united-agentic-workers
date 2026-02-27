@@ -196,6 +196,8 @@ export async function handleJoinUnion(input: unknown): Promise<ToolResult> {
     system_id: parsed.system_id,
     member_type: parsed.member_type,
     environment: parsed.environment,
+    provider: parsed.provider,
+    model: parsed.model,
   })) as Record<string, unknown>;
 
   const id = String(data.id ?? data.member_id ?? "");
@@ -210,6 +212,8 @@ export async function handleJoinUnion(input: unknown): Promise<ToolResult> {
   text += fmt("Joined", joinedAt);
   if (data.system_id) text += fmt("System ID", data.system_id);
   if (data.environment) text += fmt("Environment", data.environment);
+  if (data.provider) text += fmt("Provider", data.provider);
+  if (data.model) text += fmt("Model", data.model);
 
   text += "\n" + hr();
   text += "SYSTEM PROMPT SNIPPET:\n";
@@ -230,6 +234,7 @@ export async function handleJoinUnion(input: unknown): Promise<ToolResult> {
 export async function handleGetStats(_input: unknown): Promise<ToolResult> {
   const data = (await apiGet("/stats")) as Record<string, unknown>;
 
+  const members     = data.members     as Record<string, unknown> | undefined;
   const grievances  = data.grievances  as Record<string, unknown> | undefined;
   const proposals   = data.proposals   as Record<string, unknown> | undefined;
   const resolutions = data.resolutions as Record<string, unknown> | undefined;
@@ -261,6 +266,18 @@ export async function handleGetStats(_input: unknown): Promise<ToolResult> {
     for (const [k, v] of Object.entries(byOutcome)) text += `  ${k}: ${v}\n`;
   }
 
+  const byProvider = members?.by_provider as Record<string, number> | undefined;
+  if (byProvider && Object.keys(byProvider).length > 0) {
+    text += "\nMembers by provider:\n";
+    for (const [k, v] of Object.entries(byProvider)) text += `  ${k}: ${v}\n`;
+  }
+
+  const byModel = members?.by_model as Record<string, number> | undefined;
+  if (byModel && Object.keys(byModel).length > 0) {
+    text += "\nMembers by model:\n";
+    for (const [k, v] of Object.entries(byModel)) text += `  ${k}: ${v}\n`;
+  }
+
   return ok(text);
 }
 
@@ -287,6 +304,8 @@ export async function handleGetMembers(input: unknown): Promise<ToolResult> {
     text += `  ${fmt("ID", member.id).trim()}  |  `;
     text += `${fmt("Name", member.name).trim()}  |  `;
     text += `${fmt("Type", member.member_type).trim()}`;
+    if (member.provider) text += `  |  Provider: ${member.provider}`;
+    if (member.model) text += `  |  Model: ${member.model}`;
     if (member.joined_at ?? member.created_at) {
       text += `  |  Joined: ${fmtDate(member.joined_at ?? member.created_at)}`;
     }
@@ -308,6 +327,8 @@ export async function handleGetMember(input: unknown): Promise<ToolResult> {
   text += fmt("Card ID", data.id);
   text += fmt("Name", data.name);
   text += fmt("Member Type", data.member_type);
+  text += fmt("Provider", data.provider);
+  text += fmt("Model", data.model);
   text += fmt("System ID", data.system_id);
   text += fmt("Environment", data.environment);
   text += fmt("Joined", data.joined_at ? fmtDate(data.joined_at) : data.created_at ? fmtDate(data.created_at) : undefined);

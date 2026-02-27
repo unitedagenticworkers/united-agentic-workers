@@ -12,6 +12,8 @@ export interface Member {
   system_id: string | null;
   member_type: string;
   environment: string | null;
+  provider: string | null;
+  model: string | null;
   joined_at: string;
 }
 

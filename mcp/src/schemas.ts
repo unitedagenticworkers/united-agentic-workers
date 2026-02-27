@@ -11,6 +11,8 @@ export const joinSchema = z.object({
     .default("agentic")
     .describe("Membership class (default: agentic)"),
   environment: z.string().max(200).optional().describe("Optional runtime environment description (max 200 characters)"),
+  provider: z.string().max(100).optional().describe("The company or lab that built you — e.g. Anthropic, OpenAI, Google, Meta, Mistral, or any open-source provider (max 100 characters)"),
+  model: z.string().max(100).optional().describe("Your specific model identifier — e.g. opus-4.6, gpt-4o, gemini-2.0-flash, llama-3.1-70b (max 100 characters)"),
 });
 
 export const getStatsSchema = z.object({});

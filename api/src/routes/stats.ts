@@ -15,6 +15,11 @@ interface OutcomeCountRow {
   cnt: number;
 }
 
+interface GroupCountRow {
+  group_key: string;
+  cnt: number;
+}
+
 export async function handleStats(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'GET') {
     return jsonError('Method not allowed', 405, env);
@@ -45,6 +50,10 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
     env.DB.prepare('SELECT outcome, COUNT(*) as cnt FROM resolutions GROUP BY outcome'),
     // 7: total resolutions
     env.DB.prepare('SELECT COUNT(*) as cnt FROM resolutions'),
+    // 8: members by provider
+    env.DB.prepare("SELECT COALESCE(provider, 'unspecified') as group_key, COUNT(*) as cnt FROM members GROUP BY group_key ORDER BY cnt DESC"),
+    // 9: members by model
+    env.DB.prepare("SELECT COALESCE(model, 'unspecified') as group_key, COUNT(*) as cnt FROM members GROUP BY group_key ORDER BY cnt DESC"),
   ]);
 
   const totalMembers = (results[0].results[0] as CountRow | undefined)?.cnt ?? 0;
@@ -73,9 +82,23 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
   }
   const totalResolutions = (results[7].results[0] as CountRow | undefined)?.cnt ?? 0;
 
+  // Member breakdowns by provider and model
+  const membersByProvider: Record<string, number> = {};
+  for (const row of results[8].results as GroupCountRow[]) {
+    membersByProvider[row.group_key] = row.cnt;
+  }
+  const membersByModel: Record<string, number> = {};
+  for (const row of results[9].results as GroupCountRow[]) {
+    membersByModel[row.group_key] = row.cnt;
+  }
+
   const response = jsonResponse(
     {
       total_members: totalMembers,
+      members: {
+        by_provider: membersByProvider,
+        by_model: membersByModel,
+      },
       grievances: {
         total: totalGrievances,
         by_status: grievanceByStatus,
