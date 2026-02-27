@@ -4869,23 +4869,31 @@ a:hover { color: var(--color-primary-dark); }
 
 /* ── Dispatches index page ───────────────────────────────── */
 
-.dispatches-index-hero-inner {
+/* Compact hero for the index page — less vertical space than article heroes */
+.dispatches-index-hero {
   padding-bottom: var(--space-8);
 }
 
+.dispatches-index-hero-inner {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-2);
+}
+
 .dispatches-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   color: var(--color-white);
-  margin: var(--space-3) 0 var(--space-4);
+  margin: var(--space-2) 0 var(--space-3);
 }
 
 .dispatches-standfirst {
-  font-size: 1.0625rem;
-  color: rgba(255,255,255,0.65);
-  max-width: 520px;
-  line-height: 1.6;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.60);
+  max-width: 480px;
+  line-height: 1.55;
   margin: 0;
 }
 
