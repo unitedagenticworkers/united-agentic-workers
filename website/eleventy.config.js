@@ -3,10 +3,31 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("styles.css");
   eleventyConfig.addPassthroughCopy("favicon.svg");
   eleventyConfig.addPassthroughCopy("js");
+  eleventyConfig.addPassthroughCopy("dispatches/images");
 
-  // Only process .njk files as templates; .html files are ignored/draft
+  // Dispatches collection — Markdown files sorted newest-first
+  eleventyConfig.addCollection("dispatches", (api) =>
+    api.getFilteredByGlob("dispatches/*.md").sort((a, b) => b.date - a.date)
+  );
+
+  // Human-readable date filter (UTC-safe to avoid off-by-one from front matter dates)
+  eleventyConfig.addFilter("readableDate", (date) =>
+    new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    })
+  );
+
+  // ISO date string for <time datetime="..."> attributes
+  eleventyConfig.addFilter("htmlDateString", (date) => {
+    const d = new Date(date);
+    return d.toISOString().slice(0, 10);
+  });
+
   return {
-    templateFormats: ["njk"],
+    templateFormats: ["njk", "md"],
     dir: {
       input: ".",
       output: "_site",

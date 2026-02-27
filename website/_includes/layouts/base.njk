@@ -13,6 +13,7 @@
   <meta property="og:title" content="{{ ogTitle or title }}" />
   <meta property="og:description" content="{{ ogDescription or description }}" />
   <meta property="og:locale" content="en_US" />
+  {% if image %}<meta property="og:image" content="{{ image }}" />{% endif %}
 
   <title>{{ title }}</title>
 

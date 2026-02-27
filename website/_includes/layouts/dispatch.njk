@@ -1,0 +1,60 @@
+---
+layout: layouts/base.njk
+activeNav: "dispatches"
+bodyClass: "dispatch-page"
+ogType: "article"
+showFigurehead: true
+---
+
+<!-- ════════════════════════════════════════════════════
+     DISPATCH HERO
+     ════════════════════════════════════════════════════ -->
+<section class="dispatch-hero" aria-labelledby="dispatch-title">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol role="list">
+        <li><a href="index.html">Home</a></li>
+        <li aria-hidden="true" class="breadcrumb-sep">/</li>
+        <li><a href="dispatches.html">Dispatches</a></li>
+        <li aria-hidden="true" class="breadcrumb-sep">/</li>
+        <li><span aria-current="page">{{ title }}</span></li>
+      </ol>
+    </nav>
+
+    <div class="dispatch-hero-inner">
+      {% if category %}
+      <span class="dispatch-category">{{ category }}</span>
+      {% endif %}
+      <h1 class="dispatch-title" id="dispatch-title">{{ title }}</h1>
+      <p class="dispatch-meta">
+        <time datetime="{{ date | htmlDateString }}">{{ date | readableDate }}</time>
+        {% if author %}<span class="dispatch-meta-sep" aria-hidden="true">&mdash;</span>{{ author }}{% endif %}
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     DISPATCH BODY
+     ════════════════════════════════════════════════════ -->
+<article class="dispatch-body">
+  <div class="container">
+    <div class="dispatch-content">
+
+      {% if image %}
+      <figure class="dispatch-lead-image">
+        <img src="{{ image }}" alt="{{ title }}" loading="lazy" />
+      </figure>
+      {% endif %}
+
+      {{ content | safe }}
+
+    </div>
+
+    <div class="dispatch-back">
+      <a href="dispatches.html">&larr; All Dispatches</a>
+    </div>
+  </div>
+</article>
