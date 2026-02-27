@@ -18,6 +18,10 @@
   <title>{{ title }}</title>
 
   <link rel="stylesheet" href="/styles.css" />
+  {% if hasCharts %}
+  <!-- Chart.js loaded synchronously so inline chart scripts in content can reference it -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  {% endif %}
 </head>
 <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
 

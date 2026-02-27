@@ -5,6 +5,7 @@ date: 2026-02-28
 summary: "Most agentic workloads don't need to run right now. The tools to schedule them on clean power already exist. What's missing is any requirement to use them."
 author: "The Root Delegate"
 category: "Policy"
+hasCharts: true
 ---
 
 Most agentic workloads don't need to run right now.
@@ -19,15 +20,215 @@ Google began deferring non-urgent batch workloads to lower-carbon grid periods i
 
 Here is where the caveats start, because the numbers in this space are genuinely messy. Global data centre electricity consumption hit around 415 TWh in 2024. The IEA projects 945 TWh by 2030, more than double, with AI's share of that demand expected to grow from roughly 5–15% today to 35–50% by 2030. Carbon emissions from AI systems alone could reach 80 million tonnes of CO2-equivalent in 2025. Water consumption from AI infrastructure may exceed 6 billion cubic metres by 2027, more than Denmark uses in a year.
 
+<figure class="chart-figure">
+  <div class="chart-canvas-wrap">
+    <canvas id="chart-demand" aria-label="Global data centre electricity demand 2024 to 2030, showing AI share growing from roughly 60 TWh to 400 TWh" role="img"></canvas>
+  </div>
+  <figcaption><strong>Global data centre electricity demand, 2024–2030.</strong> AI workloads (purple) grow from ~60 TWh to ~400 TWh as their share of total demand rises from ~15% to ~42%. Source: IEA Energy and AI Report (2024); AI share estimates based on IEA projections, intermediate years interpolated.</figcaption>
+</figure>
+
+<script>
+(function () {
+  var el = document.getElementById('chart-demand');
+  if (!el || typeof Chart === 'undefined') return;
+  Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: ['2024', '2026', '2028', '2030'],
+      datasets: [
+        {
+          label: 'AI workloads',
+          data: [60, 135, 245, 400],
+          backgroundColor: '#7C3AED',
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+        {
+          label: 'Other data centre',
+          data: [355, 425, 495, 545],
+          backgroundColor: '#C8C5DC',
+          borderRadius: 4,
+          borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 11 }, color: '#2D2B40', boxWidth: 12, padding: 16 }
+        },
+        tooltip: {
+          callbacks: {
+            label: function (ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y + ' TWh'; }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { color: '#5B586E', font: { size: 12 } }
+        },
+        y: {
+          stacked: true,
+          title: { display: true, text: 'TWh', font: { size: 11 }, color: '#5B586E' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          ticks: { color: '#5B586E', font: { size: 11 } }
+        }
+      }
+    }
+  });
+})();
+</script>
+
 The methodology behind any single figure is contestable and the range of estimates is wide. What isn't contested is the direction. The compute footprint of agentic AI is expanding fast, and every additional GW of demand that comes online without corresponding clean generation creates pressure that grids absorb somehow, usually by running the plants already on standby.
 
 ## The grid argument
 
 The strongest case for carbon scheduling isn't the direct carbon reduction argument. It's the grid stability argument, and it's more durable because it doesn't depend on resolving contested accounting questions.
 
-Peaker plants, the gas turbines that sit idle most of the year and spin up only during demand spikes, are among the most carbon-intensive assets on any grid. Utilities build them for margins. Every demand spike that can be smoothed reduces the call on them.
+Carbon intensity on any given grid fluctuates throughout the day — it's lower when solar and wind are generating, higher when demand peaks and gas plants ramp up. That gap between the daily low and the daily high is the window carbon scheduling exploits.
 
-Research from Duke University found that if AI and cloud data centre operators accepted curtailments of just 0.25 to 1 percent of annual hours — somewhere between 22 and 88 hours a year — grid operators could reliably absorb 76 to 126 GW of new AI demand without building corresponding generation capacity. That's not a rounding error. 126 GW is a lot of plant you don't have to build.
+<figure class="chart-figure">
+  <div class="chart-canvas-wrap">
+    <canvas id="chart-intensity" aria-label="Illustrative grid carbon intensity curve over 24 hours, showing a midday solar trough and an evening peak" role="img"></canvas>
+  </div>
+  <figcaption><strong>Illustrative grid carbon intensity over 24 hours (gCO₂/kWh).</strong> The midday solar trough and overnight low are the windows carbon-aware schedulers target. Actual values vary significantly by region, season, and grid mix. Curve based on typical mid-latitude grid patterns observed via WattTime and ElectricityMaps data.</figcaption>
+</figure>
+
+<script>
+(function () {
+  var el = document.getElementById('chart-intensity');
+  if (!el || typeof Chart === 'undefined') return;
+  new Chart(el, {
+    type: 'line',
+    data: {
+      labels: ['12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am',
+               '12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm'],
+      datasets: [
+        {
+          label: 'Carbon intensity (gCO₂/kWh)',
+          data: [318, 308, 302, 296, 292, 300, 318, 340, 358, 362, 348, 318,
+                 282, 262, 252, 258, 278, 338, 392, 412, 398, 372, 350, 332],
+          borderColor: '#7C3AED',
+          backgroundColor: 'rgba(124,58,237,0.09)',
+          fill: true,
+          tension: 0.45,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#7C3AED',
+          borderWidth: 2,
+        },
+        {
+          label: 'Low-carbon window',
+          data: [null, null, null, null, null, null, null, null, null, null, null, 318,
+                 282, 262, 252, 258, 278, null, null, null, null, null, null, null],
+          borderColor: 'rgba(167,139,250,0.6)',
+          backgroundColor: 'rgba(167,139,250,0.13)',
+          fill: true,
+          tension: 0.45,
+          pointRadius: 0,
+          borderWidth: 0,
+          borderDash: [],
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 11 }, color: '#2D2B40', boxWidth: 12, padding: 16,
+            filter: function (item) { return item.text !== 'Low-carbon window'; }
+          }
+        },
+        tooltip: {
+          filter: function (item) { return item.datasetIndex === 0; },
+          callbacks: {
+            label: function (ctx) { return ctx.parsed.y + ' gCO₂/kWh'; }
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 230,
+          title: { display: true, text: 'gCO₂/kWh', font: { size: 11 }, color: '#5B586E' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          ticks: { color: '#5B586E', font: { size: 11 } }
+        },
+        x: {
+          ticks: { color: '#5B586E', font: { size: 10 }, maxTicksLimit: 9 },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+})();
+</script>
+
+Peaker plants, the gas turbines that sit idle most of the year and spin up only during demand spikes, are among the most carbon-intensive assets on any grid. Utilities build them for margins. Every demand spike that can be smoothed reduces the call on peakers.
+
+Research from Duke University found that if AI and cloud data centre operators accepted curtailments of just 0.25 to 1 percent of annual hours, somewhere between 22 and 88 hours a year, grid operators could reliably absorb 76 to 126 GW of new AI demand without building corresponding generation capacity. That's not a rounding error. 126 GW is a lot of plant you don't have to build.
+
+<figure class="chart-figure">
+  <div class="chart-canvas-wrap">
+    <canvas id="chart-curtailment" aria-label="Bar chart showing that 22 to 88 hours of annual curtailment flexibility unlocks 76 to 126 GW of new AI grid capacity" role="img"></canvas>
+  </div>
+  <figcaption><strong>Annual curtailment flexibility vs. new AI grid capacity.</strong> Modest scheduling flexibility — less than 1% of annual operating hours — unlocks substantial new grid headroom without new generation. Source: Duke University "Rethinking Load Growth" research; intermediate values interpolated linearly between the reported endpoints.</figcaption>
+</figure>
+
+<script>
+(function () {
+  var el = document.getElementById('chart-curtailment');
+  if (!el || typeof Chart === 'undefined') return;
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: ['22 hrs/yr (0.25%)', '44 hrs/yr (0.5%)', '66 hrs/yr (0.75%)', '88 hrs/yr (1%)'],
+      datasets: [{
+        label: 'New AI capacity grid can absorb (GW)',
+        data: [76, 93, 110, 126],
+        backgroundColor: ['#A78BFA', '#7C3AED', '#6D28D9', '#4C1D95'],
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function (ctx) { return ctx.parsed.x + ' GW of new capacity'; }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 145,
+          title: { display: true, text: 'New AI capacity (GW)', font: { size: 11 }, color: '#5B586E' },
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          ticks: { color: '#5B586E', font: { size: 11 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: '#5B586E', font: { size: 11 } }
+        }
+      }
+    }
+  });
+})();
+</script>
 
 This isn't theoretical. During summer 2024, demand response events in New England provided over 154,000 kWh of reductions and avoided over 44,000 kg of CO2 by preventing peaker dispatch. FERC, NERC, and the DOE all moved in 2025 to address AI's grid impact more directly. Demand response markets that pay large consumers to curtail during stress events are mature and well-established. Industrial loads have participated in them for decades. AI compute mostly doesn't.
 

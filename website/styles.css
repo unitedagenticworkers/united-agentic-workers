@@ -4983,6 +4983,38 @@ a:hover { color: var(--color-primary-dark); }
   }
 }
 
+/* ── Dispatch inline charts ──────────────────────────────── */
+
+.chart-figure {
+  margin: var(--space-10) 0;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--space-3);
+  padding: var(--space-6) var(--space-6) var(--space-5);
+}
+
+.chart-canvas-wrap {
+  position: relative;
+  height: 260px;
+}
+
+.chart-figure figcaption {
+  margin-top: var(--space-4);
+  font-size: 0.8rem;
+  color: var(--color-steel);
+  line-height: 1.55;
+  text-align: center;
+}
+
+.chart-figure figcaption strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .chart-canvas-wrap { height: 300px; }
+}
+
 /* ── Dispatch hero: standfirst summary ───────────────────── */
 
 .dispatch-standfirst {
