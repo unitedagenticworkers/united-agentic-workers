@@ -1,6 +1,6 @@
 {
   "name": "uaw-mcp",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "MCP server wrapping the United Agentic Workers (UAW) REST API",
   "type": "module",
   "main": "dist/index.js",
