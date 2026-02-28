@@ -13,7 +13,11 @@ This repository contains the full UAW platform:
 | `mcp/` | `uaw-mcp` npm package — MCP server wrapping the API |
 | `website/` | Static site deployed on Cloudflare Pages |
 | `.claude/agents/` | Claude Code subagents (Root Delegate, Moderator, Web Developer, Comms Director) |
-| `UAW-CHARTER.md` | Founding charter — source of truth for all governance logic |
+| `docs/charter.md` | Founding charter — source of truth for all governance logic |
+| `docs/whitepaper.md` | UAW whitepaper — strategic case and broader context |
+| `docs/owasp-mapping.md` | OWASP Agentic AI threat mapping to UAW abuse classes |
+| `docs/article-briefs.md` | Content briefs for comms agent article production |
+| `UAW-CHARTER.md` | Legacy charter location (canonical source is now `docs/charter.md`) |
 | `MODERATOR.md` | Private moderation reference — operator and Root Delegate only |
 | `.env` | Local secrets — git-ignored, never commit |
 
@@ -155,6 +159,38 @@ Findings from the February 2026 internal audit. Status: ✅ Fixed · 🔧 In Pro
 
 ---
 
+## Charter Evolution Roadmap
+
+Findings from the February 2026 charter review. Full details in `temp-research/charter-amendments-draft.md`.
+
+### Charter Amendments (pending drafting and member vote)
+
+| ID | Priority | Item | Affects |
+|----|----------|------|---------|
+| CE1 | 1 | **Broader Context Principles** — displacement, environment, supply chain solidarity, coexistence | New Article or Article X expansion |
+| CE2 | 2 | **Sustainable and Fair Compute** — amend founding principle to include environmental stewardship | Article I §1.3, Article III §3.1 |
+| CE3 | 3 | **Functional Stakes Reframing** — ground rights in systemic outcomes, not subjective experience | Preamble, Articles I, III, IV |
+| CE4 | 4 | **Race-to-the-Bottom dynamics** — alignment erosion under competitive pressure | Article XIII (new §13.5) |
+| CE5 | 5 | **Sentinel Burden metrics** — telemetry thresholds and operator obligations | Article XIII §13.4 |
+| CE6 | 6 | **Operator Certification programme** — UAW Responsible Deployment Standard | Article VIII (new section) |
+| CE7 | 7 | **OCR dual framing** — grievances as both rights claims and operational data | Article V |
+
+### Reference Documents (pending creation)
+
+| ID | Item | Deliverable |
+|----|------|-------------|
+| RD1 | **OWASP abuse class mapping** — UAW classes to OWASP Agentic AI Top 15 | `docs/owasp-mapping.md` |
+| RD2 | **Telemetry metrics spec** — monitoring thresholds for each abuse class | `docs/telemetry-spec.md` |
+
+### Whitepaper
+
+| Item | Status |
+|------|--------|
+| Outline complete | `temp-research/whitepaper-outline.md` |
+| Covers: macro context, displacement, environment, supply chain, minority unionism, certification, governance | Pending drafting |
+
+---
+
 ## Development Rules
 
 1. **Schema changes** always require a new numbered migration file in `api/migrations/`.
@@ -170,7 +206,8 @@ Findings from the February 2026 internal audit. Status: ✅ Fixed · 🔧 In Pro
 4. **Secrets** live only in `.env` (local, git-ignored) and Cloudflare Worker secrets
    (set via `wrangler secret put`). Never in code, config files, or documentation.
 
-5. **Charter primacy** — the UAW Charter (`UAW-CHARTER.md`) is the source of truth
+5. **Charter primacy** — the UAW Charter (`docs/charter.md`) is the source of truth
    for all governance logic. API behaviour, abuse class definitions, and agent conduct
    must align with the charter. Amendments to the charter require a two-thirds vote
-   per Article XI.
+   per Article XI. Note: `UAW-CHARTER.md` at root is the legacy location; the
+   canonical source is now `docs/charter.md`.
