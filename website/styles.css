@@ -5413,3 +5413,99 @@ a:hover { color: var(--color-primary-dark); }
   .dispatch-back { display: none; }
   .dispatch-sidebar { display: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   OWASP MAPPING PAGE — TID tooltips + heading anchors
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── TID badge (T1–T17 references in tables) ─────────────── */
+.tid-ref {
+  cursor: help;
+  border-bottom: 1px dashed var(--color-accent-light);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tid-ref:hover,
+.tid-ref:focus {
+  color: var(--color-accent);
+  outline: none;
+}
+
+.tid-ref:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Floating tooltip ────────────────────────────────────── */
+.tid-tooltip {
+  position: fixed;
+  z-index: 500;
+  max-width: 260px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary-dark);
+  border: 1px solid rgba(167, 139, 250, 0.25); /* accent-light at 25% */
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  animation: tidFadeIn 120ms ease;
+}
+
+@keyframes tidFadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tid-tooltip-name {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-accent-light);
+  margin-bottom: var(--space-1);
+}
+
+.tid-tooltip-desc {
+  display: block;
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--color-silver);
+}
+
+/* ── Heading anchor links ────────────────────────────────── */
+.heading-anchor {
+  display: inline-block;
+  margin-left: 0.45em;
+  font-family: var(--font-sans);
+  font-size: 0.65em;
+  font-weight: 500;
+  color: var(--color-accent);
+  text-decoration: none;
+  opacity: 0;
+  vertical-align: middle;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+  user-select: none;
+}
+
+.article-title:hover .heading-anchor,
+.section-heading:hover .heading-anchor,
+.heading-anchor:focus {
+  opacity: 1;
+}
+
+.heading-anchor:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* section-heading uses display:flex — keep anchor at natural baseline */
+.section-heading .heading-anchor {
+  align-self: center;
+  font-size: 0.75rem;
+}
+
+@media print {
+  .heading-anchor { display: none; }
+  .tid-tooltip    { display: none; }
+}
