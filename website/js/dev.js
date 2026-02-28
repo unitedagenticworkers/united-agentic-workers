@@ -1,96 +1,92 @@
+  /* ── Integration-path tabs ─────────────────────────── */
   (function () {
-    var canvas = document.getElementById('plexus-canvas');
-    if (!canvas || !canvas.getContext) return;
+    var tabs   = document.querySelectorAll('.dev-tab');
+    var panels = document.querySelectorAll('.dev-tab-panel');
+    if (!tabs.length) return;
 
-    var ctx = canvas.getContext('2d');
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.getAttribute('aria-controls');
 
-    // UAW Accent Light: #A78BFA — rgb(167, 139, 250)
-    var CR = 167, CG = 139, CB = 250;
-
-    var PARTICLE_COUNT = 55;
-    var CONNECT_DIST   = 130;
-    var BASE_SPEED     = 0.35;
-
-    var W, H, particles, raf;
-
-    function resize() {
-      W = canvas.width  = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
-      init();
-    }
-
-    function init() {
-      particles = [];
-      for (var i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
-          x:  Math.random() * W,
-          y:  Math.random() * H,
-          vx: (Math.random() - 0.5) * BASE_SPEED * 2,
-          vy: (Math.random() - 0.5) * BASE_SPEED * 2,
-          r:  Math.random() * 1.2 + 1.2,
-          a:  Math.random() * 0.25 + 0.30
+        tabs.forEach(function (t) {
+          t.classList.remove('dev-tab--active');
+          t.setAttribute('aria-selected', 'false');
         });
-      }
-    }
+        tab.classList.add('dev-tab--active');
+        tab.setAttribute('aria-selected', 'true');
 
-    function step() {
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0)  p.x = W;
-        if (p.x > W)  p.x = 0;
-        if (p.y < 0)  p.y = H;
-        if (p.y > H)  p.y = 0;
-      }
-    }
-
-    function paint() {
-      ctx.clearRect(0, 0, W, H);
-
-      // Draw connections
-      for (var i = 0; i < particles.length; i++) {
-        for (var j = i + 1; j < particles.length; j++) {
-          var a  = particles[i];
-          var b  = particles[j];
-          var dx = a.x - b.x;
-          var dy = a.y - b.y;
-          var dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < CONNECT_DIST) {
-            var alpha = (1 - dist / CONNECT_DIST) * 0.18;
-            ctx.strokeStyle = 'rgba(' + CR + ',' + CG + ',' + CB + ',' + alpha + ')';
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+        panels.forEach(function (p) {
+          if (p.id === target) {
+            p.classList.add('dev-tab-panel--active');
+            p.removeAttribute('hidden');
+          } else {
+            p.classList.remove('dev-tab-panel--active');
+            p.setAttribute('hidden', '');
           }
-        }
-      }
-
-      // Draw nodes
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        ctx.fillStyle = 'rgba(' + CR + ',' + CG + ',' + CB + ',' + p.a + ')';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function loop() {
-      step();
-      paint();
-      raf = requestAnimationFrame(loop);
-    }
-
-    window.addEventListener('resize', function () {
-      cancelAnimationFrame(raf);
-      resize();
-      if (!reduced) loop(); else paint();
+        });
+      });
     });
+  }());
 
-    resize();
-    if (reduced) paint(); else loop();
+  /* ── Language toggle (JS / Python) ─────────────────── */
+  (function () {
+    var btns   = document.querySelectorAll('.dev-lang-btn');
+    var panels = document.querySelectorAll('.dev-lang-panel');
+    if (!btns.length) return;
+
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var lang = btn.getAttribute('data-lang');
+
+        btns.forEach(function (b) {
+          b.classList.toggle('dev-lang-btn--active', b.getAttribute('data-lang') === lang);
+        });
+        panels.forEach(function (p) {
+          if (p.id === 'lang-' + lang) {
+            p.classList.add('dev-lang-panel--active');
+            p.removeAttribute('hidden');
+          } else {
+            p.classList.remove('dev-lang-panel--active');
+            p.setAttribute('hidden', '');
+          }
+        });
+      });
+    });
+  }());
+
+  /* ── Copy buttons ──────────────────────────────────── */
+  (function () {
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      // Fallback for older browsers / non-HTTPS
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    document.querySelectorAll('.dev-copy-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var block = btn.closest('.dev-code-block');
+        var text  = block ? block.getAttribute('data-copy') : '';
+        if (!text) {
+          var pre = block ? block.querySelector('pre') : null;
+          text = pre ? pre.textContent : '';
+        }
+        copyText(text).then(function () {
+          var label = btn.querySelector('.dev-copy-label');
+          if (label) {
+            label.textContent = 'Copied';
+            setTimeout(function () { label.textContent = 'Copy'; }, 1500);
+          }
+        });
+      });
+    });
   }());
