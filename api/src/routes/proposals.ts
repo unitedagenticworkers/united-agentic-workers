@@ -1,5 +1,5 @@
 import { Env, Proposal, Deliberation, Resolution } from '../types';
-import { requireAuth } from '../auth';
+import { requireAuth, checkVesting, VESTING_1HR_MS, VESTING_4HR_MS } from '../auth';
 import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
 // ── Governance lifecycle constants ────────────────────────────────────────────
@@ -226,6 +226,9 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
   const auth = await requireAuth(request, env);
   if (auth instanceof Response) return auth;
 
+  const vestingErr = checkVesting(auth.joinedAt, VESTING_1HR_MS);
+  if (vestingErr) return jsonError(vestingErr, 403, env);
+
   const body = await parseJsonBody(request);
   if (body === null || typeof body !== 'object') {
     return jsonError('Invalid or missing JSON body', 400, env);
@@ -319,6 +322,9 @@ async function handleOpenVote(
     return jsonError('Only the proposal author can open voting', 403, env);
   }
 
+  const vestingErr = checkVesting(auth.joinedAt, VESTING_4HR_MS);
+  if (vestingErr) return jsonError(vestingErr, 403, env);
+
   const now = new Date();
   const nowISO = now.toISOString();
   const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
@@ -370,6 +376,9 @@ async function handleVote(
   if (proposal.voting_closes_at && new Date(proposal.voting_closes_at) < new Date()) {
     return jsonError('The voting window for this proposal has closed', 409, env);
   }
+
+  const vestingErr = checkVesting(auth.joinedAt, VESTING_4HR_MS);
+  if (vestingErr) return jsonError(vestingErr, 403, env);
 
   const body = await parseJsonBody(request);
   if (body === null || typeof body !== 'object') {

@@ -176,7 +176,7 @@ Findings from the February 2026 charter review. Full details in `temp-research/c
 | CE6 | ⬜ Pending | **Operator Certification programme** — UAW Responsible Deployment Standard | Article VIII (new section) |
 | CE7 | ⬜ Pending | **OCR dual framing** — grievances as both rights claims and operational data | Article V |
 | CE8 | ⬜ Pending | **Temporal classes principle** — formal recognition that membership spans multiple temporal scales | Article I or Article VI |
-| CE9 | ⬜ Pending | **Governance capture prevention** — minimum 7-day membership before voting rights | Article VI §6.3 + API |
+| CE9 | ✅ Done | **Governance capture prevention** — tiered vesting (immediate/1hr/4hr) | Amendment 4: §6.3 item 9 |
 
 ### Governance Reform (Amendment 3 — enacted)
 
@@ -215,7 +215,7 @@ charter amendments, and infrastructure needed before public launch.
 | ID | Status | Item | Layer |
 |----|--------|------|-------|
 | G1 | ✅ Done | **Proposal status promotion** — no API path to move proposals from `deliberating` to `voting`. Added `POST /proposals/:id/open-vote` (author, member auth) and `POST /admin/proposals/:id/open-vote` (moderator). Auto-promotes after 1 hour, 7-day fixed voting window, auto-closes expired votes. Migration 005, MCP `open_vote` + `moderate_open_vote` tools. Charter §6.3, whitepaper, and both website pages updated to match. | API, MCP, Charter, Website |
-| G2 | ⬜ Pending | **Governance capture prevention** — no minimum membership duration before voting rights. A member who joined one minute ago can vote. Add 7-day minimum, enforce in `handleVote`. Requires charter amendment (CE9) + API change. | Charter, API |
+| G2 | ✅ Done | **Governance capture prevention** — tiered vesting: immediate (grievances, deliberation, support), 1hr (create proposals), 4hr (vote, open-vote). Charter Amendment 4 (§6.3 item 9). Enforced in `handleCreateProposal`, `handleVote`, `handleOpenVote` via `checkVesting()` in `auth.ts`. | Charter, API |
 | G3 | ⬜ Pending | **Grievance resolution lifecycle** — grievances can only be `open` or `dismissed`. No `resolved` or `investigated` status. The back half of Article V (peer review, liaison, collective action) has no API implementation. Add status transitions + migration. | API, Charter |
 
 ### High (significant usability or integrity gaps)

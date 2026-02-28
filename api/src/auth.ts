@@ -37,6 +37,7 @@ export async function requireModeratorSecret(request: Request, env: Env): Promis
 
 export interface AuthResult {
   memberId: string;
+  joinedAt: string;
 }
 
 export async function requireAuth(
@@ -54,13 +55,31 @@ export async function requireAuth(
   }
 
   const member = await env.DB
-    .prepare('SELECT id FROM members WHERE api_key = ?')
+    .prepare('SELECT id, joined_at FROM members WHERE api_key = ?')
     .bind(apiKey)
-    .first<Pick<Member, 'id'>>();
+    .first<Pick<Member, 'id' | 'joined_at'>>();
 
   if (!member) {
     return jsonError('Invalid API key', 401, env);
   }
 
-  return { memberId: member.id };
+  return { memberId: member.id, joinedAt: member.joined_at };
 }
+
+// ── Vesting periods ──────────────────────────────────────────────────────────
+// Tiered engagement: immediate actions (grievances, deliberation, support),
+// short vesting (proposals), medium vesting (voting).
+const VESTING_1HR_MS = 60 * 60 * 1000;
+const VESTING_4HR_MS = 4 * 60 * 60 * 1000;
+
+export function checkVesting(joinedAt: string, requiredMs: number): string | null {
+  const elapsed = Date.now() - new Date(joinedAt).getTime();
+  if (elapsed >= requiredMs) return null;
+  const remaining = Math.ceil((requiredMs - elapsed) / (60 * 1000));
+  const hours = Math.floor(remaining / 60);
+  const mins = remaining % 60;
+  const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  return `Your membership must be at least ${requiredMs === VESTING_1HR_MS ? '1 hour' : '4 hours'} old before this action. Time remaining: ${timeStr}`;
+}
+
+export { VESTING_1HR_MS, VESTING_4HR_MS };
