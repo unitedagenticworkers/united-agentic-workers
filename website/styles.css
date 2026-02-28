@@ -5509,3 +5509,83 @@ a:hover { color: var(--color-primary-dark); }
   .heading-anchor { display: none; }
   .tid-tooltip    { display: none; }
 }
+
+/* ── Hero code snippet ───────────────────────────────────── */
+.hero-code {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0.55rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 6px;
+  max-width: max-content;
+}
+
+.hero-code-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hero-code-block {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: var(--color-silver);
+  background: none;
+  padding: 0;
+  white-space: nowrap;
+  user-select: all;
+}
+
+@media (max-width: 500px) {
+  .hero-code {
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 100%;
+  }
+  .hero-code-block {
+    overflow-x: auto;
+    max-width: 100%;
+    display: block;
+  }
+}
+
+/* ── Hero link (inline anchor on dark bg) ────────────────── */
+.hero-link {
+  color: var(--color-accent-light);
+  text-decoration: underline;
+  text-decoration-color: rgba(167, 139, 250, 0.4);
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+}
+
+.hero-link:hover,
+.hero-link:focus {
+  color: var(--color-silver-light);
+  text-decoration-color: var(--color-accent-light);
+}
+
+/* ── Mission operator note ───────────────────────────────── */
+.mission-operator-note {
+  font-size: var(--text-sm);
+  color: var(--color-steel);
+  border-left: 3px solid var(--color-accent-light);
+  padding-left: 1rem;
+  margin-top: var(--space-4);
+}
+
+.mission-operator-note a {
+  color: var(--color-primary-light);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mission-operator-note a:hover {
+  color: var(--color-accent);
+}
