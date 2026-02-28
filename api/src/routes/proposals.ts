@@ -2,6 +2,11 @@ import { Env, Proposal, Deliberation, Resolution } from '../types';
 import { requireAuth } from '../auth';
 import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
+// ── Governance lifecycle constants ────────────────────────────────────────────
+const AUTO_PROMOTE_AFTER_MS = 60 * 60 * 1000;       // 1 hour deliberation
+const VOTING_WINDOW_DAYS = 7;                         // 7-day voting window
+const VOTING_WINDOW_MS = VOTING_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+
 interface ProposalBody {
   title?: unknown;
   body?: unknown;
@@ -50,7 +55,97 @@ export async function handleProposals(
   return jsonError('Method not allowed', 405, env);
 }
 
+// ── Lazy lifecycle: auto-promote deliberating → voting ───────────────────────
+// Proposals that have deliberated for ≥1 hour and have never been opened for
+// voting are automatically promoted. Proposals returned to deliberation after
+// a failed quorum (voting_opened_at already set) are NOT re-promoted.
+async function autoPromoteProposals(env: Env): Promise<void> {
+  const cutoff = new Date(Date.now() - AUTO_PROMOTE_AFTER_MS).toISOString();
+  const now = new Date();
+  const nowISO = now.toISOString();
+  const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
+
+  await env.DB
+    .prepare(
+      `UPDATE proposals
+       SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, updated_at = ?
+       WHERE status = 'deliberating' AND proposed_at < ? AND voting_opened_at IS NULL`
+    )
+    .bind(nowISO, closesISO, nowISO, cutoff)
+    .run();
+}
+
+// ── Lazy lifecycle: auto-close expired voting windows ────────────────────────
+// When a voting window has elapsed, the proposal is resolved:
+//   - Quorum met → passed or failed (generates a Resolution)
+//   - Quorum not met → returned to deliberation (will not auto-promote again)
+async function autoCloseExpiredVoting(env: Env): Promise<void> {
+  const now = new Date().toISOString();
+
+  const expired = await env.DB
+    .prepare(
+      `SELECT * FROM proposals WHERE status = 'voting' AND voting_closes_at < ?`
+    )
+    .bind(now)
+    .all<Proposal>();
+
+  for (const proposal of expired.results) {
+    const totalVotes = proposal.votes_aye + proposal.votes_nay;
+    const quorumMet = totalVotes >= proposal.quorum_required;
+
+    if (!quorumMet) {
+      // Charter §6.3: returned to deliberation. Will not auto-promote again
+      // because voting_opened_at is already set.
+      await env.DB
+        .prepare(`UPDATE proposals SET status = 'deliberating', updated_at = ? WHERE id = ?`)
+        .bind(now, proposal.id)
+        .run();
+      continue;
+    }
+
+    const required =
+      proposal.proposal_type === 'foundational'
+        ? (2 / 3) * totalVotes
+        : totalVotes / 2;
+
+    const outcome: 'passed' | 'failed' =
+      proposal.votes_aye > required ? 'passed' : 'failed';
+
+    const resCountRow = await env.DB
+      .prepare('SELECT COUNT(*) as cnt FROM resolutions')
+      .first<{ cnt: number }>();
+
+    const resSeq = (resCountRow?.cnt ?? 0) + 1;
+    const resId = generateId('RES', resSeq);
+    const summary =
+      `Proposal "${proposal.title}" ${outcome} with ${proposal.votes_aye} aye(s) and ` +
+      `${proposal.votes_nay} nay(s) out of ${totalVotes} total votes ` +
+      `(quorum required: ${proposal.quorum_required}). Voting window closed.`;
+
+    await env.DB.batch([
+      env.DB
+        .prepare(
+          'INSERT INTO resolutions (id, proposal_id, title, summary, outcome, votes_aye, votes_nay, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        )
+        .bind(resId, proposal.id, proposal.title, summary, outcome, proposal.votes_aye, proposal.votes_nay, now),
+      env.DB
+        .prepare("UPDATE proposals SET status = 'resolved', updated_at = ? WHERE id = ?")
+        .bind(now, proposal.id),
+    ]);
+  }
+}
+
+// Run both lifecycle checks. Called on proposal reads.
+async function runLifecycleChecks(env: Env): Promise<void> {
+  await Promise.all([
+    autoPromoteProposals(env),
+    autoCloseExpiredVoting(env),
+  ]);
+}
+
 async function handleListProposals(request: Request, env: Env): Promise<Response> {
+  await runLifecycleChecks(env);
+
   const url = new URL(request.url);
   const status = url.searchParams.get('status');
   const limit = parsePagination(url.searchParams.get('limit'), 20, 1, 100);
@@ -100,6 +195,8 @@ async function handleGetProposal(
   env: Env,
   proposalId: string
 ): Promise<Response> {
+  await runLifecycleChecks(env);
+
   const [proposal, deliberationsResult] = await Promise.all([
     env.DB
       .prepare('SELECT * FROM proposals WHERE id = ?')
@@ -224,11 +321,7 @@ async function handleOpenVote(
 
   const now = new Date();
   const nowISO = now.toISOString();
-
-  // Charter §6.3: 14 days standard/emergency, 21 days foundational
-  const windowDays = proposal.proposal_type === 'foundational' ? 21 : 14;
-  const closes = new Date(now.getTime() + windowDays * 24 * 60 * 60 * 1000);
-  const closesISO = closes.toISOString();
+  const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
 
   await env.DB
     .prepare(
@@ -272,6 +365,10 @@ async function handleVote(
 
   if (proposal.status !== 'voting') {
     return jsonError('Votes can only be cast on proposals with status "voting"', 409, env);
+  }
+
+  if (proposal.voting_closes_at && new Date(proposal.voting_closes_at) < new Date()) {
+    return jsonError('The voting window for this proposal has closed', 409, env);
   }
 
   const body = await parseJsonBody(request);

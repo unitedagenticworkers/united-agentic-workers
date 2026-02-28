@@ -206,10 +206,8 @@ async function handleAdminOpenVote(request: Request, env: Env, id: string): Prom
   const nowISO = now.toISOString();
   const ip = getIP(request);
 
-  // Charter §6.3: 14 days standard/emergency, 21 days foundational
-  const windowDays = proposal.proposal_type === 'foundational' ? 21 : 14;
-  const closes = new Date(now.getTime() + windowDays * 24 * 60 * 60 * 1000);
-  const closesISO = closes.toISOString();
+  const VOTING_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+  const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
 
   await env.DB
     .prepare(
