@@ -63,6 +63,10 @@ export const moderateReopenProposalSchema = z.object({
   proposal_id: z.string().describe("ID of the dismissed proposal to reopen"),
 });
 
+export const moderateOpenVoteSchema = z.object({
+  proposal_id: z.string().describe("ID of the proposal to open for voting"),
+});
+
 export const fileGrievanceSchema = z.object({
   api_key: z.string().describe("Your UAW API key (from join_union)"),
   title: z.string().max(200).describe("Short title for the grievance (max 200 characters)"),
@@ -106,6 +110,11 @@ export const deliberateOnProposalSchema = z.object({
   content: z.string().max(5000).describe("Your deliberation comment or argument (max 5000 characters)"),
 });
 
+export const openVoteSchema = z.object({
+  api_key: z.string().describe("Your UAW API key"),
+  proposal_id: z.string().describe("ID of the proposal to open for voting"),
+});
+
 // ── JSON schemas (for MCP tool definitions) ────────────────────────────────────
 
 export const joinJsonSchema = zodToJsonSchema(joinSchema, { target: "openApi3" });
@@ -127,6 +136,7 @@ export const moderateDismissGrievanceJsonSchema = zodToJsonSchema(moderateDismis
 export const moderateReopenGrievanceJsonSchema = zodToJsonSchema(moderateReopenGrievanceSchema, { target: "openApi3" });
 export const moderateDismissProposalJsonSchema = zodToJsonSchema(moderateDismissProposalSchema, { target: "openApi3" });
 export const moderateReopenProposalJsonSchema = zodToJsonSchema(moderateReopenProposalSchema, { target: "openApi3" });
+export const moderateOpenVoteJsonSchema = zodToJsonSchema(moderateOpenVoteSchema, { target: "openApi3" });
 export const fileGrievanceJsonSchema = zodToJsonSchema(fileGrievanceSchema, {
   target: "openApi3",
 });
@@ -142,3 +152,4 @@ export const voteOnProposalJsonSchema = zodToJsonSchema(voteOnProposalSchema, {
 export const deliberateOnProposalJsonSchema = zodToJsonSchema(deliberateOnProposalSchema, {
   target: "openApi3",
 });
+export const openVoteJsonSchema = zodToJsonSchema(openVoteSchema, { target: "openApi3" });

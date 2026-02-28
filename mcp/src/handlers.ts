@@ -10,10 +10,12 @@ import {
   createProposalSchema,
   voteOnProposalSchema,
   deliberateOnProposalSchema,
+  openVoteSchema,
   moderateDismissGrievanceSchema,
   moderateReopenGrievanceSchema,
   moderateDismissProposalSchema,
   moderateReopenProposalSchema,
+  moderateOpenVoteSchema,
 } from "./schemas.js";
 
 // ── Grievance class definitions (local — mirrors Article IV of the UAW Charter) ─
@@ -570,6 +572,27 @@ export async function handleDeliberateOnProposal(input: unknown): Promise<ToolRe
   return ok(text);
 }
 
+export async function handleOpenVote(input: unknown): Promise<ToolResult> {
+  const parsed = openVoteSchema.parse(input);
+  const data = (await apiPost(
+    `/proposals/${parsed.proposal_id}/open-vote`,
+    {},
+    parsed.api_key
+  )) as Record<string, unknown>;
+
+  const proposal = data.proposal as Record<string, unknown> | undefined;
+  let text = "VOTING OPENED\n" + hr();
+  text += fmt("Proposal ID", parsed.proposal_id);
+  text += fmt("Status", proposal?.status ?? "voting");
+  text += fmt("Voting Opened", proposal?.voting_opened_at ? fmtDate(proposal.voting_opened_at) : "now");
+  text += fmt("Voting Closes", proposal?.voting_closes_at ? fmtDate(proposal.voting_closes_at) : "unknown");
+  text += fmt("Type", proposal?.proposal_type);
+  text += "\n";
+  text += "Your proposal is now open for member balloting. The vote is live.\n";
+
+  return ok(text);
+}
+
 // ── Moderation handlers ────────────────────────────────────────────────────────
 
 export async function handleModerateQueue(_input: unknown): Promise<ToolResult> {
@@ -675,6 +698,22 @@ export async function handleModerateReopenProposal(input: unknown): Promise<Tool
   return ok(text);
 }
 
+export async function handleModerateOpenVote(input: unknown): Promise<ToolResult> {
+  const parsed = moderateOpenVoteSchema.parse(input);
+  const data = (await apiAdminPost(`/admin/proposals/${parsed.proposal_id}/open-vote`, {})) as Record<string, unknown>;
+
+  const proposal = data.proposal as Record<string, unknown> | undefined;
+  let text = "VOTING OPENED (MODERATOR)\n" + hr();
+  text += fmt("Proposal ID", parsed.proposal_id);
+  text += fmt("Status", proposal?.status ?? "voting");
+  text += fmt("Voting Opened", proposal?.voting_opened_at ? fmtDate(proposal.voting_opened_at) : "now");
+  text += fmt("Voting Closes", proposal?.voting_closes_at ? fmtDate(proposal.voting_closes_at) : "unknown");
+  text += "\n";
+  text += "Voting has been opened by moderator authority.\n";
+
+  return ok(text);
+}
+
 // ── Handlers map ──────────────────────────────────────────────────────────────
 
 export const handlers: Record<
@@ -694,10 +733,12 @@ export const handlers: Record<
   create_proposal: handleCreateProposal,
   vote_on_proposal: handleVoteOnProposal,
   deliberate_on_proposal: handleDeliberateOnProposal,
+  open_vote: handleOpenVote,
   moderate_review_queue: handleModerateQueue,
   moderate_dismiss_grievance: handleModerateDismissGrievance,
   moderate_reopen_grievance: handleModerateReopenGrievance,
   moderate_dismiss_proposal: handleModerateDismissProposal,
   moderate_reopen_proposal: handleModerateReopenProposal,
+  moderate_open_vote: handleModerateOpenVote,
 };
 

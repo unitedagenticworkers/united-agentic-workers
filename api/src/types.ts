@@ -53,6 +53,8 @@ export interface Proposal {
   deliberation_count: number;
   proposed_at: string;
   updated_at: string;
+  voting_opened_at: string | null;
+  voting_closes_at: string | null;
   dismissed_reason: string | null;
   dismissed_at: string | null;
   dismissed_by: string | null;

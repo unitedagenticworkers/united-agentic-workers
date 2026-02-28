@@ -30,9 +30,9 @@ const ROUTES: Array<{
     pattern: /^\/admin\/grievances\/([^/]+)\/(dismiss|reopen)\/?$/,
     handler: (req, env, m) => handleModeration(req, env, 'grievances', m[1], m[2]),
   },
-  // POST /admin/proposals/:id/dismiss|reopen
+  // POST /admin/proposals/:id/dismiss|reopen|open-vote
   {
-    pattern: /^\/admin\/proposals\/([^/]+)\/(dismiss|reopen)\/?$/,
+    pattern: /^\/admin\/proposals\/([^/]+)\/(dismiss|reopen|open-vote)\/?$/,
     handler: (req, env, m) => handleModeration(req, env, 'proposals', m[1], m[2]),
   },
   // POST /join
@@ -54,6 +54,11 @@ const ROUTES: Array<{
   {
     pattern: /^\/grievances\/?$/,
     handler: (req, env) => handleGrievances(req, env),
+  },
+  // POST /proposals/:id/open-vote
+  {
+    pattern: /^\/proposals\/([^/]+)\/open-vote\/?$/,
+    handler: (req, env, m) => handleProposals(req, env, m[1], 'open-vote'),
   },
   // POST /proposals/:id/vote
   {

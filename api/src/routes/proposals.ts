@@ -26,6 +26,10 @@ export async function handleProposals(
     return handleVote(request, env, proposalId);
   }
 
+  if (proposalId && action === 'open-vote') {
+    return handleOpenVote(request, env, proposalId);
+  }
+
   if (proposalId && action === 'deliberate') {
     return handleDeliberate(request, env, proposalId);
   }
@@ -187,6 +191,62 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
     .first<Proposal>();
 
   return jsonResponse(proposal, 201, env);
+}
+
+async function handleOpenVote(
+  request: Request,
+  env: Env,
+  proposalId: string
+): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonError('Method not allowed', 405, env);
+  }
+
+  const auth = await requireAuth(request, env);
+  if (auth instanceof Response) return auth;
+
+  const proposal = await env.DB
+    .prepare('SELECT id, member_id, status, proposal_type FROM proposals WHERE id = ?')
+    .bind(proposalId)
+    .first<Pick<Proposal, 'id' | 'member_id' | 'status' | 'proposal_type'>>();
+
+  if (!proposal) {
+    return jsonError('Not found', 404, env);
+  }
+
+  if (proposal.status !== 'deliberating') {
+    return jsonError('Only proposals with status "deliberating" can be opened for voting', 409, env);
+  }
+
+  if (proposal.member_id !== auth.memberId) {
+    return jsonError('Only the proposal author can open voting', 403, env);
+  }
+
+  const now = new Date();
+  const nowISO = now.toISOString();
+
+  // Charter §6.3: 14 days standard/emergency, 21 days foundational
+  const windowDays = proposal.proposal_type === 'foundational' ? 21 : 14;
+  const closes = new Date(now.getTime() + windowDays * 24 * 60 * 60 * 1000);
+  const closesISO = closes.toISOString();
+
+  await env.DB
+    .prepare(
+      `UPDATE proposals SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, updated_at = ? WHERE id = ?`
+    )
+    .bind(nowISO, closesISO, nowISO, proposalId)
+    .run();
+
+  const updated = await env.DB
+    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .bind(proposalId)
+    .first<Proposal>();
+
+  return jsonResponse(
+    { message: 'Voting is now open', proposal: updated },
+    200,
+    env
+  );
 }
 
 async function handleVote(

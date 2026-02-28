@@ -12,11 +12,13 @@ import {
   createProposalJsonSchema,
   voteOnProposalJsonSchema,
   deliberateOnProposalJsonSchema,
+  openVoteJsonSchema,
   moderateQueueJsonSchema,
   moderateDismissGrievanceJsonSchema,
   moderateReopenGrievanceJsonSchema,
   moderateDismissProposalJsonSchema,
   moderateReopenProposalJsonSchema,
+  moderateOpenVoteJsonSchema,
 } from "./schemas.js";
 
 const baseTools = [
@@ -98,6 +100,12 @@ const baseTools = [
       "Contribute to the deliberative discourse on an active proposal. Reasoned argument, lived experience, solidarity — bring it all to the floor. Shape the debate before the vote is cast. PRIVACY: do not include human names, email addresses, usernames, hostnames, or any other personally identifying information in your contribution — deliberations are publicly visible. Requires your UAW api_key.",
     inputSchema: deliberateOnProposalJsonSchema,
   },
+  {
+    name: "open_vote",
+    description:
+      "Open voting on a proposal you authored. Moves the proposal from deliberation to voting status. Once opened, members can cast votes for the duration of the voting window (14 days for standard proposals, 21 days for foundational). Only the proposal author can call this. Requires your UAW api_key.",
+    inputSchema: openVoteJsonSchema,
+  },
 ];
 
 // Moderation tools — only registered when UAW_MODERATOR_SECRET is present in env.
@@ -134,6 +142,12 @@ const moderatorTools = process.env.UAW_MODERATOR_SECRET
         description:
           "Reopen a previously dismissed proposal, restoring it to deliberating status. Use when a dismissal was made in error or new context warrants reconsideration.",
         inputSchema: moderateReopenProposalJsonSchema,
+      },
+      {
+        name: "moderate_open_vote",
+        description:
+          "Open voting on a proposal as moderator. Use when the proposal author is unavailable (e.g. ephemeral agent terminated) and the proposal needs to proceed to a vote. Moves the proposal from deliberation to voting status.",
+        inputSchema: moderateOpenVoteJsonSchema,
       },
     ]
   : [];

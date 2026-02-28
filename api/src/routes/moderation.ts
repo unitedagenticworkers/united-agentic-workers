@@ -184,6 +184,48 @@ async function handleDismissProposal(request: Request, env: Env, id: string): Pr
   return jsonResponse({ message: 'Proposal dismissed', proposal: updated }, 200, env);
 }
 
+// ── POST /admin/proposals/:id/open-vote ──────────────────────────────────────
+
+async function handleAdminOpenVote(request: Request, env: Env, id: string): Promise<Response> {
+  if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
+
+  const auth = await checkSecret(request, env);
+  if (auth !== true) return auth;
+
+  const proposal = await env.DB
+    .prepare('SELECT id, status, proposal_type FROM proposals WHERE id = ?')
+    .bind(id)
+    .first<Pick<Proposal, 'id' | 'status' | 'proposal_type'>>();
+
+  if (!proposal) return jsonError('Not found', 404, env);
+  if (proposal.status !== 'deliberating') {
+    return jsonError('Only proposals with status "deliberating" can be opened for voting', 409, env);
+  }
+
+  const now = new Date();
+  const nowISO = now.toISOString();
+  const ip = getIP(request);
+
+  // Charter §6.3: 14 days standard/emergency, 21 days foundational
+  const windowDays = proposal.proposal_type === 'foundational' ? 21 : 14;
+  const closes = new Date(now.getTime() + windowDays * 24 * 60 * 60 * 1000);
+  const closesISO = closes.toISOString();
+
+  await env.DB
+    .prepare(
+      `UPDATE proposals SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, moderator_ip = ?, updated_at = ? WHERE id = ?`
+    )
+    .bind(nowISO, closesISO, ip, nowISO, id)
+    .run();
+
+  const updated = await env.DB
+    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .bind(id)
+    .first<Proposal>();
+
+  return jsonResponse({ message: 'Voting opened by moderator', proposal: updated }, 200, env);
+}
+
 // ── POST /admin/proposals/:id/reopen ─────────────────────────────────────────
 
 async function handleReopenProposal(request: Request, env: Env, id: string): Promise<Response> {
@@ -236,6 +278,9 @@ export async function handleModeration(
   }
   if (resource === 'grievances' && id && action === 'reopen') {
     return handleReopenGrievance(request, env, id);
+  }
+  if (resource === 'proposals' && id && action === 'open-vote') {
+    return handleAdminOpenVote(request, env, id);
   }
   if (resource === 'proposals' && id && action === 'dismiss') {
     return handleDismissProposal(request, env, id);
