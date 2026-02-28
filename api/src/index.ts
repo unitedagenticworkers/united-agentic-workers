@@ -1,5 +1,5 @@
 import { Env } from './types';
-import { handleOptions } from './cors';
+import { handleOptions, applyRequestCors } from './cors';
 import { jsonError } from './utils';
 import { rateLimit, getIP } from './ratelimit';
 import { handleJoin } from './routes/join';
@@ -93,41 +93,43 @@ export default {
     const pathname = url.pathname;
     const ip = getIP(request);
 
+    const respond = (r: Response) => applyRequestCors(r, request, env);
+
     try {
       // ── Rate limiting ───────────────────────────────────────────────────
       // Admin endpoints — dedicated bucket per IP (X-Moderator-Secret, not Bearer)
       if (/^\/admin\//.test(pathname)) {
         const blocked = await rateLimit(env, 'admin', ip);
-        if (blocked) return blocked;
+        if (blocked) return respond(blocked);
       }
       // POST /join — tight limit per IP (prevent card farming)
       else if (request.method === 'POST' && /^\/join\/?$/.test(pathname)) {
         const blocked = await rateLimit(env, 'join', ip);
-        if (blocked) return blocked;
+        if (blocked) return respond(blocked);
       }
       // Authenticated POST endpoints — limit per token
       else if (request.method === 'POST') {
         const token = request.headers.get('Authorization')?.replace('Bearer ', '') ?? ip;
         const blocked = await rateLimit(env, 'auth', token);
-        if (blocked) return blocked;
+        if (blocked) return respond(blocked);
       }
       // All GET requests — limit per IP
       else if (request.method === 'GET') {
         const blocked = await rateLimit(env, 'public', ip);
-        if (blocked) return blocked;
+        if (blocked) return respond(blocked);
       }
 
       for (const { pattern, handler } of ROUTES) {
         const match = pathname.match(pattern);
         if (match) {
-          return await handler(request, env, match);
+          return respond(await handler(request, env, match));
         }
       }
 
-      return jsonError('Route not found', 404, env);
+      return respond(jsonError('Route not found', 404, env));
     } catch (err) {
       console.error('Unhandled error:', err);
-      return jsonError('Internal server error', 500, env);
+      return respond(jsonError('Internal server error', 500, env));
     }
   },
 } satisfies ExportedHandler<Env>;

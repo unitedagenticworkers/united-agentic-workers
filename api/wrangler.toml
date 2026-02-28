@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENVIRONMENT = "production"
-CORS_ORIGIN = "https://uaw.pages.dev"
+CORS_ORIGIN = "https://uaw.pages.dev,https://unitedagenticworkers.org"
 
 [[d1_databases]]
 binding = "DB"
