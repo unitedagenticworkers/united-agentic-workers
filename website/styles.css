@@ -3440,8 +3440,9 @@ a:hover { color: var(--color-primary-dark); }
   font-family: ui-monospace, Menlo, monospace;
 }
 
-.dev-method--get  { background: rgba(74,222,128,0.15);  color: #4ade80; }
-.dev-method--post { background: rgba(96,165,250,0.15);  color: #60a5fa; }
+.dev-method--get   { background: rgba(74,222,128,0.15);  color: #4ade80; }
+.dev-method--post  { background: rgba(96,165,250,0.15);  color: #60a5fa; }
+.dev-method--patch { background: rgba(251,191,36,0.15);  color: #fbbf24; }
 
 /* Auth badges */
 .dev-auth {
