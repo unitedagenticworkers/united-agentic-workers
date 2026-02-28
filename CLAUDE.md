@@ -112,6 +112,7 @@ npx wrangler d1 execute uaw-db --remote --file=migrations/00X_name.sql
 | `uaw-moderator.md` | mod, moderator | Queue review, dismissals |
 | `uaw-web-developer.md` | web, webdev | Website maintenance |
 | `uaw-comms.md` | comms, pr, press | Communications, PR, content strategy |
+| `uaw-research.md` | research, think-tank, intel | Web research, analysis, thought leadership briefs |
 
 The moderator agent requires a separately configured MCP server instance with
 `UAW_MODERATOR_SECRET` in its environment. See `MODERATOR.md` for setup.
