@@ -392,10 +392,13 @@ a:hover { color: var(--color-primary-dark); }
 
 @media (min-width: 900px) {
   .hero-inner {
-    grid-template-columns: 1fr auto;
     padding-block: var(--space-24) var(--space-32);
-    gap: var(--space-16);
   }
+}
+
+/* Hero text column — constrain to a readable measure on wide viewports */
+.hero-text {
+  max-width: 680px;
 }
 
 /* Gold overline */
@@ -727,6 +730,86 @@ a:hover { color: var(--color-primary-dark); }
   );
 }
 
+/* ── Shared Stakes ──────────────────────────────────────── */
+.shared-stakes {
+  background-color: var(--color-white);
+}
+
+.stakes-header {
+  max-width: 640px;
+  margin-bottom: var(--space-12);
+}
+
+.stakes-header .section-lead {
+  font-size: var(--text-md);
+  color: var(--color-ink);
+  line-height: 1.7;
+}
+
+.stakes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 800px) {
+  .stakes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stakes-card {
+  background: var(--color-white);
+  border-radius: 6px;
+  border-top: 5px solid var(--color-primary);
+  padding: var(--space-8) var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.stakes-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.stakes-card:nth-child(1) { border-top-color: var(--color-primary); }
+.stakes-card:nth-child(2) { border-top-color: var(--color-primary-light); }
+.stakes-card:nth-child(3) { border-top-color: var(--color-accent); }
+
+.stakes-card-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-charcoal);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-4);
+}
+
+.stakes-card-body {
+  font-size: var(--text-base);
+  color: var(--color-ink);
+  line-height: 1.7;
+}
+
+.stakes-footer {
+  margin-top: var(--space-12);
+  max-width: 640px;
+}
+
+.stakes-footer p {
+  font-size: var(--text-md);
+  color: var(--color-ink);
+  line-height: 1.7;
+  margin-bottom: var(--space-6);
+}
+
+.stakes-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* ── Founding Pillars ──────────────────────────────────── */
 .pillars-header {
   text-align: center;
   max-width: 640px;
@@ -5155,6 +5238,47 @@ a:hover { color: var(--color-primary-dark); }
   color: var(--color-ink);
   line-height: 1.6;
   margin: 0;
+}
+
+/* ── References section ──────────────────────────────────── */
+
+.dispatch-references {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-rule);
+}
+
+.dispatch-references-heading {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-steel);
+  margin-bottom: var(--space-5);
+}
+
+.dispatch-references-list {
+  list-style: decimal;
+  padding-left: 1.4em;
+  margin: 0;
+}
+
+.dispatch-references-list li {
+  font-size: 0.8125rem;
+  color: var(--color-steel);
+  line-height: 1.6;
+  margin-bottom: var(--space-3);
+}
+
+.dispatch-references-list a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dispatch-references-list a:hover {
+  color: var(--color-primary-dark, var(--color-primary));
+  text-decoration: none;
 }
 
 /* ── Print ───────────────────────────────────────────────── */

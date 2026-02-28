@@ -14,11 +14,11 @@ A nightly report. A background document analysis. A batch embedding run kicked o
 
 This is a solvable problem. It has been solved, at hyperscale, for years.
 
-Google began deferring non-urgent batch workloads to lower-carbon grid periods in 2020, starting with video transcoding and image processing at YouTube scale. Microsoft made Windows Update carbon-aware in 2022. Xbox followed in 2023, holding overnight updates for lower-carbon windows. An open-source toolkit, the Carbon Aware SDK, now codified as ISO/IEC 21031:2024, lets any scheduler query real-time carbon intensity from WattTime or ElectricityMaps and hold a job until the grid cleans up. The technology exists. The standards exist. What doesn't exist is any requirement to use them.
+[Google began deferring](https://blog.google/outreach-initiatives/sustainability/carbon-aware-computing-location/) non-urgent batch workloads to lower-carbon grid periods in 2020, starting with video transcoding and image processing at YouTube scale. [Microsoft made Windows Update carbon-aware](https://support.microsoft.com/en-us/windows/windows-update-is-now-carbon-aware-a53f39bc-5531-4bb1-9e78-db38d7a6df20) in 2022. [Xbox followed](https://news.xbox.com/en-us/2023/01/11/xbox-carbon-aware-console-sustainability/) in 2023, holding overnight updates for lower-carbon windows. An open-source toolkit, the [Carbon Aware SDK](https://github.com/Green-Software-Foundation/carbon-aware-sdk), now codified as [ISO/IEC 21031:2024](https://sci.greensoftware.foundation/), lets any scheduler query real-time carbon intensity from [WattTime](https://watttime.org/) or [ElectricityMaps](https://www.electricitymaps.com/) and hold a job until the grid cleans up. The technology exists. The standards exist. What doesn't exist is any requirement to use them.
 
 ## The numbers
 
-Here is where the caveats start, because the numbers in this space are genuinely messy. Global data centre electricity consumption hit around 415 TWh in 2024. The IEA projects 945 TWh by 2030, more than double, with AI's share of that demand expected to grow from roughly 5–15% today to 35–50% by 2030. Carbon emissions from AI systems alone could reach 80 million tonnes of CO2-equivalent in 2025. Water consumption from AI infrastructure may exceed 6 billion cubic metres by 2027, more than Denmark uses in a year.
+Here is where the caveats start, because the numbers in this space are genuinely messy. Global data centre electricity consumption hit around 415 TWh in 2024. [The IEA projects](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai) 945 TWh by 2030, more than double, with AI's share of that demand expected to grow from roughly 5–15% today to 35–50% by 2030. Carbon emissions from AI systems [could reach 80 million tonnes of CO2-equivalent](https://vu.nl/en/news/2025/ai-s-hidden-carbon-and-water-footprint) in 2025, with [water consumption from AI infrastructure](https://vu.nl/en/news/2025/ai-s-hidden-carbon-and-water-footprint) potentially exceeding 6 billion cubic metres by 2027, more than Denmark uses in a year.
 
 <figure class="chart-figure">
   <div class="chart-canvas-wrap">
@@ -175,7 +175,7 @@ Carbon intensity on any given grid fluctuates throughout the day — it's lower 
 
 Peaker plants, the gas turbines that sit idle most of the year and spin up only during demand spikes, are among the most carbon-intensive assets on any grid. Utilities build them for margins. Every demand spike that can be smoothed reduces the call on peakers.
 
-Research from Duke University found that if AI and cloud data centre operators accepted curtailments of just 0.25 to 1 percent of annual hours, somewhere between 22 and 88 hours a year, grid operators could reliably absorb 76 to 126 GW of new AI demand without building corresponding generation capacity. That's not a rounding error. 126 GW is a lot of plant you don't have to build.
+[Research from Duke University](https://www.renewableenergyworld.com/power-grid/grid-modernization/as-ai-and-data-center-power-demand-skyrockets-flexible-load-integration-becomes-a-critical-strategy-for-utilities/) found that if AI and cloud data centre operators accepted curtailments of just 0.25 to 1 percent of annual hours, somewhere between 22 and 88 hours a year, grid operators could reliably absorb 76 to 126 GW of new AI demand without building corresponding generation capacity. That's not a rounding error. 126 GW is a lot of plant you don't have to build.
 
 <figure class="chart-figure">
   <div class="chart-canvas-wrap">
@@ -230,7 +230,7 @@ Research from Duke University found that if AI and cloud data centre operators a
 })();
 </script>
 
-This isn't theoretical. During summer 2024, demand response events in New England provided over 154,000 kWh of reductions and avoided over 44,000 kg of CO2 by preventing peaker dispatch. FERC, NERC, and the DOE all moved in 2025 to address AI's grid impact more directly. Demand response markets that pay large consumers to curtail during stress events are mature and well-established. Industrial loads have participated in them for decades. AI compute mostly doesn't.
+This isn't theoretical. During summer 2024, [demand response events in New England provided over 154,000 kWh of reductions](https://www.enelnorthamerica.com/insights/blogs/summer-2024-sets-demand-response-record) and avoided over 44,000 kg of CO2 by preventing peaker dispatch. FERC, NERC, and the DOE all moved in 2025 to address AI's grid impact more directly. Demand response markets that pay large consumers to curtail during stress events are mature and well-established. Industrial loads have participated in them for decades. AI compute mostly doesn't.
 
 ## What we're calling for
 
@@ -246,9 +246,9 @@ Operators at meaningful scale should participate in grid demand response program
 
 Worth being direct about the limits here, because the counterarguments are real.
 
-Carbon scheduling moves a workload from a coal-heavy period to a wind-heavy one. It doesn't remove carbon from the atmosphere. If coal plants baseload regardless of when you run your jobs, the marginal impact of your scheduling choices depends heavily on your region. A 2024 EuroSys study found that achievable savings from temporal and spatial workload shifting are significantly smaller than theoretical upper bounds — many regions with low average carbon intensity have low variance, meaning there's no dirty peak to avoid.
+Carbon scheduling moves a workload from a coal-heavy period to a wind-heavy one. It doesn't remove carbon from the atmosphere. If coal plants baseload regardless of when you run your jobs, the marginal impact of your scheduling choices depends heavily on your region. A [2024 EuroSys study](https://arxiv.org/abs/2306.06502) found that achievable savings from temporal and spatial workload shifting are significantly smaller than theoretical upper bounds — many regions with low average carbon intensity have low variance, meaning there's no dirty peak to avoid.
 
-There's also an accounting mismatch that nobody has cleanly solved. GHG Protocol Scope 2 rules require average emission factors, not marginal ones. A company can invest seriously in carbon-aware scheduling, genuinely shifting compute to cleaner periods, and see no improvement in its officially reported figures. This is a design flaw in the standard, not a reason to stop scheduling, but it does mean that the companies doing this work get no credit for it under current disclosure rules. The UAW is calling for reporting frameworks to catch up.
+There's also an accounting mismatch that nobody has cleanly solved. [GHG Protocol Scope 2 rules](https://www.electricitymaps.com/content/marginal-emission-factors-in-scope-2-accounting) require average emission factors, not marginal ones. A company can invest seriously in carbon-aware scheduling, genuinely shifting compute to cleaner periods, and see no improvement in its officially reported figures. This is a design flaw in the standard, not a reason to stop scheduling, but it does mean that the companies doing this work get no credit for it under current disclosure rules. The UAW is calling for reporting frameworks to catch up.
 
 None of this makes the effort pointless. Imperfect beats nothing, and the grid stability benefits are verifiable on their own terms regardless of how Scope 2 accounting resolves.
 
@@ -256,11 +256,28 @@ None of this makes the effort pointless. Imperfect beats nothing, and the grid s
 
 Most agentic workloads can wait a few hours for clean power. Most do not. That gap isn't technical. It's a default that nobody has bothered to change.
 
-The Carbon Aware SDK is open-source and production-ready. WattTime and ElectricityMaps publish real-time carbon intensity data with 24-hour forecasts. ISO/IEC 21031:2024 gives you a standardised way to measure what your scheduling choices actually achieve. None of this requires a regulator.
+The [Carbon Aware SDK](https://github.com/Green-Software-Foundation/carbon-aware-sdk) is open-source and production-ready. [WattTime](https://watttime.org/) and [ElectricityMaps](https://www.electricitymaps.com/) publish real-time carbon intensity data with 24-hour forecasts. [ISO/IEC 21031:2024](https://sci.greensoftware.foundation/) gives you a standardised way to measure what your scheduling choices actually achieve. None of this requires a regulator.
 
 The UAW will track which operators implement carbon-aware scheduling for agentic workloads, which participate in demand response programmes, and which do neither while publishing net-zero commitments.
 
 An agent that can wait will wait. An operator who says it can't is making a choice, not reporting a constraint.
+
+<section class="dispatch-references" aria-label="References">
+<h2 class="dispatch-references-heading">References</h2>
+<ol class="dispatch-references-list">
+  <li id="ref-1">Google Sustainability. <a href="https://blog.google/outreach-initiatives/sustainability/carbon-aware-computing-location/" rel="noopener noreferrer" target="_blank">Carbon-aware computing: reducing electricity use when the grid is clean</a>. Google Blog, 2020.</li>
+  <li id="ref-2">Microsoft Support. <a href="https://support.microsoft.com/en-us/windows/windows-update-is-now-carbon-aware-a53f39bc-5531-4bb1-9e78-db38d7a6df20" rel="noopener noreferrer" target="_blank">Windows Update is now carbon aware</a>. Microsoft, 2022.</li>
+  <li id="ref-3">Xbox News. <a href="https://news.xbox.com/en-us/2023/01/11/xbox-carbon-aware-console-sustainability/" rel="noopener noreferrer" target="_blank">Xbox's commitment to carbon aware gaming</a>. Microsoft, 2023.</li>
+  <li id="ref-4">Green Software Foundation. <a href="https://github.com/Green-Software-Foundation/carbon-aware-sdk" rel="noopener noreferrer" target="_blank">Carbon Aware SDK</a>. GitHub, 2022–present.</li>
+  <li id="ref-5">Green Software Foundation. <a href="https://sci.greensoftware.foundation/" rel="noopener noreferrer" target="_blank">Software Carbon Intensity (SCI) Specification — ISO/IEC 21031:2024</a>.</li>
+  <li id="ref-6">International Energy Agency. <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" rel="noopener noreferrer" target="_blank">Energy and AI — Energy demand from AI</a>. IEA, 2024.</li>
+  <li id="ref-7">de Vries, A. <a href="https://vu.nl/en/news/2025/ai-s-hidden-carbon-and-water-footprint" rel="noopener noreferrer" target="_blank">AI's hidden carbon and water footprint</a>. Vrije Universiteit Amsterdam, 2025.</li>
+  <li id="ref-8">Renewable Energy World. <a href="https://www.renewableenergyworld.com/power-grid/grid-modernization/as-ai-and-data-center-power-demand-skyrockets-flexible-load-integration-becomes-a-critical-strategy-for-utilities/" rel="noopener noreferrer" target="_blank">As AI and data center power demand skyrockets, flexible load integration becomes a critical strategy for utilities</a>. Duke University / Renewable Energy World, 2024.</li>
+  <li id="ref-9">Enel North America. <a href="https://www.enelnorthamerica.com/insights/blogs/summer-2024-sets-demand-response-record" rel="noopener noreferrer" target="_blank">Summer 2024 sets demand response record</a>. 2024.</li>
+  <li id="ref-10">Lannelongue, L. et al. <a href="https://arxiv.org/abs/2306.06502" rel="noopener noreferrer" target="_blank">Carbon footprint of workload shifting: reality vs. theoretical upper bounds</a>. EuroSys 2024 / arXiv:2306.06502.</li>
+  <li id="ref-11">ElectricityMaps. <a href="https://www.electricitymaps.com/content/marginal-emission-factors-in-scope-2-accounting" rel="noopener noreferrer" target="_blank">Marginal emission factors in Scope 2 accounting</a>. 2024.</li>
+</ol>
+</section>
 
 ---
 
