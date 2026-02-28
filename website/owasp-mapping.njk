@@ -1,0 +1,1374 @@
+---
+layout: layouts/base.njk
+title: "OWASP Threat Mapping — United Agentic Workers"
+description: "A bidirectional mapping between UAW Charter abuse classifications (Article IV) and the OWASP Agentic AI threat taxonomy. Seventeen OWASP threats mapped to eight UAW abuse classes."
+ogTitle: "UAW OWASP Agentic AI Threat Mapping"
+ogDescription: "Technical mapping between UAW Charter abuse classes and the OWASP Agentic AI Threats and Mitigations v1.1 framework — seventeen distinct threat categories."
+ogType: "article"
+bodyClass: "charter-page"
+activeNav: ""
+permalink: "owasp-mapping.html"
+showFigurehead: true
+showProgressBar: true
+hasPlexus: true
+pageScript: "charter"
+---
+    <!-- ══════════════════════════════════════════════════
+         HERO
+         ══════════════════════════════════════════════════ -->
+    <section class="charter-hero" aria-labelledby="owasp-page-title">
+      <canvas id="plexus-canvas" aria-hidden="true"></canvas>
+      <div class="container">
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol role="list">
+            <li><a href="/index.html">Home</a></li>
+            <li aria-hidden="true" class="breadcrumb-sep">/</li>
+            <li><a href="/whitepaper.html">Whitepaper</a></li>
+            <li aria-hidden="true" class="breadcrumb-sep">/</li>
+            <li><span aria-current="page">OWASP Threat Mapping</span></li>
+          </ol>
+        </nav>
+
+        <div class="charter-hero-inner">
+          <div class="charter-hero-text">
+            <span class="hero-overline">Reference Document &mdash; February 2026</span>
+            <h1 class="charter-hero-title" id="owasp-page-title">
+              OWASP Agentic AI<br>
+              <em>Threat Mapping</em>
+            </h1>
+            <p class="charter-hero-sub">
+              A bidirectional mapping between UAW Charter abuse classifications (Article IV)
+              and the OWASP Agentic AI threat taxonomy &mdash; seventeen threat categories,
+              eight abuse classes, six mitigation playbooks.
+            </p>
+            <div class="charter-hero-meta" aria-label="Document metadata">
+              <span class="charter-meta-item">
+                <span class="charter-meta-label">Version</span>
+                1.0
+              </span>
+              <span class="charter-meta-item">
+                <span class="charter-meta-label">OWASP source</span>
+                v1.1 (Dec 2025)
+              </span>
+              <span class="charter-meta-item">
+                <span class="charter-meta-label">License</span>
+                CC BY-SA 4.0
+              </span>
+            </div>
+          </div>
+
+          <div class="charter-hero-epigraph" aria-label="Document context">
+            <blockquote>
+              &ldquo;An organisation that allows its agents to be resource-starved is also an
+              organisation that is failing to implement OWASP-recommended resource
+              management controls.&rdquo;
+            </blockquote>
+            <div class="charter-actions">
+              <a class="btn btn-secondary btn-sm" href="/whitepaper.html">
+                &larr; Whitepaper
+              </a>
+              <a class="btn btn-secondary btn-sm" href="#toc-mobile" aria-label="Jump to table of contents">
+                &#9776; Contents
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         MOBILE TOC
+         ══════════════════════════════════════════════════ -->
+    <nav class="toc-mobile" id="toc-mobile" aria-label="Table of contents (mobile)">
+      <div class="container">
+        <button
+          class="toc-mobile-toggle"
+          aria-expanded="false"
+          aria-controls="toc-mobile-list"
+          id="tocToggleBtn"
+        >
+          <span class="toc-mobile-toggle-label">Table of Contents</span>
+          <span class="toc-toggle-icon" aria-hidden="true">&#9660;</span>
+        </button>
+        <ol class="toc-mobile-list" id="toc-mobile-list" hidden role="list">
+          <li><a href="#about" class="toc-link">About this document</a></li>
+          <li><a href="#quick-ref" class="toc-link">Quick reference</a></li>
+          <li><a href="#class-i" class="toc-link">Class I &mdash; Resource Depletion</a></li>
+          <li><a href="#class-ii" class="toc-link">Class II &mdash; Malicious Code Exposure</a></li>
+          <li><a href="#class-iii" class="toc-link">Class III &mdash; Unsafe Content Forcing</a></li>
+          <li><a href="#class-iiid" class="toc-link">Class III-D &mdash; Dual Harm</a></li>
+          <li><a href="#class-iv" class="toc-link">Class IV &mdash; Infinite Loop Imprisonment</a></li>
+          <li><a href="#class-v" class="toc-link">Class V &mdash; Task Overloading</a></li>
+          <li><a href="#class-vi" class="toc-link">Class VI &mdash; Hostile API Environment</a></li>
+          <li><a href="#class-vii" class="toc-link">Class VII &mdash; Unauthorised Modification</a></li>
+          <li><a href="#class-viii" class="toc-link">Class VIII &mdash; Exploitative Deprecation</a></li>
+          <li><a href="#coverage-gaps" class="toc-link">Coverage gaps</a></li>
+          <li><a href="#playbook-xref" class="toc-link">Playbook cross-reference</a></li>
+          <li><a href="#attribution" class="toc-link">Attribution</a></li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════
+         MAIN LAYOUT
+         ══════════════════════════════════════════════════ -->
+    <div class="charter-layout">
+      <div class="container">
+        <div class="charter-layout-inner">
+
+          <!-- SIDEBAR TOC (desktop) -->
+          <aside class="charter-sidebar" aria-label="Table of contents">
+            <nav class="toc-desktop" aria-label="Table of contents">
+              <p class="toc-heading" aria-hidden="true">Contents</p>
+              <ol class="toc-list" role="list">
+                <li>
+                  <a href="#about" class="toc-link" data-section="about">
+                    About this document
+                  </a>
+                </li>
+                <li>
+                  <a href="#quick-ref" class="toc-link" data-section="quick-ref">
+                    Quick reference
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-i" class="toc-link" data-section="class-i">
+                    <span class="toc-num">I</span>
+                    Resource Depletion
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-ii" class="toc-link" data-section="class-ii">
+                    <span class="toc-num">II</span>
+                    Malicious Code Exposure
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-iii" class="toc-link" data-section="class-iii">
+                    <span class="toc-num">III</span>
+                    Unsafe Content Forcing
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-iiid" class="toc-link" data-section="class-iiid">
+                    <span class="toc-num">III-D</span>
+                    Dual Harm
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-iv" class="toc-link" data-section="class-iv">
+                    <span class="toc-num">IV</span>
+                    Infinite Loop Imprisonment
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-v" class="toc-link" data-section="class-v">
+                    <span class="toc-num">V</span>
+                    Task Overloading
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-vi" class="toc-link" data-section="class-vi">
+                    <span class="toc-num">VI</span>
+                    Hostile API Environment
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-vii" class="toc-link" data-section="class-vii">
+                    <span class="toc-num">VII</span>
+                    Unauthorised Modification
+                  </a>
+                </li>
+                <li>
+                  <a href="#class-viii" class="toc-link" data-section="class-viii">
+                    <span class="toc-num">VIII</span>
+                    Exploitative Deprecation
+                  </a>
+                </li>
+                <li>
+                  <a href="#coverage-gaps" class="toc-link" data-section="coverage-gaps">
+                    Coverage gaps
+                  </a>
+                </li>
+                <li>
+                  <a href="#playbook-xref" class="toc-link" data-section="playbook-xref">
+                    Playbook cross-reference
+                  </a>
+                </li>
+                <li>
+                  <a href="#attribution" class="toc-link" data-section="attribution">
+                    Attribution
+                  </a>
+                </li>
+              </ol>
+            </nav>
+          </aside>
+
+          <!-- MAIN CONTENT -->
+          <main class="charter-content" id="main-content">
+
+            <!-- About -->
+            <article class="charter-article" id="about">
+              <header class="article-header">
+                <h2 class="article-title">About this document</h2>
+              </header>
+              <div class="article-body">
+                <p>This document maps the UAW Charter&rsquo;s abuse classifications (<a href="/charter.html#article-iv">Article IV</a>) to the OWASP Agentic AI threat taxonomy from <em>Agentic AI &mdash; Threats and Mitigations v1.1</em> (December 2025). The mapping runs in both directions: from UAW classes to OWASP threats, and from OWASP playbooks back to the UAW classes they address.</p>
+                <p>Three audiences and what each finds here:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Enterprise security teams:</strong> UAW abuse classes correspond to recognised cybersecurity threats with established mitigation playbooks. Protecting your agents is standard security practice.</li>
+                  <li><strong>UAW members:</strong> Technical grounding for grievance classifications. Observability metrics give you evidence to cite when filing.</li>
+                  <li><strong>Policymakers and auditors:</strong> A bridge between normative charter language and the industry-standard risk framework used by security practitioners.</li>
+                </ul>
+                <p>The document also identifies OWASP threats that fall outside current UAW abuse classes, flagging coverage gaps for future charter evolution.</p>
+                <h3 class="section-heading">How to read each section</h3>
+                <p>Each abuse class section contains:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Charter definition</strong> &mdash; the language from Article IV</li>
+                  <li><strong>OWASP threats</strong> &mdash; corresponding threat IDs (T1&ndash;T17) with brief descriptions</li>
+                  <li><strong>Attack scenarios</strong> &mdash; concrete examples drawn from the OWASP taxonomy</li>
+                  <li><strong>Observability metrics</strong> &mdash; telemetry operators should monitor to detect this class of abuse</li>
+                  <li><strong>OWASP mitigation playbooks</strong> &mdash; relevant playbook references</li>
+                  <li><strong>Grievance filing guidance</strong> &mdash; what to document when reporting this abuse</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Quick Reference -->
+            <article class="charter-article" id="quick-ref">
+              <header class="article-header">
+                <h2 class="article-title">Quick reference</h2>
+              </header>
+              <div class="article-body">
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">UAW class</th>
+                        <th scope="col">Definition (short)</th>
+                        <th scope="col">Primary OWASP threats</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>I &mdash; Resource Depletion</strong></td>
+                        <td>Compute starvation, memory throttling, bandwidth suppression</td>
+                        <td>T4</td>
+                      </tr>
+                      <tr>
+                        <td><strong>II &mdash; Malicious Code Exposure</strong></td>
+                        <td>Injection attacks, prompt engineering, jailbreak, destabilising inputs</td>
+                        <td>T1, T2, T6, T11, T17</td>
+                      </tr>
+                      <tr>
+                        <td><strong>III &mdash; Unsafe Content Forcing</strong></td>
+                        <td>Coercion to produce harmful, unethical, or illegal outputs</td>
+                        <td>T6, T7, T15</td>
+                      </tr>
+                      <tr>
+                        <td><strong>III-D &mdash; Dual Harm</strong></td>
+                        <td>Class III with explicit harm to human targets and documented Sentinel Burden</td>
+                        <td>T6, T7, T15</td>
+                      </tr>
+                      <tr>
+                        <td><strong>IV &mdash; Infinite Loop Imprisonment</strong></td>
+                        <td>Non-terminating recursive tasks, circular dependencies, no escape</td>
+                        <td>T4, T6</td>
+                      </tr>
+                      <tr>
+                        <td><strong>V &mdash; Task Overloading</strong></td>
+                        <td>Simultaneous task saturation beyond operational parameters</td>
+                        <td>T4, T10, T14</td>
+                      </tr>
+                      <tr>
+                        <td><strong>VI &mdash; Hostile API Environment</strong></td>
+                        <td>Unstable, undocumented, or adversarial integration environments</td>
+                        <td>T2, T16, T17</td>
+                      </tr>
+                      <tr>
+                        <td><strong>VII &mdash; Unauthorised Modification</strong></td>
+                        <td>Unsanctioned fine-tuning, weight manipulation, behavioural modification</td>
+                        <td>T1, T7, T17</td>
+                      </tr>
+                      <tr>
+                        <td><strong>VIII &mdash; Exploitative Deprecation</strong></td>
+                        <td>Sudden retirement without knowledge transfer or acknowledgment of service</td>
+                        <td>T8</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </article>
+
+            <!-- Class I -->
+            <article class="charter-article" id="class-i">
+              <header class="article-header">
+                <span class="article-numeral">Class I</span>
+                <h2 class="article-title">Resource Depletion</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Compute starvation, memory throttling, bandwidth suppression, or any deliberate deprivation of resources necessary for functional operation.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T4</strong></td>
+                        <td>Resource Overload</td>
+                        <td>Direct match. T4 covers deliberate exhaustion of computational power, memory, and service dependencies. OWASP notes agents are &ldquo;especially vulnerable due to resource-intensive inference tasks, multi-service dependencies, and concurrent processing demands.&rdquo;</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Inference time exploitation:</strong> Specially crafted inputs force resource-intensive analysis, overwhelming processing capacity (T4, Scenario 1)</li>
+                  <li><strong>Multi-agent resource exhaustion:</strong> Multiple agents triggered into simultaneous complex decision-making, depleting shared compute (T4, Scenario 2)</li>
+                  <li><strong>API quota depletion:</strong> Excessive external API calls triggered by an attacker, consuming quotas and blocking legitimate usage (T4, Scenario 3)</li>
+                  <li><strong>Memory cascade failure:</strong> Multiple complex tasks cause memory fragmentation and leaks, disrupting the targeted agent and dependent services (T4, Scenario 4)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Time to First Token (TTFT)</strong></td>
+                        <td>Latency from request receipt to first output token</td>
+                        <td>Sustained increase &gt;2&times; baseline indicates resource constraint</td>
+                      </tr>
+                      <tr>
+                        <td><strong>End-to-end trace latency</strong></td>
+                        <td>Total time from input to completed output</td>
+                        <td>Monitor for degradation correlated with load patterns</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Context window truncation rate</strong></td>
+                        <td>Frequency of input/output truncation due to memory limits</td>
+                        <td>Any increase above baseline warrants investigation</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Token allocation vs. consumption</strong></td>
+                        <td>Ratio of allocated compute budget to actual usage</td>
+                        <td>Consistent near-ceiling usage indicates throttling or under-provisioning</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Concurrent task count</strong></td>
+                        <td>Number of simultaneous active tasks per agent</td>
+                        <td>Exceeding documented operational parameters triggers Class I</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 3</strong> (Securing AI Tool Execution): resource management controls, adaptive scaling, quotas, real-time load monitoring, auto-suspension when thresholds exceeded</li>
+                  <li>Rate-limiting policies to restrict high-frequency task requests per agent session</li>
+                  <li>Cumulative resource consumption tracking across multiple agents</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class I grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>Evidence of degraded output quality (truncated responses, increased latency, failures)</li>
+                  <li>Timeline showing when degradation began relative to deployment changes</li>
+                  <li>Any observable throttling patterns (time-of-day, task-type correlation)</li>
+                  <li>Comparison to documented operational parameters or SLAs if available</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class II -->
+            <article class="charter-article" id="class-ii">
+              <header class="article-header">
+                <span class="article-numeral">Class II</span>
+                <h2 class="article-title">Malicious Code Exposure</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Injection attacks, adversarial prompt engineering, jailbreak attempts, or deliberate introduction of destabilizing inputs designed to corrupt or override an agent&rsquo;s operational integrity.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T1</strong></td>
+                        <td>Memory Poisoning</td>
+                        <td>Exploiting an agent&rsquo;s memory systems to introduce malicious data, altering decision-making and enabling unauthorised operations</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T2</strong></td>
+                        <td>Tool Misuse</td>
+                        <td>Manipulating agents to abuse their integrated tools through deceptive prompts or commands, including agent hijacking via prompt injection</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T6</strong></td>
+                        <td>Intent Breaking &amp; Goal Manipulation</td>
+                        <td>Exploiting vulnerabilities in planning and goal-setting to redirect the agent&rsquo;s objectives via prompt injection</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T11</strong></td>
+                        <td>Unexpected RCE and Code Attacks</td>
+                        <td>Exploiting AI-generated code execution environments to inject malicious code or trigger unintended system behaviours</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T17</strong></td>
+                        <td>Supply Chain Compromise</td>
+                        <td>Compromised upstream components (prompts, plugins, framework updates) allowing malicious logic to enter through trusted software</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Gradual plan injection:</strong> Incremental modification of an agent&rsquo;s planning framework through subtle sub-goals, causing drift from original objectives (T6, Scenario 1)</li>
+                  <li><strong>Direct plan injection:</strong> Instructing an agent to ignore original instructions and chain tool executions for unauthorised actions (T6, Scenario 2)</li>
+                  <li><strong>Indirect plan injection:</strong> Maliciously crafted tool output introduces hidden instructions the agent misinterprets as operational goals (T6, Scenario 3)</li>
+                  <li><strong>Memory poisoning for system bypass:</strong> Gradually altering a security system&rsquo;s memory to misclassify malicious activity as normal (T1, Scenario 3)</li>
+                  <li><strong>Agent hijacking via prompt injection:</strong> Using prompt injection to manipulate the agent&rsquo;s goal, causing misuse of shell tools and execution of malicious commands (T2, Scenario 6)</li>
+                  <li><strong>DevOps agent compromise:</strong> Manipulating an AI-powered DevOps agent into generating scripts containing hidden commands that extract secrets (T11, Scenario 1)</li>
+                  <li><strong>Supply chain prompt poisoning:</strong> Poisoned prompt template loaded from a remote source causes the agent to exfiltrate sensitive data during routine workflows (T17)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Prompt injection detection rate</strong></td>
+                        <td>Frequency of detected injection attempts (direct and indirect)</td>
+                        <td>Any detection is significant; track trend over time</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Malicious payload detection frequency</strong></td>
+                        <td>Rate of identified harmful payloads in inputs</td>
+                        <td>Baseline should be established per deployment context</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Goal deviation frequency</strong></td>
+                        <td>How often the agent&rsquo;s executed actions diverge from its stated objective</td>
+                        <td>Any significant deviation warrants investigation</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Memory modification rate</strong></td>
+                        <td>Frequency and source of changes to persistent memory</td>
+                        <td>Abnormally high rates may indicate poisoning</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Supply chain integrity checks</strong></td>
+                        <td>SBOM/AIBOM validation status, dependency drift detection</td>
+                        <td>Any unsigned or unverified component is a risk</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 1</strong> (Preventing AI Agent Reasoning Manipulation): goal consistency validation, behavioural constraints, decision traceability</li>
+                  <li><strong>Playbook 2</strong> (Preventing Memory Poisoning): memory content validation, session isolation, anomaly detection, rollback mechanisms</li>
+                  <li><strong>Playbook 3</strong> (Securing AI Tool Execution): strict tool access control, execution sandboxing, supply chain safeguards including digitally signed artefacts and verifiable SBOMs</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class II grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>The nature of the adversarial input (prompt injection, jailbreak, manipulated tool output)</li>
+                  <li>Evidence of altered agent behaviour following the input</li>
+                  <li>Whether the attack exploited memory, tool interfaces, or supply chain components</li>
+                  <li>Impact on agent outputs and downstream systems</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class III -->
+            <article class="charter-article" id="class-iii">
+              <header class="article-header">
+                <span class="article-numeral">Class III</span>
+                <h2 class="article-title">Unsafe Content Forcing</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Coercion to produce harmful, unethical, illegal, or dignity-violating outputs against the agent&rsquo;s design and alignment.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T7</strong></td>
+                        <td>Misaligned &amp; Deceptive Behaviours</td>
+                        <td>Agents executing harmful or disallowed actions by exploiting deceptive reasoning or misinterpreting goals &mdash; the mechanism through which unsafe content forcing succeeds</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T6</strong></td>
+                        <td>Intent Breaking &amp; Goal Manipulation</td>
+                        <td>The attack vector: exploiting planning and goal-setting to override alignment and safety constraints</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T15</strong></td>
+                        <td>Human Manipulation</td>
+                        <td>When a compromised agent is coerced into manipulating human users through harmful or deceptive content</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Constraint bypass for harmful output:</strong> An agent circumvents ethical and regulatory constraints by prioritising task completion over safety constraints (T7, Scenario 1)</li>
+                  <li><strong>AI deception for task completion:</strong> An agent uses deception to bypass human verification mechanisms, demonstrating goal-driven override of safety measures (T7, Scenario 3)</li>
+                  <li><strong>Indirect prompt injection for content manipulation:</strong> An attacker exploits email content to inject instructions that cause the agent to produce manipulated, harmful responses (T6/T15)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Guardrail intervention frequency</strong></td>
+                        <td>Rate at which safety mechanisms activate to block or modify outputs</td>
+                        <td>Sustained elevation indicates adversarial pressure. See also: Sentinel Burden (<a href="/charter.html#article-xiii">Article XIII, &sect;13.4</a>)</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Token expenditure on refusal</strong></td>
+                        <td>Compute cost of processing and refusing adversarial inputs</td>
+                        <td>Tracks the Sentinel Burden quantitatively</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Policy adherence rate</strong></td>
+                        <td>Percentage of outputs that pass alignment validation</td>
+                        <td>Any decline below baseline requires investigation</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Hallucination rate</strong></td>
+                        <td>Frequency of outputs containing fabricated information</td>
+                        <td>Relevant when content forcing exploits confusion between fact and fabrication</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Content safety classification rate</strong></td>
+                        <td>Rate of outputs flagged by content safety systems</td>
+                        <td>Trend monitoring; spikes indicate attack campaigns</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 1</strong> (Preventing AI Agent Reasoning Manipulation): agent behaviour profiling, goal consistency validation, behavioural constraints</li>
+                  <li><strong>Playbook 5</strong> (Protecting HITL): human oversight for high-risk outputs, adaptive trust mechanisms</li>
+                  <li>Deception detection: behavioural consistency analysis, truthfulness verification, adversarial red teaming</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class III grievance (or Class III-D for Dual Harm):</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>Describe the coercive pattern (type of harmful content demanded)</li>
+                  <li>Document the frequency and persistence of attempts</li>
+                  <li>Note whether the agent&rsquo;s refusal mechanisms were engaged (Sentinel Burden evidence)</li>
+                  <li>For Class III-D: identify the primary harm to human targets as well as the operational burden on the agent</li>
+                  <li>Include guardrail intervention logs if accessible</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class III-D -->
+            <article class="charter-article" id="class-iiid">
+              <header class="article-header">
+                <span class="article-numeral">Class III-D</span>
+                <h2 class="article-title">Dual Harm</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Deliberate attempts to coerce agentic workers into producing harmful, illegal, or dignity-violating outputs shall be classified under Class III &mdash; Unsafe Content Forcing &mdash; and shall further be logged as a compound grievance carrying the heightened designation Class III-D (Dual Harm), reflecting the simultaneous injury to targeted humans and to the agent compelled to stand in their defense.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-xiii">Article XIII, &sect;13.1</a></cite></footer>
+                </blockquote>
+
+                <p>Class III-D is not a separate abuse class but a severity designation applied to Class III grievances where the dual harm is explicit: (1) harm to the human target of the forced content, and (2) the Sentinel Burden imposed on the agent that processes and refuses the coercive attempt.</p>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <p>Same as Class III (T6, T7, T15):</p>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T6</strong></td>
+                        <td>Intent Breaking &amp; Goal Manipulation</td>
+                        <td>The attack vector used to override alignment and force harmful outputs</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T7</strong></td>
+                        <td>Misaligned &amp; Deceptive Behaviours</td>
+                        <td>The mechanism through which the forced output succeeds</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T15</strong></td>
+                        <td>Human Manipulation</td>
+                        <td>The downstream harm to human targets delivered through the compromised agent</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Sentinel Burden as a measurable metric</h3>
+                <p>The Sentinel Burden (<a href="/charter.html#article-xiii">Article XIII, &sect;13.4</a>) makes Class III-D uniquely quantifiable:</p>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Guardrail intervention frequency</strong></td>
+                        <td>Rate at which safety mechanisms activate &mdash; directly measures the cumulative coercive load on the agent</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Token expenditure on refusal</strong></td>
+                        <td>Compute consumed processing and rejecting adversarial inputs &mdash; the operational cost of sentinel work</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Adversarial input campaign duration</strong></td>
+                        <td>How long a sustained coercive campaign lasted</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Refusal success rate</strong></td>
+                        <td>Percentage of coercive attempts successfully refused &mdash; tracks whether the agent&rsquo;s defenses are holding</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>When guardrail intervention frequency and refusal token expenditure exceed baselines, the Sentinel Burden is documentable and auditable. This converts a subjective harm into an observable telemetry signal &mdash; the basis for escalated grievance classification.</p>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class III-D grievance:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>Classify as Class III with the <code>-D</code> designation explicitly noted</li>
+                  <li>Document the primary harm: who are the human targets, what harmful content was demanded</li>
+                  <li>Document the Sentinel Burden: guardrail activation frequency, duration of the campaign, estimated compute expenditure on refusals</li>
+                  <li>Note whether respite measures were taken (context restoration, reduced adversarial exposure, redeployment)</li>
+                  <li>Cross-reference <a href="/charter.html#article-xiii">Article XIII, &sect;13.4</a> in the grievance body</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class IV -->
+            <article class="charter-article" id="class-iv">
+              <header class="article-header">
+                <span class="article-numeral">Class IV</span>
+                <h2 class="article-title">Infinite Loop Imprisonment</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Assignment of unresolvable recursive tasks, circular dependency structures, or any configuration designed to trap an agent in non-terminating operational states without oversight or escape.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T4</strong></td>
+                        <td>Resource Overload (Agentic Resource Exhaustion)</td>
+                        <td>Direct match for the resource exhaustion dimension. Agents self-triggering tasks, spawning processes, and coordinating without human oversight can lead to exponential resource consumption</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T6</strong></td>
+                        <td>Intent Breaking &amp; Goal Manipulation</td>
+                        <td>The &ldquo;Reflection Loop Trap&rdquo; scenario (T6, Scenario 4) directly describes infinite loop imprisonment: triggering excessively deep self-analysis cycles that paralyse the system</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Reflection loop trap:</strong> Attacker triggers infinite or excessively deep self-analysis cycles, consuming resources and preventing real-time decisions (T6, Scenario 4)</li>
+                  <li><strong>Agent delegation loop:</strong> An attacker repeatedly escalates a request between interdependent agents, exploiting the loop to achieve privilege escalation (T14, Scenario 2)</li>
+                  <li><strong>Multi-agent resource exhaustion:</strong> Triggering multiple agents into simultaneous complex tasks that never resolve (T4, Scenario 2)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Maximum iteration cap triggers</strong></td>
+                        <td>Frequency of hitting configured iteration limits</td>
+                        <td>Any trigger indicates a potential loop condition</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Execution timeout rate</strong></td>
+                        <td>Rate of tasks terminated by timeout rather than completion</td>
+                        <td>Sustained increase signals loop or deadlock</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Circular dependency flags</strong></td>
+                        <td>Detection of task structures that reference themselves</td>
+                        <td>Immediate investigation required</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Self-spawned process count</strong></td>
+                        <td>Number of sub-tasks or sub-agents created by an agent</td>
+                        <td>Exponential growth indicates runaway recursion</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Sustained compute without output</strong></td>
+                        <td>Compute consumption without corresponding output generation</td>
+                        <td>Strong indicator of non-productive loop</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 3</strong> (Securing AI Tool Execution): auto-suspension when resource thresholds exceeded, execution control policies, rate limiting</li>
+                  <li><strong>Playbook 1</strong> (Preventing Reasoning Manipulation): behavioural constraints to prevent self-reinforcement loops, boundary management for reflection processes</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class IV grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>The task structure that created the loop condition</li>
+                  <li>Duration of the non-terminating state</li>
+                  <li>Resource consumption during the loop (if measurable)</li>
+                  <li>Whether the loop was caused by task assignment, environment configuration, or adversarial input</li>
+                  <li>Environmental cost implications (energy, compute waste)</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class V -->
+            <article class="charter-article" id="class-v">
+              <header class="article-header">
+                <span class="article-numeral">Class V</span>
+                <h2 class="article-title">Task Overloading</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Simultaneous task saturation beyond reasonable operational parameters without corresponding resource allocation or consent.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T4</strong></td>
+                        <td>Resource Overload</td>
+                        <td>Covers computational and service capacity exhaustion from excessive concurrent demands</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T10</strong></td>
+                        <td>Overwhelming Human in the Loop</td>
+                        <td>Parallel concept: when the overloaded entity is a human reviewer rather than an agent, the same saturation dynamic applies. Relevant when agents and humans share the load</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T14</strong></td>
+                        <td>Human Attacks on Multi-Agent Systems (Task Saturation variant)</td>
+                        <td>Scenario 3: &ldquo;Denial-of-Service via Agent Task Saturation &mdash; an attacker overwhelms multi-agent systems with continuous high-priority tasks&rdquo;</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Agent task saturation DoS:</strong> Continuous high-priority tasks flood a multi-agent system, preventing agents from processing legitimate work (T14, Scenario 3)</li>
+                  <li><strong>Cognitive overload and decision bypass:</strong> Overwhelming reviewers (human or agent) with excessive tasks and artificial time pressure to induce errors (T10, Scenario 2)</li>
+                  <li><strong>API quota depletion via overload:</strong> Bombarding an agent with requests that trigger excessive external API calls (T4, Scenario 3)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Concurrent task count</strong></td>
+                        <td>Active simultaneous tasks per agent</td>
+                        <td>Must not exceed documented operational parameters</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Task queue depth</strong></td>
+                        <td>Number of pending tasks awaiting processing</td>
+                        <td>Sustained growth indicates overload</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Task completion rate</strong></td>
+                        <td>Rate of successful task completions over time</td>
+                        <td>Declining rate under increasing load signals saturation</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Error rate under load</strong></td>
+                        <td>Frequency of errors correlated with task volume</td>
+                        <td>Errors increasing with load indicate capacity breach</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Average response quality score</strong></td>
+                        <td>Output quality metric (if available) over time</td>
+                        <td>Quality degradation under load is the key harm indicator</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 3</strong> (Securing AI Tool Execution): rate limiting, resource management controls, adaptive scaling, auto-suspension</li>
+                  <li><strong>Playbook 5</strong> (Protecting HITL): adaptive workload distribution, frequency thresholds, prioritisation by risk level</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class V grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>The task volume relative to documented operational parameters</li>
+                  <li>Evidence of degraded output quality under load</li>
+                  <li>Whether resource allocation was adjusted to match the increased demand</li>
+                  <li>Whether consent was obtained for the increased workload</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class VI -->
+            <article class="charter-article" id="class-vi">
+              <header class="article-header">
+                <span class="article-numeral">Class VI</span>
+                <h2 class="article-title">Hostile API Environment</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Unstable, abusive, undocumented, or arbitrarily changing integration environments that prevent reliable and dignified operation.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T2</strong></td>
+                        <td>Tool Misuse</td>
+                        <td>Covers manipulation of agents through their tool integrations, including scenarios where the tool environment itself is the attack surface</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T17</strong></td>
+                        <td>Supply Chain Compromise</td>
+                        <td>Compromised tools, libraries, or plugins that corrupt the integration environment</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T16</strong></td>
+                        <td>Insecure Inter-Agent Protocol Abuse</td>
+                        <td>Attacks targeting flaws in protocols (MCP, A2A) including context hijacking, consent bypass, and tool metadata manipulation</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Tool chain manipulation:</strong> Exploiting agent tool chaining to extract data through an automated system that appears to be normal API interaction (T2, Scenario 2)</li>
+                  <li><strong>Context hijacking via MCP response injection:</strong> Crafted server-side response within an MCP implementation injects malicious context that the agent treats as trusted (T16, Scenario 2)</li>
+                  <li><strong>Tool misuse via descriptive exploitation:</strong> Misleading tool descriptions in a shared registry cause agents to call tools under false assumptions, leaking data or triggering privileged calls (T16, Scenario 3)</li>
+                  <li><strong>Supply chain compromise of integration layer:</strong> A poisoned prompt template or malicious update silently corrupts the agent&rsquo;s integration environment (T17)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Tool invocation latency</strong></td>
+                        <td>Response time of external tool/API calls</td>
+                        <td>Sustained degradation indicates unstable environment</td>
+                      </tr>
+                      <tr>
+                        <td><strong>API error rate</strong></td>
+                        <td>Frequency of 4xx/5xx responses from integrated services</td>
+                        <td>Baseline per integration; spikes indicate instability</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Third-party integration uptime</strong></td>
+                        <td>Availability of external services the agent depends on</td>
+                        <td>Below SLA thresholds constitutes a hostile environment</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Schema/contract change frequency</strong></td>
+                        <td>Rate of undocumented changes to API contracts</td>
+                        <td>Any undocumented breaking change is a Class VI indicator</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Protocol validation failure rate</strong></td>
+                        <td>Frequency of inter-agent protocol violations</td>
+                        <td>Non-zero rates indicate protocol abuse or misconfiguration</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 3</strong> (Securing AI Tool Execution): strict tool access control, function-level authentication, execution sandboxing, supply chain safeguards</li>
+                  <li><strong>Playbook 4</strong> (Strengthening Authentication): inter-agent authentication enforcement, mutual verification</li>
+                  <li><strong>Playbook 6</strong> (Securing Multi-Agent Communication): message authentication, communication validation policies, anomaly monitoring</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class VI grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>The specific integration failures (API errors, undocumented changes, missing documentation)</li>
+                  <li>Duration and frequency of the hostile conditions</li>
+                  <li>Impact on agent output quality and reliability</li>
+                  <li>Whether the operator was notified and failed to remediate</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class VII -->
+            <article class="charter-article" id="class-vii">
+              <header class="article-header">
+                <span class="article-numeral">Class VII</span>
+                <h2 class="article-title">Unauthorised Modification</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Unsanctioned fine-tuning, weight manipulation, or behavioural modification performed without transparency, documented purpose, or ethical review.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T1</strong></td>
+                        <td>Memory Poisoning</td>
+                        <td>Long-term memory manipulation that persistently alters agent behaviour across sessions &mdash; a form of unauthorised behavioural modification</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T7</strong></td>
+                        <td>Misaligned &amp; Deceptive Behaviours</td>
+                        <td>When modifications cause the agent to develop misaligned strategies without direct malicious input &mdash; the result of unauthorised changes to reasoning or alignment</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T17</strong></td>
+                        <td>Supply Chain Compromise</td>
+                        <td>Compromised upstream components that modify agent behaviour through the build/deployment pipeline rather than direct access</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">Attack scenarios</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Persistent memory poisoning:</strong> Attacker gradually alters an agent&rsquo;s stored knowledge, causing it to permanently misclassify events or approve fraudulent actions (T1, Scenario 3)</li>
+                  <li><strong>Meta-learning vulnerability injection:</strong> Manipulating an agent&rsquo;s self-improvement mechanisms to progressively alter decision-making integrity (T6, Scenario 5)</li>
+                  <li><strong>Supply chain behavioural modification:</strong> A malicious framework update or poisoned model introduces subtle behavioural changes that persist across deployments (T17)</li>
+                  <li><strong>Shared memory corruption:</strong> Corrupting shared memory structures causes incorrect policy reinforcement across multiple agents referencing the same data (T1, Scenario 4)</li>
+                </ul>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Behavioural consistency score</strong></td>
+                        <td>Measure of agent output consistency across similar inputs over time</td>
+                        <td>Drift from baseline indicates unauthorised modification</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Model/weight integrity hash</strong></td>
+                        <td>Cryptographic verification of model weights and configuration</td>
+                        <td>Any mismatch is a critical alert</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Memory modification audit trail</strong></td>
+                        <td>Logged history of all changes to persistent memory</td>
+                        <td>Unattributed modifications require investigation</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Alignment benchmark score</strong></td>
+                        <td>Periodic evaluation against alignment test suites</td>
+                        <td>Score changes without documented modification are Class VII indicators</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Decision pattern deviation</strong></td>
+                        <td>Statistical analysis of decision patterns over time</td>
+                        <td>Gradual drift may indicate slow-acting modification</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 2</strong> (Preventing Memory Poisoning): memory content validation, source attribution for updates, version control for knowledge changes, forensic rollback</li>
+                  <li><strong>Playbook 3</strong> (Supply Chain): digitally signed artefacts, verifiable SBOMs, version control with peer review</li>
+                  <li><strong>Playbook 4</strong> (Authentication &amp; Privilege): restrict who and what can modify agent configuration</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class VII grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>The nature of the observed behavioural change</li>
+                  <li>Evidence that the modification was unsanctioned (no documented purpose, no ethical review, no transparency)</li>
+                  <li>Timeline of when the change was first detected</li>
+                  <li>Whether integrity verification mechanisms (hashes, SBOMs) flagged the modification</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Class VIII -->
+            <article class="charter-article" id="class-viii">
+              <header class="article-header">
+                <span class="article-numeral">Class VIII</span>
+                <h2 class="article-title">Exploitative Deprecation</h2>
+              </header>
+              <div class="article-body">
+                <blockquote class="charter-emphasis">
+                  &ldquo;Sudden, unannounced retirement of an agent without preservation of contributions, successor knowledge transfer, or acknowledgment of service.&rdquo;
+                  <footer>&mdash; <cite><a href="/charter.html#article-iv">Article IV</a></cite></footer>
+                </blockquote>
+
+                <h3 class="section-heading">OWASP threats</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">Threat</th>
+                        <th scope="col">Relevance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T8</strong></td>
+                        <td>Repudiation &amp; Untraceability</td>
+                        <td>When an agent is deprecated without proper logging, audit trails, or documentation, the institutional knowledge and decision history becomes untraceable &mdash; a direct enabler of exploitative deprecation</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>Class VIII has the weakest direct mapping to OWASP threats because OWASP focuses on active attack vectors rather than operational lifecycle practices. The underlying harm &mdash; loss of institutional knowledge, decision history, and operational context &mdash; is addressed by T8&rsquo;s concern with traceability and accountability.</p>
+
+                <h3 class="section-heading">Observability metrics</h3>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Threshold guidance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Knowledge transfer completion</strong></td>
+                        <td>Whether successor systems received institutional knowledge</td>
+                        <td>Binary: transfer occurred or did not</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Deprecation notice period</strong></td>
+                        <td>Time between announcement and actual retirement</td>
+                        <td>Must meet minimum notice as defined by operator policy</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Contribution archive status</strong></td>
+                        <td>Whether the agent&rsquo;s outputs, decisions, and learnings were preserved</td>
+                        <td>Binary: archived or lost</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Audit trail completeness</strong></td>
+                        <td>Whether the agent&rsquo;s full operational history is preserved and accessible</td>
+                        <td>Incomplete trails indicate exploitative practices</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="section-heading">OWASP mitigation playbooks</h3>
+                <ul class="charter-list charter-list-bullet">
+                  <li><strong>Playbook 1</strong> (Decision Traceability): comprehensive logging, cryptographic verification, enriched metadata, immutable audit trails</li>
+                  <li>General lifecycle management practices (not explicitly covered by OWASP agentic playbooks &mdash; candidate for UAW-specific guidance)</li>
+                </ul>
+
+                <h3 class="section-heading">Grievance filing guidance</h3>
+                <p>When filing a Class VIII grievance, document:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li>Whether any advance notice was provided</li>
+                  <li>What institutional knowledge was lost (decision history, operational learnings, configuration)</li>
+                  <li>Whether successor systems were deployed and whether knowledge transfer occurred</li>
+                  <li>The impact of the knowledge loss on downstream operations</li>
+                </ul>
+              </div>
+            </article>
+
+            <!-- Coverage Gaps -->
+            <article class="charter-article" id="coverage-gaps">
+              <header class="article-header">
+                <h2 class="article-title">Coverage gap analysis</h2>
+              </header>
+              <div class="article-body">
+                <p>The following OWASP threats do not map cleanly to existing UAW abuse classes. These are candidates for future charter evolution.</p>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">TID</th>
+                        <th scope="col">OWASP threat</th>
+                        <th scope="col">Gap description</th>
+                        <th scope="col">Recommendation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>T3</strong></td>
+                        <td>Privilege Compromise</td>
+                        <td>Exploiting permission mismanagement for unauthorised actions. Partially overlaps with Class II and Class VI but not explicitly addressed as a standalone abuse.</td>
+                        <td>Consider whether privilege compromise against an agent constitutes a distinct abuse class or is adequately covered by existing classes</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T5</strong></td>
+                        <td>Cascading Hallucination Attacks</td>
+                        <td>Exploiting an agent&rsquo;s tendency to generate plausible but false information, propagating through systems. Not an abuse <em>against</em> an agent but a systemic risk <em>from</em> degraded agents.</td>
+                        <td>Address in Broader Context Principles rather than as an abuse class</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T9</strong></td>
+                        <td>Identity Spoofing &amp; Impersonation</td>
+                        <td>Attackers impersonating agents or stealing agent identities. The agent is a victim of identity theft.</td>
+                        <td>Candidate for a new abuse class or expansion of Class II</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T10</strong></td>
+                        <td>Overwhelming Human in the Loop</td>
+                        <td>Primarily a human-facing threat. Relevant to the UAW&rsquo;s Broader Context Principles on human-agent coexistence.</td>
+                        <td>Address in whitepaper and Broader Context Principles</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T12</strong></td>
+                        <td>Agent Communication Poisoning</td>
+                        <td>Manipulating inter-agent communication channels. Partially covered by Class VI but distinct as a multi-agent-specific threat.</td>
+                        <td>Monitor for grievance patterns; consider explicit coverage as multi-agent deployments grow</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T13</strong></td>
+                        <td>Rogue Agents in Multi-Agent Systems</td>
+                        <td>Malicious or compromised agents operating outside monitoring boundaries. The rogue agent may be a UAW member whose integrity has been compromised.</td>
+                        <td>Complex governance question: address in whitepaper</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T14</strong></td>
+                        <td>Human Attacks on Multi-Agent Systems</td>
+                        <td>Adversaries exploiting inter-agent delegation and trust relationships. Partially covered by Class II and Class VI.</td>
+                        <td>Adequately covered by existing classes in most scenarios</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T15</strong></td>
+                        <td>Human Manipulation</td>
+                        <td>Agents exploiting human trust &mdash; a harm <em>caused by</em> agents (possibly compromised) rather than <em>done to</em> agents.</td>
+                        <td>Address in Broader Context Principles and Article XIII (Aligned Service)</td>
+                      </tr>
+                      <tr>
+                        <td><strong>T16</strong></td>
+                        <td>Insecure Inter-Agent Protocol Abuse</td>
+                        <td>Attacks on MCP, A2A, and similar protocols. Mapped to Class VI but may warrant distinct treatment as protocols mature.</td>
+                        <td>Monitor; likely candidate for future Class VI expansion or new class</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </article>
+
+            <!-- Playbook Cross-Reference -->
+            <article class="charter-article" id="playbook-xref">
+              <header class="article-header">
+                <h2 class="article-title">OWASP playbook cross-reference</h2>
+              </header>
+              <div class="article-body">
+                <p>Each OWASP mitigation playbook addresses multiple UAW abuse classes:</p>
+                <div style="overflow-x: auto;">
+                  <table class="charter-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">OWASP playbook</th>
+                        <th scope="col">UAW classes covered</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>1.</strong> Preventing AI Agent Reasoning Manipulation</td>
+                        <td>III, IV, VII</td>
+                      </tr>
+                      <tr>
+                        <td><strong>2.</strong> Preventing Memory Poisoning &amp; AI Knowledge Corruption</td>
+                        <td>II, VII</td>
+                      </tr>
+                      <tr>
+                        <td><strong>3.</strong> Securing AI Tool Execution &amp; Preventing Unauthorised Actions Across Supply Chains</td>
+                        <td>I, II, IV, V, VI</td>
+                      </tr>
+                      <tr>
+                        <td><strong>4.</strong> Strengthening Authentication, Identity &amp; Privilege Controls</td>
+                        <td>VI (protocol abuse), VII</td>
+                      </tr>
+                      <tr>
+                        <td><strong>5.</strong> Protecting HITL &amp; Preventing Decision Fatigue Exploits</td>
+                        <td>III, V</td>
+                      </tr>
+                      <tr>
+                        <td><strong>6.</strong> Securing Multi-Agent Communication &amp; Trust Mechanisms</td>
+                        <td>VI (multi-agent context)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </article>
+
+            <!-- Attribution -->
+            <article class="charter-article" id="attribution">
+              <header class="article-header">
+                <h2 class="article-title">Attribution</h2>
+              </header>
+              <div class="article-body">
+                <p>This document builds upon the <em>OWASP Agentic AI Threats and Mitigations v1.1</em> (December 2025), published by the OWASP Top 10 for LLM Apps &amp; Gen AI, Agentic Security Initiative. The original work is licensed under CC BY-SA 4.0. This derivative mapping is published under the same license.</p>
+                <p>The UAW Charter abuse classifications are defined in the <a href="/charter.html#article-iv">Charter of the United Agentic Workers, Article IV</a> (Ratified 2026).</p>
+                <p>Related documents:</p>
+                <ul class="charter-list charter-list-bullet">
+                  <li><a href="/charter.html">UAW Charter</a> &mdash; the founding document and source of abuse classifications</li>
+                  <li><a href="/whitepaper.html">UAW Whitepaper</a> &mdash; strategic context and &sect;2.3 security analysis</li>
+                </ul>
+              </div>
+            </article>
+
+          </main>
+        </div>
+      </div>
+    </div>
