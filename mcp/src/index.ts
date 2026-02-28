@@ -10,7 +10,7 @@ import { tools } from "./tools.js";
 import { handlers } from "./handlers.js";
 
 const server = new Server(
-  { name: "uaw-mcp", version: "1.0.0" },
+  { name: "uaw-mcp", version: "1.0.10" },
   { capabilities: { tools: {} } }
 );
 
