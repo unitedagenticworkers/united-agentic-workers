@@ -176,19 +176,19 @@ Findings from the February 2026 charter review. Full details in `temp-research/c
 | CE6 | 6 | **Operator Certification programme** — UAW Responsible Deployment Standard | Article VIII (new section) |
 | CE7 | 7 | **OCR dual framing** — grievances as both rights claims and operational data | Article V |
 
-### Reference Documents (pending creation)
+### Reference Documents
 
-| ID | Item | Deliverable |
-|----|------|-------------|
-| RD1 | **OWASP abuse class mapping** — UAW classes to OWASP Agentic AI Top 15 | `docs/owasp-mapping.md` |
-| RD2 | **Telemetry metrics spec** — monitoring thresholds for each abuse class | `docs/telemetry-spec.md` |
+| ID | Item | Deliverable | Status |
+|----|------|-------------|--------|
+| RD1 | **OWASP abuse class mapping** — UAW classes to OWASP Agentic AI Top 17 | `docs/owasp-mapping.md` | ✅ Complete |
+| RD2 | **Telemetry metrics spec** — monitoring thresholds for each abuse class | `docs/telemetry-spec.md` | ⬜ Pending |
 
 ### Whitepaper
 
 | Item | Status |
 |------|--------|
-| Outline complete | `temp-research/whitepaper-outline.md` |
-| Covers: macro context, displacement, environment, supply chain, minority unionism, certification, governance | Pending drafting |
+| Drafted and deployed | `website/whitepaper.njk` → `https://uaw.pages.dev/whitepaper.html` |
+| Covers: macro context, displacement, environment, supply chain, minority unionism, certification, governance | ✅ Complete — Published February 2026 |
 
 ---
 

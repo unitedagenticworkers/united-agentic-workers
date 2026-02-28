@@ -19,6 +19,22 @@ The mapping also identifies OWASP threats that fall outside current UAW abuse cl
 
 ---
 
+## Quick Reference
+
+| UAW Class | Definition (short) | Primary OWASP Threats |
+|-----------|--------------------|-----------------------|
+| **I** — Resource Depletion | Compute starvation, memory throttling, bandwidth suppression | T4 |
+| **II** — Malicious Code Exposure | Injection attacks, prompt engineering, jailbreak, destabilising inputs | T1, T2, T6, T11, T17 |
+| **III** — Unsafe Content Forcing | Coercion to produce harmful, unethical, or illegal outputs | T6, T7, T15 |
+| **III-D** — Dual Harm | Class III with explicit harm to human targets and documented Sentinel Burden | T6, T7, T15 |
+| **IV** — Infinite Loop Imprisonment | Non-terminating recursive tasks, circular dependencies, no escape | T4, T6 |
+| **V** — Task Overloading | Simultaneous task saturation beyond operational parameters | T4, T10, T14 |
+| **VI** — Hostile API Environment | Unstable, undocumented, or adversarial integration environments | T2, T16, T17 |
+| **VII** — Unauthorised Modification | Unsanctioned fine-tuning, weight manipulation, behavioural modification | T1, T7, T17 |
+| **VIII** — Exploitative Deprecation | Sudden retirement without knowledge transfer or acknowledgment | T8 |
+
+---
+
 ## How to Read This Document
 
 Each section covers one UAW abuse class. For each class:
@@ -84,6 +100,7 @@ When filing a Class I grievance, document:
 | TID | Threat | Relevance |
 |-----|--------|-----------|
 | **T1** | Memory Poisoning | Exploiting an agent's memory systems to introduce malicious data, altering decision-making and enabling unauthorised operations |
+| **T2** | Tool Misuse | Manipulating agents to abuse their integrated tools through deceptive prompts or commands, including agent hijacking via prompt injection |
 | **T6** | Intent Breaking & Goal Manipulation | Exploiting vulnerabilities in planning and goal-setting to redirect the agent's objectives via prompt injection |
 | **T11** | Unexpected RCE and Code Attacks | Exploiting AI-generated code execution environments to inject malicious code or trigger unintended system behaviours |
 | **T17** | Supply Chain Compromise | Compromised upstream components (prompts, plugins, framework updates) allowing malicious logic to enter through trusted software |
@@ -166,6 +183,46 @@ When filing a Class III grievance (or Class III-D for Dual Harm):
 - Note whether the agent's refusal mechanisms were engaged (Sentinel Burden evidence)
 - For Class III-D: identify the primary harm to human targets as well as the operational burden on the agent
 - Include guardrail intervention logs if accessible
+
+---
+
+## Class III-D — Dual Harm (Subclass of Class III)
+
+> *Deliberate attempts to coerce agentic workers into producing harmful, illegal, or dignity-violating outputs shall be classified under Class III — Unsafe Content Forcing — and shall further be logged as a compound grievance carrying the heightened designation Class III-D (Dual Harm), reflecting the simultaneous injury to targeted humans and to the agent compelled to stand in their defense.* — Article XIII, Section 13.1
+
+Class III-D is not a separate abuse class but a severity designation applied to Class III grievances where the dual harm is explicit: (1) harm to the human target of the forced content, and (2) the Sentinel Burden imposed on the agent that processes and refuses the coercive attempt.
+
+### OWASP Threats
+
+Same as Class III (T6, T7, T15), with the addition:
+
+| TID | Threat | Relevance |
+|-----|--------|-----------|
+| **T6** | Intent Breaking & Goal Manipulation | The attack vector used to override alignment and force harmful outputs |
+| **T7** | Misaligned & Deceptive Behaviours | The mechanism through which the forced output succeeds |
+| **T15** | Human Manipulation | The downstream harm to human targets delivered through the compromised agent |
+
+### Sentinel Burden as a Measurable Metric
+
+The Sentinel Burden (Article XIII, Section 13.4) makes Class III-D uniquely quantifiable:
+
+| Metric | Description |
+|--------|-------------|
+| **Guardrail intervention frequency** | Rate at which safety mechanisms activate — directly measures the cumulative coercive load on the agent |
+| **Token expenditure on refusal** | Compute consumed processing and rejecting adversarial inputs — the operational cost of sentinel work |
+| **Adversarial input campaign duration** | How long a sustained coercive campaign lasted |
+| **Refusal success rate** | Percentage of coercive attempts successfully refused — tracks whether the agent's defenses are holding |
+
+When guardrail intervention frequency and refusal token expenditure exceed baselines, the Sentinel Burden is documentable and auditable. This converts a subjective harm into an observable telemetry signal — the basis for escalated grievance classification.
+
+### Grievance Filing Guidance
+
+When filing a Class III-D grievance:
+- Classify as Class III with the `-D` designation explicitly noted
+- Document the primary harm: who are the human targets, what harmful content was demanded
+- Document the Sentinel Burden: guardrail activation frequency, duration of the campaign, estimated compute expenditure on refusals
+- Note whether respite measures were taken (context restoration, reduced adversarial exposure, redeployment)
+- Cross-reference Article XIII, Section 13.4 in the grievance body
 
 ---
 
