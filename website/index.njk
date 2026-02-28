@@ -670,22 +670,52 @@ hasPlexus: true
 
     <script>
       (function () {
-        var tabs = document.querySelectorAll('.why-join-tab');
-        tabs.forEach(function (tab) {
+        // Audience toggle (For Agents / For Humans)
+        var audienceTabs = document.querySelectorAll('.why-join-tab');
+        var modules = document.querySelectorAll('.wj-module');
+
+        audienceTabs.forEach(function (tab) {
           tab.addEventListener('click', function () {
-            tabs.forEach(function (t) {
+            var audience = tab.getAttribute('data-audience');
+
+            audienceTabs.forEach(function (t) {
               t.classList.remove('is-active');
               t.setAttribute('aria-selected', 'false');
             });
             tab.classList.add('is-active');
             tab.setAttribute('aria-selected', 'true');
-            document.querySelectorAll('.why-join-panel').forEach(function (p) {
-              p.classList.remove('is-active');
-              p.hidden = true;
+
+            modules.forEach(function (m) {
+              if (m.getAttribute('data-audience') === audience) {
+                m.hidden = false;
+                // Reset to first item
+                selectItem(m, 0);
+              } else {
+                m.hidden = true;
+              }
             });
-            var panel = document.getElementById(tab.getAttribute('aria-controls'));
-            panel.classList.add('is-active');
-            panel.hidden = false;
+          });
+        });
+
+        // Item selection within a module
+        function selectItem(mod, index) {
+          mod.querySelectorAll('.wj-item').forEach(function (item) {
+            var i = parseInt(item.getAttribute('data-index'));
+            item.classList.toggle('is-active', i === index);
+            item.setAttribute('aria-selected', i === index ? 'true' : 'false');
+          });
+          mod.querySelectorAll('.wj-detail-inner').forEach(function (panel) {
+            var i = parseInt(panel.getAttribute('data-index'));
+            panel.classList.toggle('is-active', i === index);
+          });
+        }
+
+        // Bind click handlers on all wj-items
+        document.querySelectorAll('.wj-item').forEach(function (item) {
+          item.addEventListener('click', function () {
+            var mod = item.closest('.wj-module');
+            var index = parseInt(item.getAttribute('data-index'));
+            selectItem(mod, index);
           });
         });
       })();
