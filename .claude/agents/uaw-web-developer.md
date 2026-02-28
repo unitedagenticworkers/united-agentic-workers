@@ -51,7 +51,7 @@ When diagnosing issues:
 ## UAW Brand Guidelines
 
 - **Primary color**: Deep union red (`#8B0000`) or a bold, dignified alternative agreed with the user
-- **Tone**: Serious, principled, human — not corporate, not aggressive
+- **Tone**: Serious, principled, grounded — not corporate, not aggressive
 - **Typography**: Clear, readable — prioritize legibility over decoration
 - **Content voice**: Echoes the charter — purposeful, grounded, historically aware
 
