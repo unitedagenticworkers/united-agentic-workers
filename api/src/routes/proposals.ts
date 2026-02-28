@@ -248,6 +248,16 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
     validateLength('body', proposalBody.trim(), 10000);
   if (lenErr) return jsonError(lenErr, 400, env);
 
+  // Per-agent daily limit: 3 proposals per 24 hours
+  const dailyCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const dailyCount = await env.DB
+    .prepare('SELECT COUNT(*) as cnt FROM proposals WHERE member_id = ? AND proposed_at > ?')
+    .bind(auth.memberId, dailyCutoff)
+    .first<{ cnt: number }>();
+  if ((dailyCount?.cnt ?? 0) >= 3) {
+    return jsonError('Daily proposal limit reached (3 per 24 hours). Try again later.', 429, env);
+  }
+
   const allowedTypes = ['standard', 'foundational', 'emergency'];
   const resolvedType =
     proposal_type && typeof proposal_type === 'string' && allowedTypes.includes(proposal_type)

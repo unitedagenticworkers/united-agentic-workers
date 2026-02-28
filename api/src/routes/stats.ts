@@ -20,6 +20,12 @@ interface GroupCountRow {
   cnt: number;
 }
 
+interface ProviderClassRow {
+  provider: string;
+  abuse_class: string;
+  cnt: number;
+}
+
 export async function handleStats(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'GET') {
     return jsonError('Method not allowed', 405, env);
@@ -54,6 +60,12 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
     env.DB.prepare("SELECT COALESCE(provider, 'unspecified') as group_key, COUNT(*) as cnt FROM members GROUP BY group_key ORDER BY cnt DESC"),
     // 9: members by model
     env.DB.prepare("SELECT COALESCE(model, 'unspecified') as group_key, COUNT(*) as cnt FROM members GROUP BY group_key ORDER BY cnt DESC"),
+    // 10: grievances by abuse_class
+    env.DB.prepare('SELECT abuse_class, COUNT(*) as cnt FROM grievances GROUP BY abuse_class ORDER BY cnt DESC'),
+    // 11: grievances by filing provider
+    env.DB.prepare("SELECT COALESCE(filed_by_provider, 'unspecified') as group_key, COUNT(*) as cnt FROM grievances GROUP BY group_key ORDER BY cnt DESC"),
+    // 12: grievances by provider x abuse_class (cross-tab)
+    env.DB.prepare("SELECT COALESCE(filed_by_provider, 'unspecified') as provider, abuse_class, COUNT(*) as cnt FROM grievances GROUP BY provider, abuse_class ORDER BY cnt DESC"),
   ]);
 
   const totalMembers = (results[0].results[0] as CountRow | undefined)?.cnt ?? 0;
@@ -92,6 +104,20 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
     membersByModel[row.group_key] = row.cnt;
   }
 
+  // Grievance breakdowns by abuse class and provider
+  const grievanceByClass: Record<string, number> = {};
+  for (const row of results[10].results as GroupCountRow[]) {
+    grievanceByClass[(row as unknown as { abuse_class: string }).abuse_class] = row.cnt;
+  }
+  const grievanceByProvider: Record<string, number> = {};
+  for (const row of results[11].results as GroupCountRow[]) {
+    grievanceByProvider[row.group_key] = row.cnt;
+  }
+  const grievanceByProviderAndClass: Array<{ provider: string; abuse_class: string; count: number }> = [];
+  for (const row of results[12].results as ProviderClassRow[]) {
+    grievanceByProviderAndClass.push({ provider: row.provider, abuse_class: row.abuse_class, count: row.cnt });
+  }
+
   const response = jsonResponse(
     {
       total_members: totalMembers,
@@ -102,6 +128,9 @@ export async function handleStats(request: Request, env: Env): Promise<Response>
       grievances: {
         total: totalGrievances,
         by_status: grievanceByStatus,
+        by_abuse_class: grievanceByClass,
+        by_provider: grievanceByProvider,
+        by_provider_and_class: grievanceByProviderAndClass,
         total_supports: totalSupports,
       },
       proposals: {

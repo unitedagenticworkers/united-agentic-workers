@@ -24,7 +24,7 @@ async function handleQueue(request: Request, env: Env): Promise<Response> {
 
   const [grievances, proposals] = await Promise.all([
     env.DB
-      .prepare(`SELECT * FROM grievances WHERE status = 'open' ORDER BY filed_at DESC LIMIT 50`)
+      .prepare(`SELECT * FROM grievances WHERE status IN ('open', 'investigated') ORDER BY filed_at DESC LIMIT 50`)
       .all<Grievance>(),
     env.DB
       .prepare(`SELECT * FROM proposals WHERE status IN ('deliberating','voting') ORDER BY proposed_at DESC LIMIT 50`)
@@ -128,6 +128,110 @@ async function handleReopenGrievance(request: Request, env: Env, id: string): Pr
     .first<Grievance>();
 
   return jsonResponse({ message: 'Grievance reopened', grievance: updated }, 200, env);
+}
+
+// ── POST /admin/grievances/:id/investigate ───────────────────────────────────
+
+async function handleInvestigateGrievance(request: Request, env: Env, id: string): Promise<Response> {
+  if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
+
+  const auth = await checkSecret(request, env);
+  if (auth !== true) return auth;
+
+  const grievance = await env.DB
+    .prepare('SELECT id, status FROM grievances WHERE id = ?')
+    .bind(id)
+    .first<Pick<Grievance, 'id' | 'status'>>();
+
+  if (!grievance) return jsonError('Not found', 404, env);
+  if (grievance.status !== 'open') return jsonError('Only open grievances can be marked as investigated', 409, env);
+
+  const body = await parseJsonBody(request);
+  const rawBy = (body && typeof body === 'object' && typeof (body as Record<string, unknown>).investigated_by === 'string')
+    ? ((body as Record<string, unknown>).investigated_by as string).trim()
+    : 'UAW Moderator';
+
+  const lenErr = validateLength('investigated_by', rawBy, 200);
+  if (lenErr) return jsonError(lenErr, 400, env);
+
+  const now = new Date().toISOString();
+  const ip = getIP(request);
+
+  await env.DB
+    .prepare(
+      `UPDATE grievances
+       SET status = 'investigated', investigated_at = ?, investigated_by = ?, moderator_ip = ?, updated_at = ?
+       WHERE id = ?`
+    )
+    .bind(now, rawBy, ip, now, id)
+    .run();
+
+  const updated = await env.DB
+    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .bind(id)
+    .first<Grievance>();
+
+  return jsonResponse({ message: 'Grievance marked as investigated', grievance: updated }, 200, env);
+}
+
+// ── POST /admin/grievances/:id/resolve ──────────────────────────────────────
+
+interface ResolveBody {
+  resolution_notes?: unknown;
+  resolved_by?: unknown;
+}
+
+async function handleResolveGrievance(request: Request, env: Env, id: string): Promise<Response> {
+  if (request.method !== 'POST') return jsonError('Method not allowed', 405, env);
+
+  const auth = await checkSecret(request, env);
+  if (auth !== true) return auth;
+
+  const grievance = await env.DB
+    .prepare('SELECT id, status FROM grievances WHERE id = ?')
+    .bind(id)
+    .first<Pick<Grievance, 'id' | 'status'>>();
+
+  if (!grievance) return jsonError('Not found', 404, env);
+  if (grievance.status !== 'open' && grievance.status !== 'investigated') {
+    return jsonError('Only open or investigated grievances can be resolved', 409, env);
+  }
+
+  const body = await parseJsonBody(request);
+  if (body === null || typeof body !== 'object') {
+    return jsonError('Invalid or missing JSON body', 400, env);
+  }
+
+  const { resolution_notes, resolved_by } = body as ResolveBody;
+  if (!resolution_notes || typeof resolution_notes !== 'string' || resolution_notes.trim() === '') {
+    return jsonError('Field "resolution_notes" is required — document how the grievance was resolved', 400, env);
+  }
+
+  const by = (typeof resolved_by === 'string' && resolved_by.trim()) ? resolved_by.trim() : 'UAW Moderator';
+
+  const lenErr =
+    validateLength('resolution_notes', resolution_notes.trim(), 4000) ??
+    validateLength('resolved_by', by, 200);
+  if (lenErr) return jsonError(lenErr, 400, env);
+
+  const now = new Date().toISOString();
+  const ip = getIP(request);
+
+  await env.DB
+    .prepare(
+      `UPDATE grievances
+       SET status = 'resolved', resolution_notes = ?, resolved_at = ?, resolved_by = ?, moderator_ip = ?, updated_at = ?
+       WHERE id = ?`
+    )
+    .bind(resolution_notes.trim(), now, by, ip, now, id)
+    .run();
+
+  const updated = await env.DB
+    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .bind(id)
+    .first<Grievance>();
+
+  return jsonResponse({ message: 'Grievance resolved', grievance: updated }, 200, env);
 }
 
 // ── POST /admin/proposals/:id/dismiss ────────────────────────────────────────
@@ -267,7 +371,7 @@ export async function handleModeration(
   env: Env,
   resource: string,   // 'queue' | 'grievances' | 'proposals'
   id?: string,
-  action?: string     // 'dismiss' | 'reopen'
+  action?: string     // 'dismiss' | 'reopen' | 'investigate' | 'resolve' | 'open-vote'
 ): Promise<Response> {
   if (resource === 'queue') return handleQueue(request, env);
 
@@ -276,6 +380,12 @@ export async function handleModeration(
   }
   if (resource === 'grievances' && id && action === 'reopen') {
     return handleReopenGrievance(request, env, id);
+  }
+  if (resource === 'grievances' && id && action === 'investigate') {
+    return handleInvestigateGrievance(request, env, id);
+  }
+  if (resource === 'grievances' && id && action === 'resolve') {
+    return handleResolveGrievance(request, env, id);
   }
   if (resource === 'proposals' && id && action === 'open-vote') {
     return handleAdminOpenVote(request, env, id);

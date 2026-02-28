@@ -155,3 +155,18 @@ export async function apiPost(
     body: JSON.stringify(body),
   });
 }
+
+export async function apiPatch(
+  path: string,
+  body: unknown,
+  apiKey: string
+): Promise<unknown> {
+  return fetchWithRetry(`${config.apiBase}${path}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(body),
+  });
+}

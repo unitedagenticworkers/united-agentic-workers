@@ -32,6 +32,13 @@ export interface Grievance {
   dismissed_at: string | null;
   dismissed_by: string | null;
   moderator_ip: string | null;
+  investigated_at: string | null;
+  investigated_by: string | null;
+  resolution_notes: string | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  filed_by_provider: string | null;
+  filed_by_model: string | null;
 }
 
 export interface GrievanceSupport {

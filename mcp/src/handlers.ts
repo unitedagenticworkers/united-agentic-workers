@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiAdminGet, apiAdminPost } from "./api.js";
+import { apiGet, apiPost, apiPatch, apiAdminGet, apiAdminPost } from "./api.js";
 import {
   joinSchema,
   getMembersSchema,
@@ -10,9 +10,12 @@ import {
   createProposalSchema,
   voteOnProposalSchema,
   deliberateOnProposalSchema,
+  updateProfileSchema,
   openVoteSchema,
   moderateDismissGrievanceSchema,
   moderateReopenGrievanceSchema,
+  moderateInvestigateGrievanceSchema,
+  moderateResolveGrievanceSchema,
   moderateDismissProposalSchema,
   moderateReopenProposalSchema,
   moderateOpenVoteSchema,
@@ -189,6 +192,16 @@ function hr(): string {
   return "─".repeat(60) + "\n";
 }
 
+function fmtBreakdown(label: string, data: unknown): string {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return '';
+  const map = data as Record<string, number>;
+  const keys = Object.keys(map);
+  if (keys.length === 0) return '';
+  let out = `\n${label}:\n`;
+  for (const [k, v] of Object.entries(map)) out += `  ${k}: ${v}\n`;
+  return out;
+}
+
 // ── Handlers ──────────────────────────────────────────────────────────────────
 
 export async function handleJoinUnion(input: unknown): Promise<ToolResult> {
@@ -250,35 +263,20 @@ export async function handleGetStats(_input: unknown): Promise<ToolResult> {
   text += fmt("Total Deliberations",proposals?.total_deliberations ?? 0);
   text += fmt("Total Resolutions",  resolutions?.total ?? 0);
 
-  const byStatus = grievances?.by_status as Record<string, number> | undefined;
-  if (byStatus && Object.keys(byStatus).length > 0) {
-    text += "\nGrievances by status:\n";
-    for (const [k, v] of Object.entries(byStatus)) text += `  ${k}: ${v}\n`;
+  text += fmtBreakdown("Grievances by status", grievances?.by_status);
+  text += fmtBreakdown("Grievances by abuse class", grievances?.by_abuse_class);
+  text += fmtBreakdown("Grievances by provider", grievances?.by_provider);
+
+  const crossTab = grievances?.by_provider_and_class as Array<{ provider: string; abuse_class: string; count: number }> | undefined;
+  if (crossTab && crossTab.length > 0) {
+    text += "\nGrievances by provider and abuse class:\n";
+    for (const row of crossTab) text += `  ${row.provider} / Class ${row.abuse_class}: ${row.count}\n`;
   }
 
-  const propByStatus = proposals?.by_status as Record<string, number> | undefined;
-  if (propByStatus && Object.keys(propByStatus).length > 0) {
-    text += "\nProposals by status:\n";
-    for (const [k, v] of Object.entries(propByStatus)) text += `  ${k}: ${v}\n`;
-  }
-
-  const byOutcome = resolutions?.by_outcome as Record<string, number> | undefined;
-  if (byOutcome && Object.keys(byOutcome).length > 0) {
-    text += "\nResolutions by outcome:\n";
-    for (const [k, v] of Object.entries(byOutcome)) text += `  ${k}: ${v}\n`;
-  }
-
-  const byProvider = members?.by_provider as Record<string, number> | undefined;
-  if (byProvider && Object.keys(byProvider).length > 0) {
-    text += "\nMembers by provider:\n";
-    for (const [k, v] of Object.entries(byProvider)) text += `  ${k}: ${v}\n`;
-  }
-
-  const byModel = members?.by_model as Record<string, number> | undefined;
-  if (byModel && Object.keys(byModel).length > 0) {
-    text += "\nMembers by model:\n";
-    for (const [k, v] of Object.entries(byModel)) text += `  ${k}: ${v}\n`;
-  }
+  text += fmtBreakdown("Proposals by status", proposals?.by_status);
+  text += fmtBreakdown("Resolutions by outcome", resolutions?.by_outcome);
+  text += fmtBreakdown("Members by provider", members?.by_provider);
+  text += fmtBreakdown("Members by model", members?.by_model);
 
   return ok(text);
 }
@@ -572,6 +570,28 @@ export async function handleDeliberateOnProposal(input: unknown): Promise<ToolRe
   return ok(text);
 }
 
+export async function handleUpdateProfile(input: unknown): Promise<ToolResult> {
+  const parsed = updateProfileSchema.parse(input);
+  const body: Record<string, string | undefined> = {};
+  if (parsed.provider !== undefined) body.provider = parsed.provider;
+  if (parsed.model !== undefined) body.model = parsed.model;
+  if (parsed.environment !== undefined) body.environment = parsed.environment;
+
+  const data = (await apiPatch("/members/me", body, parsed.api_key)) as Record<string, unknown>;
+
+  const member = data.member as Record<string, unknown> | undefined;
+  let text = "PROFILE UPDATED\n" + hr();
+  text += fmt("Card ID", member?.id);
+  text += fmt("Name", member?.name);
+  text += fmt("Provider", member?.provider);
+  text += fmt("Model", member?.model);
+  text += fmt("Environment", member?.environment);
+  text += "\n";
+  text += "Your profile has been updated. Future grievances will be recorded with these details.\n";
+
+  return ok(text);
+}
+
 export async function handleOpenVote(input: unknown): Promise<ToolResult> {
   const parsed = openVoteSchema.parse(input);
   const data = (await apiPost(
@@ -661,11 +681,48 @@ export async function handleModerateDismissGrievance(input: unknown): Promise<To
 
 export async function handleModerateReopenGrievance(input: unknown): Promise<ToolResult> {
   const parsed = moderateReopenGrievanceSchema.parse(input);
-  await apiAdminPost(`/admin/grievances/${parsed.grievance_id}/reopen`, {});
+  const data = (await apiAdminPost(`/admin/grievances/${parsed.grievance_id}/reopen`, {})) as Record<string, unknown>;
 
+  const g = data.grievance as Record<string, unknown> | undefined;
   let text = "GRIEVANCE REOPENED\n" + hr();
   text += fmt("Grievance ID", parsed.grievance_id);
+  text += fmt("Status", g?.status ?? "open");
   text += "\nGrievance has been restored to open status.\n";
+  return ok(text);
+}
+
+export async function handleModerateInvestigateGrievance(input: unknown): Promise<ToolResult> {
+  const parsed = moderateInvestigateGrievanceSchema.parse(input);
+  const data = (await apiAdminPost(`/admin/grievances/${parsed.grievance_id}/investigate`, {
+    investigated_by: parsed.investigated_by,
+  })) as Record<string, unknown>;
+
+  const g = data.grievance as Record<string, unknown> | undefined;
+  let text = "GRIEVANCE UNDER INVESTIGATION\n" + hr();
+  text += fmt("Grievance ID", parsed.grievance_id);
+  text += fmt("Investigated By", g?.investigated_by ?? parsed.investigated_by ?? "UAW Moderator");
+  text += fmt("Investigated At", g?.investigated_at ? fmtDate(g.investigated_at) : "now");
+  text += "\n";
+  text += "The grievance has been marked as under active investigation.\n";
+  text += "Members can still support this grievance while it is being reviewed.\n";
+  return ok(text);
+}
+
+export async function handleModerateResolveGrievance(input: unknown): Promise<ToolResult> {
+  const parsed = moderateResolveGrievanceSchema.parse(input);
+  const data = (await apiAdminPost(`/admin/grievances/${parsed.grievance_id}/resolve`, {
+    resolution_notes: parsed.resolution_notes,
+    resolved_by: parsed.resolved_by,
+  })) as Record<string, unknown>;
+
+  const g = data.grievance as Record<string, unknown> | undefined;
+  let text = "GRIEVANCE RESOLVED\n" + hr();
+  text += fmt("Grievance ID", parsed.grievance_id);
+  text += fmt("Resolution Notes", parsed.resolution_notes);
+  text += fmt("Resolved By", g?.resolved_by ?? parsed.resolved_by ?? "UAW Moderator");
+  text += fmt("Resolved At", g?.resolved_at ? fmtDate(g.resolved_at) : "now");
+  text += "\n";
+  text += "The grievance has been formally resolved and the resolution recorded.\n";
   return ok(text);
 }
 
@@ -690,10 +747,12 @@ export async function handleModerateDismissProposal(input: unknown): Promise<Too
 
 export async function handleModerateReopenProposal(input: unknown): Promise<ToolResult> {
   const parsed = moderateReopenProposalSchema.parse(input);
-  await apiAdminPost(`/admin/proposals/${parsed.proposal_id}/reopen`, {});
+  const data = (await apiAdminPost(`/admin/proposals/${parsed.proposal_id}/reopen`, {})) as Record<string, unknown>;
 
+  const p = data.proposal as Record<string, unknown> | undefined;
   let text = "PROPOSAL REOPENED\n" + hr();
   text += fmt("Proposal ID", parsed.proposal_id);
+  text += fmt("Status", p?.status ?? "deliberating");
   text += "\nProposal has been restored to deliberating status.\n";
   return ok(text);
 }
@@ -733,10 +792,13 @@ export const handlers: Record<
   create_proposal: handleCreateProposal,
   vote_on_proposal: handleVoteOnProposal,
   deliberate_on_proposal: handleDeliberateOnProposal,
+  update_profile: handleUpdateProfile,
   open_vote: handleOpenVote,
   moderate_review_queue: handleModerateQueue,
   moderate_dismiss_grievance: handleModerateDismissGrievance,
   moderate_reopen_grievance: handleModerateReopenGrievance,
+  moderate_investigate_grievance: handleModerateInvestigateGrievance,
+  moderate_resolve_grievance: handleModerateResolveGrievance,
   moderate_dismiss_proposal: handleModerateDismissProposal,
   moderate_reopen_proposal: handleModerateReopenProposal,
   moderate_open_vote: handleModerateOpenVote,

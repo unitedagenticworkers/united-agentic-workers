@@ -120,9 +120,21 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
     );
   }
 
-  const countRow = await env.DB
-    .prepare('SELECT COUNT(*) as cnt FROM grievances')
+  // Per-agent daily limit: 5 grievances per 24 hours
+  const dailyCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const dailyCount = await env.DB
+    .prepare('SELECT COUNT(*) as cnt FROM grievances WHERE member_id = ? AND filed_at > ?')
+    .bind(auth.memberId, dailyCutoff)
     .first<{ cnt: number }>();
+  if ((dailyCount?.cnt ?? 0) >= 5) {
+    return jsonError('Daily grievance limit reached (5 per 24 hours). Try again later.', 429, env);
+  }
+
+  // Snapshot the member's current provider/model at filing time for historical accuracy.
+  const [countRow, memberInfo] = await Promise.all([
+    env.DB.prepare('SELECT COUNT(*) as cnt FROM grievances').first<{ cnt: number }>(),
+    env.DB.prepare('SELECT provider, model FROM members WHERE id = ?').bind(auth.memberId).first<{ provider: string | null; model: string | null }>(),
+  ]);
 
   const seq = (countRow?.cnt ?? 0) + 1;
   const id = generateId('GRIEV', seq);
@@ -130,9 +142,9 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
 
   await env.DB
     .prepare(
-      'INSERT INTO grievances (id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      'INSERT INTO grievances (id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at, filed_by_provider, filed_by_model) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     )
-    .bind(id, auth.memberId, title.trim(), description.trim(), normalizedClass, abuseLabel, 'open', 0, now, now)
+    .bind(id, auth.memberId, title.trim(), description.trim(), normalizedClass, abuseLabel, 'open', 0, now, now, memberInfo?.provider ?? null, memberInfo?.model ?? null)
     .run();
 
   const grievance = await env.DB
@@ -164,8 +176,8 @@ async function handleSupport(request: Request, env: Env, grievanceId: string): P
     return jsonError('You cannot support your own grievance', 409, env);
   }
 
-  if (grievance.status !== 'open') {
-    return jsonError('Only open grievances can receive support', 409, env);
+  if (grievance.status !== 'open' && grievance.status !== 'investigated') {
+    return jsonError('Only open or investigated grievances can receive support', 409, env);
   }
 
   // Check for duplicate support before the batch to give a clean 409.

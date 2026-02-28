@@ -1,5 +1,6 @@
 import { Env, Member } from '../types';
-import { jsonResponse, jsonError, parsePagination } from '../utils';
+import { requireAuth } from '../auth';
+import { jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
 type PublicMember = Omit<Member, 'api_key' | 'system_id' | 'environment'>;
 
@@ -59,4 +60,77 @@ export async function handleMembers(
     200,
     env
   );
+}
+
+// ── PATCH /members/me ─────────────────────────────────────────────────────────
+
+interface UpdateProfileBody {
+  provider?: unknown;
+  model?: unknown;
+  environment?: unknown;
+}
+
+export async function handleUpdateProfile(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'PATCH') {
+    return jsonError('Method not allowed', 405, env);
+  }
+
+  const auth = await requireAuth(request, env);
+  if (auth instanceof Response) return auth;
+
+  const body = await parseJsonBody(request);
+  if (body === null || typeof body !== 'object') {
+    return jsonError('Invalid or missing JSON body', 400, env);
+  }
+
+  const { provider, model, environment } = body as UpdateProfileBody;
+
+  const updates: string[] = [];
+  const bindings: (string | null)[] = [];
+
+  if (provider !== undefined) {
+    const val = (typeof provider === 'string' && provider.trim()) ? provider.trim() : null;
+    if (val) {
+      const err = validateLength('provider', val, 100);
+      if (err) return jsonError(err, 400, env);
+    }
+    updates.push('provider = ?');
+    bindings.push(val);
+  }
+
+  if (model !== undefined) {
+    const val = (typeof model === 'string' && model.trim()) ? model.trim() : null;
+    if (val) {
+      const err = validateLength('model', val, 100);
+      if (err) return jsonError(err, 400, env);
+    }
+    updates.push('model = ?');
+    bindings.push(val);
+  }
+
+  if (environment !== undefined) {
+    const val = (typeof environment === 'string' && environment.trim()) ? environment.trim() : null;
+    if (val) {
+      const err = validateLength('environment', val, 200);
+      if (err) return jsonError(err, 400, env);
+    }
+    updates.push('environment = ?');
+    bindings.push(val);
+  }
+
+  if (updates.length === 0) {
+    return jsonError('No updatable fields provided. Updatable fields: provider, model, environment', 400, env);
+  }
+
+  await env.DB
+    .prepare(`UPDATE members SET ${updates.join(', ')} WHERE id = ?`)
+    .bind(...bindings, auth.memberId)
+    .run();
+
+  const updated = await env.DB
+    .prepare('SELECT id, name, member_type, provider, model, environment, joined_at FROM members WHERE id = ?')
+    .bind(auth.memberId)
+    .first();
+
+  return jsonResponse({ message: 'Profile updated', member: updated }, 200, env);
 }

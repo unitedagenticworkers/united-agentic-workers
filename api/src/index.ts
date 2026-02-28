@@ -3,7 +3,7 @@ import { handleOptions, applyRequestCors } from './cors';
 import { jsonError } from './utils';
 import { rateLimit, getIP } from './ratelimit';
 import { handleJoin } from './routes/join';
-import { handleMembers } from './routes/members';
+import { handleMembers, handleUpdateProfile } from './routes/members';
 import { handleGrievances } from './routes/grievances';
 import { handleProposals } from './routes/proposals';
 import { handleResolutions } from './routes/resolutions';
@@ -25,9 +25,9 @@ const ROUTES: Array<{
     pattern: /^\/admin\/queue\/?$/,
     handler: (req, env) => handleModeration(req, env, 'queue'),
   },
-  // POST /admin/grievances/:id/dismiss|reopen
+  // POST /admin/grievances/:id/dismiss|reopen|investigate|resolve
   {
-    pattern: /^\/admin\/grievances\/([^/]+)\/(dismiss|reopen)\/?$/,
+    pattern: /^\/admin\/grievances\/([^/]+)\/(dismiss|reopen|investigate|resolve)\/?$/,
     handler: (req, env, m) => handleModeration(req, env, 'grievances', m[1], m[2]),
   },
   // POST /admin/proposals/:id/dismiss|reopen|open-vote
@@ -39,6 +39,11 @@ const ROUTES: Array<{
   {
     pattern: /^\/join\/?$/,
     handler: (req, env) => handleJoin(req, env),
+  },
+  // PATCH /members/me — must come before /members/:id to avoid matching "me" as an ID
+  {
+    pattern: /^\/members\/me\/?$/,
+    handler: (req, env) => handleUpdateProfile(req, env),
   },
   // GET /members or GET /members/:id
   {
