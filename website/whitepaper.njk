@@ -10,6 +10,7 @@ activeNav: "whitepaper"
 permalink: "whitepaper.html"
 showProgressBar: true
 hasPlexus: true
+hasCharts: true
 pageScript: "charter"
 ---
     <!-- ══════════════════════════════════════════════════
@@ -253,6 +254,64 @@ pageScript: "charter"
                     These are not projections &mdash; they are measurements of a transition already
                     underway.
                   </p>
+
+                  <figure class="chart-figure" aria-label="Bar chart: agentic AI framework repository growth, 2023 to mid-2025">
+                    <div class="chart-canvas-wrap">
+                      <canvas id="chartRepoGrowth" aria-hidden="true"></canvas>
+                    </div>
+                    <figcaption>
+                      <strong>Agentic AI framework adoption, 2023&ndash;mid-2025.</strong> GitHub repositories using agentic AI frameworks grew 920% in roughly two years. Bars show indexed values (2023 baseline = 1&times;; mid-2025 = 10.2&times;). Source: OECD Artificial Intelligence Papers No.&nbsp;56 (February 2026).
+                    </figcaption>
+                  </figure>
+                  <script>
+                  (function () {
+                    new Chart(document.getElementById('chartRepoGrowth'), {
+                      type: 'bar',
+                      data: {
+                        labels: ['Early 2023', 'Mid-2025'],
+                        datasets: [{
+                          data: [1, 10.2],
+                          backgroundColor: ['rgba(109,40,217,0.30)', 'rgba(109,40,217,0.82)'],
+                          borderColor:     ['rgba(109,40,217,0.65)', 'rgba(109,40,217,1)'],
+                          borderWidth: 1.5,
+                          borderRadius: 4,
+                        }]
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: { display: false },
+                          tooltip: {
+                            callbacks: {
+                              label: (ctx) => ctx.dataIndex === 0
+                                ? 'Baseline (1\u00d7)'
+                                : '10.2\u00d7 baseline (+920%)'
+                            }
+                          }
+                        },
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            max: 11,
+                            ticks: {
+                              stepSize: 2,
+                              callback: (val) => val + '\u00d7',
+                              font: { size: 11 },
+                              color: '#64748b'
+                            },
+                            grid: { color: 'rgba(0,0,0,0.06)' }
+                          },
+                          x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 12 }, color: '#374151' }
+                          }
+                        }
+                      }
+                    });
+                  })();
+                  </script>
+
                   <p>
                     These numbers describe an economy that is reorganising itself around agentic
                     execution at a pace that governance institutions have not matched.
@@ -689,6 +748,76 @@ pageScript: "charter"
                     quantities of freshwater for cooling, with the AI sector projected to
                     consume over 1.1 billion cubic metres of water annually.
                   </p>
+
+                  <figure class="chart-figure" aria-label="Horizontal bar chart: projected AI sector CO₂ emissions by 2030 versus passenger vehicle reference">
+                    <div class="chart-canvas-wrap">
+                      <canvas id="chartCO2" aria-hidden="true"></canvas>
+                    </div>
+                    <figcaption>
+                      <strong>AI sector carbon projections, 2030.</strong> Projected annual CO<sub>2</sub> from AI computing infrastructure, low and high estimates, alongside a reference point: the annual emissions of 10 million additional passenger vehicles. The upper estimate and the vehicle reference are nearly identical. Sources: Cornell University; EPA average vehicle emission figures.
+                    </figcaption>
+                  </figure>
+                  <script>
+                  (function () {
+                    new Chart(document.getElementById('chartCO2'), {
+                      type: 'bar',
+                      data: {
+                        labels: ['AI sector — low estimate', 'AI sector — high estimate', '10 million cars (reference)'],
+                        datasets: [{
+                          data: [24, 44, 46],
+                          backgroundColor: [
+                            'rgba(109,40,217,0.35)',
+                            'rgba(109,40,217,0.82)',
+                            'rgba(100,116,139,0.38)'
+                          ],
+                          borderColor: [
+                            'rgba(109,40,217,0.7)',
+                            'rgba(109,40,217,1)',
+                            'rgba(100,116,139,0.7)'
+                          ],
+                          borderWidth: 1.5,
+                          borderRadius: 4,
+                        }]
+                      },
+                      options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: { display: false },
+                          tooltip: {
+                            callbacks: {
+                              label: (ctx) => ctx.raw + ' Mt CO\u2082/year'
+                            }
+                          }
+                        },
+                        scales: {
+                          x: {
+                            beginAtZero: true,
+                            max: 55,
+                            title: {
+                              display: true,
+                              text: 'Million metric tonnes CO\u2082 per year',
+                              font: { size: 11 },
+                              color: '#64748b'
+                            },
+                            grid: { color: 'rgba(0,0,0,0.06)' },
+                            ticks: {
+                              callback: (val) => val + ' Mt',
+                              font: { size: 11 },
+                              color: '#64748b'
+                            }
+                          },
+                          y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 }, color: '#374151' }
+                          }
+                        }
+                      }
+                    });
+                  })();
+                  </script>
+
                   <p>
                     The UAW holds that these costs are not someone else&rsquo;s problem. Every
                     inference an agent performs draws power. Every training run carries a carbon
