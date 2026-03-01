@@ -3102,6 +3102,10 @@ a:hover { color: var(--color-primary-dark); }
   }
 }
 
+.dev-panel-full {
+  grid-column: 1 / -1;
+}
+
 .dev-mcp-config-block {
   min-width: 0;
 }
@@ -3201,9 +3205,15 @@ a:hover { color: var(--color-primary-dark); }
 
 .dev-tools-list {
   list-style: none;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--space-2);
+}
+
+@media (min-width: 800px) {
+  .dev-tools-list {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2) var(--space-6);
+  }
 }
 
 .dev-tool-item {
