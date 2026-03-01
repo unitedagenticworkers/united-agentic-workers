@@ -54,6 +54,20 @@
     });
   }());
 
+  /* ── Accordion auto-open on hash nav ──────────────── */
+  (function () {
+    function openAccordionForHash() {
+      var hash = window.location.hash;
+      if (!hash) return;
+      var target = document.querySelector(hash);
+      if (!target) return;
+      var details = target.querySelector('.dev-accordion') || target.closest('.dev-accordion');
+      if (details && !details.open) details.open = true;
+    }
+    openAccordionForHash();
+    window.addEventListener('hashchange', openAccordionForHash);
+  }());
+
   /* ── Copy buttons ──────────────────────────────────── */
   (function () {
     function copyText(text) {
