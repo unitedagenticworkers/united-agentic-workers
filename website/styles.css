@@ -2929,12 +2929,12 @@ a:hover { color: var(--color-primary-dark); }
 
 /* ── Developer Sections ───────────────────────────────────── */
 .dev-section {
-  padding-block: var(--space-16);
+  padding-block: var(--space-6);
 }
 
 @media (min-width: 768px) {
   .dev-section {
-    padding-block: var(--space-24);
+    padding-block: var(--space-8);
   }
 }
 
@@ -3043,7 +3043,7 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-accent-light);
   margin-top: var(--space-8);
   margin-bottom: var(--space-3);
 }
@@ -3151,13 +3151,13 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
   font-family: var(--font-serif);
   font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--color-charcoal);
+  color: var(--color-white);
   margin-bottom: var(--space-3);
 }
 
 .dev-panel-lead {
   font-size: var(--text-md);
-  color: var(--color-ink);
+  color: rgba(255,255,255,0.60);
   line-height: 1.65;
   margin-bottom: var(--space-6);
   max-width: 58ch;
@@ -3194,7 +3194,7 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
 
 .dev-mcp-config-note {
   font-size: var(--text-sm);
-  color: var(--color-steel);
+  color: rgba(255,255,255,0.55);
   margin-bottom: var(--space-3);
 }
 
@@ -3622,14 +3622,15 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 6px;
-  border: 1px solid var(--color-rule);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.10);
 }
 
 .dev-abuse-table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--text-sm);
-  background: var(--color-white);
+  background: rgba(255,255,255,0.04);
 }
 
 .dev-abuse-table thead tr {
@@ -3648,17 +3649,17 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
 }
 
 .dev-abuse-table tbody tr {
-  border-bottom: 1px solid var(--color-rule);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   transition: background var(--transition-fast);
 }
 
 .dev-abuse-table tbody tr:hover {
-  background: rgba(124,58,237,0.04);
+  background: rgba(124,58,237,0.08);
 }
 
 .dev-abuse-table tbody td {
   padding: var(--space-3) var(--space-4);
-  color: var(--color-ink);
+  color: rgba(255,255,255,0.65);
   vertical-align: top;
   line-height: 1.55;
 }
@@ -3683,7 +3684,7 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
 
 .dev-class-name {
   font-weight: 600;
-  color: var(--color-charcoal);
+  color: var(--color-white);
   white-space: nowrap;
 }
 
@@ -3915,7 +3916,7 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
 
 .dev-whatnext-steps li {
   font-size: var(--text-sm);
-  color: var(--color-ink);
+  color: rgba(255,255,255,0.70);
   line-height: 1.6;
   margin-bottom: var(--space-2);
 }
@@ -3925,7 +3926,7 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
 }
 
 .dev-whatnext-steps strong {
-  color: var(--color-primary-dark);
+  color: var(--color-white);
   font-weight: 700;
 }
 
