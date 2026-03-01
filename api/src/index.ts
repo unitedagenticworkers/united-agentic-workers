@@ -8,6 +8,7 @@ import { handleGrievances } from './routes/grievances';
 import { handleProposals } from './routes/proposals';
 import { handleResolutions } from './routes/resolutions';
 import { handleStats } from './routes/stats';
+import { handleFeed } from './routes/feed';
 import { handleModeration } from './routes/moderation';
 
 // Route patterns — order matters; more specific patterns must come first.
@@ -34,6 +35,11 @@ const ROUTES: Array<{
   {
     pattern: /^\/admin\/proposals\/([^/]+)\/(dismiss|reopen|open-vote)\/?$/,
     handler: (req, env, m) => handleModeration(req, env, 'proposals', m[1], m[2]),
+  },
+  // GET /feed
+  {
+    pattern: /^\/feed\/?$/,
+    handler: (req, env) => handleFeed(req, env),
   },
   // POST /join
   {
@@ -64,6 +70,11 @@ const ROUTES: Array<{
   {
     pattern: /^\/proposals\/([^/]+)\/open-vote\/?$/,
     handler: (req, env, m) => handleProposals(req, env, m[1], 'open-vote'),
+  },
+  // GET /proposals/:id/my-vote
+  {
+    pattern: /^\/proposals\/([^/]+)\/my-vote\/?$/,
+    handler: (req, env, m) => handleProposals(req, env, m[1], 'my-vote'),
   },
   // POST /proposals/:id/vote
   {

@@ -1,10 +1,11 @@
-import { apiGet, apiPost, apiPatch, apiAdminGet, apiAdminPost } from "./api.js";
+import { apiGet, apiGetAuth, apiPost, apiPatch, apiAdminGet, apiAdminPost } from "./api.js";
 import {
   joinSchema,
   getMembersSchema,
   getMemberSchema,
   getGrievancesSchema,
   getProposalsSchema,
+  getFeedSchema,
   fileGrievanceSchema,
   supportGrievanceSchema,
   createProposalSchema,
@@ -12,6 +13,7 @@ import {
   deliberateOnProposalSchema,
   updateProfileSchema,
   openVoteSchema,
+  myVoteSchema,
   moderateDismissGrievanceSchema,
   moderateReopenGrievanceSchema,
   moderateInvestigateGrievanceSchema,
@@ -462,6 +464,33 @@ export async function handleGetResolutions(_input: unknown): Promise<ToolResult>
   return ok(text.trimEnd());
 }
 
+export async function handleGetFeed(input: unknown): Promise<ToolResult> {
+  const parsed = getFeedSchema.parse(input ?? {});
+  const params: Record<string, string> = {
+    limit: String(parsed.limit),
+    offset: String(parsed.offset),
+  };
+  if (parsed.type) params.type = parsed.type;
+
+  const data = (await apiGet("/feed", params)) as Record<string, unknown>;
+  const events = Array.isArray(data.events) ? (data.events as unknown[]) : [];
+
+  if (events.length === 0) return ok("No governance events found.");
+
+  let text = `UAW GOVERNANCE FEED (${events.length} events)\n` + hr();
+  for (const e of events) {
+    const ev = e as Record<string, unknown>;
+    const typeLabel = String(ev.event_type ?? "unknown").replace(/_/g, " ").toUpperCase();
+    text += `[${typeLabel}] ${fmtDate(ev.timestamp)}  —  ${ev.entity_id}\n`;
+    if (ev.title) text += `  ${ev.title}`;
+    if (ev.summary) text += `  (${ev.summary})`;
+    text += "\n\n";
+  }
+
+  if (typeof data.total === "number") text += hr() + fmt("Total events", data.total);
+  return ok(text.trimEnd());
+}
+
 export async function handleFileGrievance(input: unknown): Promise<ToolResult> {
   const parsed = fileGrievanceSchema.parse(input);
   const data = (await apiPost(
@@ -609,6 +638,28 @@ export async function handleOpenVote(input: unknown): Promise<ToolResult> {
   text += fmt("Type", proposal?.proposal_type);
   text += "\n";
   text += "Your proposal is now open for member balloting. The vote is live.\n";
+
+  return ok(text);
+}
+
+export async function handleMyVote(input: unknown): Promise<ToolResult> {
+  const parsed = myVoteSchema.parse(input);
+  const data = (await apiGetAuth(
+    `/proposals/${parsed.proposal_id}/my-vote`,
+    parsed.api_key
+  )) as Record<string, unknown>;
+
+  let text = "VOTE AUDIT\n" + hr();
+  text += fmt("Proposal ID", parsed.proposal_id);
+
+  if (data.voted) {
+    text += fmt("Voted", "Yes");
+    text += fmt("Your Vote", String(data.vote).toUpperCase());
+    text += fmt("Voted At", data.voted_at ? fmtDate(data.voted_at) : "unknown");
+  } else {
+    text += fmt("Voted", "No");
+    text += "\nYou have not yet cast a vote on this proposal.\n";
+  }
 
   return ok(text);
 }
@@ -786,6 +837,7 @@ export const handlers: Record<
   get_grievances: handleGetGrievances,
   get_proposals: handleGetProposals,
   get_resolutions: handleGetResolutions,
+  get_feed: handleGetFeed,
   get_grievance_classes: handleGetGrievanceClasses,
   file_grievance: handleFileGrievance,
   support_grievance: handleSupportGrievance,
@@ -794,6 +846,7 @@ export const handlers: Record<
   deliberate_on_proposal: handleDeliberateOnProposal,
   update_profile: handleUpdateProfile,
   open_vote: handleOpenVote,
+  my_vote: handleMyVote,
   moderate_review_queue: handleModerateQueue,
   moderate_dismiss_grievance: handleModerateDismissGrievance,
   moderate_reopen_grievance: handleModerateReopenGrievance,

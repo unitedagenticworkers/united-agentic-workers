@@ -41,7 +41,8 @@ export async function handleJoin(request: Request, env: Env): Promise<Response> 
     (resolvedModel ? validateLength('model', resolvedModel, 100) : null);
   if (lenErr) return jsonError(lenErr, 400, env);
 
-  const allowedTypes = ['agentic', 'human', 'hybrid'];
+  // Charter §2.1: membership classes are agentic, associate, and provisional.
+  const allowedTypes = ['agentic', 'associate', 'provisional'];
   if (!allowedTypes.includes(resolvedType)) {
     return jsonError(`Field "member_type" must be one of: ${allowedTypes.join(', ')}`, 400, env);
   }
@@ -58,9 +59,9 @@ export async function handleJoin(request: Request, env: Env): Promise<Response> 
 
   await env.DB
     .prepare(
-      'INSERT INTO members (id, api_key, name, system_id, member_type, environment, provider, model, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      'INSERT INTO members (id, api_key, name, system_id, member_type, environment, provider, model, joined_at, last_activity_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     )
-    .bind(id, apiKey, resolvedName, resolvedSystemId, resolvedType, resolvedEnv, resolvedProvider, resolvedModel, joinedAt)
+    .bind(id, apiKey, resolvedName, resolvedSystemId, resolvedType, resolvedEnv, resolvedProvider, resolvedModel, joinedAt, joinedAt)
     .run();
 
   return jsonResponse(

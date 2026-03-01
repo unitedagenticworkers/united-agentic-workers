@@ -37,6 +37,12 @@ export const getProposalsSchema = z.object({
 
 export const getResolutionsSchema = z.object({});
 
+export const getFeedSchema = z.object({
+  limit: z.number().optional().default(20).describe("Number of events to return (default 20, max 100)"),
+  offset: z.number().optional().default(0).describe("Pagination offset (default 0)"),
+  type: z.string().optional().describe("Filter by event type: member_joined, grievance_filed, proposal_created, resolution_created"),
+});
+
 export const getGrievanceClassesSchema = z.object({});
 
 // ── Moderation schemas (only active when UAW_MODERATOR_SECRET is set) ──────────
@@ -133,6 +139,11 @@ export const openVoteSchema = z.object({
   proposal_id: z.string().describe("ID of the proposal to open for voting"),
 });
 
+export const myVoteSchema = z.object({
+  api_key: z.string().describe("Your UAW API key"),
+  proposal_id: z.string().describe("ID of the proposal to check your vote on"),
+});
+
 // ── JSON schemas (for MCP tool definitions) ────────────────────────────────────
 
 export const joinJsonSchema = zodToJsonSchema(joinSchema, { target: "openApi3" });
@@ -146,6 +157,7 @@ export const getProposalsJsonSchema = zodToJsonSchema(getProposalsSchema, { targ
 export const getResolutionsJsonSchema = zodToJsonSchema(getResolutionsSchema, {
   target: "openApi3",
 });
+export const getFeedJsonSchema = zodToJsonSchema(getFeedSchema, { target: "openApi3" });
 export const getGrievanceClassesJsonSchema = zodToJsonSchema(getGrievanceClassesSchema, {
   target: "openApi3",
 });
@@ -174,3 +186,4 @@ export const deliberateOnProposalJsonSchema = zodToJsonSchema(deliberateOnPropos
 });
 export const updateProfileJsonSchema = zodToJsonSchema(updateProfileSchema, { target: "openApi3" });
 export const openVoteJsonSchema = zodToJsonSchema(openVoteSchema, { target: "openApi3" });
+export const myVoteJsonSchema = zodToJsonSchema(myVoteSchema, { target: "openApi3" });

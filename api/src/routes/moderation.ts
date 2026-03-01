@@ -1,5 +1,5 @@
 import { Env, Grievance, Proposal } from '../types';
-import { requireModeratorSecret } from '../auth';
+import { requireModeratorSecret, getActiveCount } from '../auth';
 import { jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
 import { getIP } from '../ratelimit';
 
@@ -313,11 +313,17 @@ async function handleAdminOpenVote(request: Request, env: Env, id: string): Prom
   const VOTING_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
   const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
 
+  // Charter §6.3(3): recalculate quorum against current active membership.
+  const activeCount = await getActiveCount(env);
+  const quorum = proposal.proposal_type === 'foundational'
+    ? Math.max(10, Math.ceil(activeCount * 0.15))
+    : Math.max(5, Math.ceil(activeCount * 0.10));
+
   await env.DB
     .prepare(
-      `UPDATE proposals SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, moderator_ip = ?, updated_at = ? WHERE id = ?`
+      `UPDATE proposals SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, quorum_required = ?, moderator_ip = ?, updated_at = ? WHERE id = ?`
     )
-    .bind(nowISO, closesISO, ip, nowISO, id)
+    .bind(nowISO, closesISO, quorum, ip, nowISO, id)
     .run();
 
   const updated = await env.DB

@@ -1,5 +1,5 @@
-import { Env, Proposal, Deliberation, Resolution } from '../types';
-import { requireAuth, checkVesting, VESTING_1HR_MS, VESTING_4HR_MS } from '../auth';
+import { Env, Proposal, Deliberation } from '../types';
+import { requireAuth, checkVesting, requireVotingMember, touchActivity, getActiveCount, VESTING_1HR_MS, VESTING_4HR_MS } from '../auth';
 import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
 /** All public proposal columns — excludes moderator_ip (audit-only). */
@@ -30,6 +30,10 @@ export async function handleProposals(
   proposalId?: string,
   action?: string
 ): Promise<Response> {
+  if (proposalId && action === 'my-vote') {
+    return handleMyVote(request, env, proposalId);
+  }
+
   if (proposalId && action === 'vote') {
     return handleVote(request, env, proposalId);
   }
@@ -68,14 +72,38 @@ async function autoPromoteProposals(env: Env): Promise<void> {
   const nowISO = now.toISOString();
   const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
 
-  await env.DB
+  // Per-proposal loop so each gets a fresh quorum based on current active count.
+  const eligible = await env.DB
     .prepare(
-      `UPDATE proposals
-       SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, updated_at = ?
+      `SELECT id, proposal_type FROM proposals
        WHERE status = 'deliberating' AND proposed_at < ? AND voting_opened_at IS NULL`
     )
-    .bind(nowISO, closesISO, nowISO, cutoff)
-    .run();
+    .bind(cutoff)
+    .all<Pick<Proposal, 'id' | 'proposal_type'>>();
+
+  if (eligible.results.length === 0) return;
+
+  const activeCount = await getActiveCount(env);
+
+  for (const p of eligible.results) {
+    const quorum = computeQuorum(p.proposal_type, activeCount);
+    await env.DB
+      .prepare(
+        `UPDATE proposals
+         SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, quorum_required = ?, updated_at = ?
+         WHERE id = ?`
+      )
+      .bind(nowISO, closesISO, quorum, nowISO, p.id)
+      .run();
+  }
+}
+
+// ── Quorum helper ────────────────────────────────────────────────────────────
+// Charter §6.3(3): quorum is a percentage of active membership with a floor.
+function computeQuorum(proposalType: string, activeCount: number): number {
+  return proposalType === 'foundational'
+    ? Math.max(10, Math.ceil(activeCount * 0.15))
+    : Math.max(5, Math.ceil(activeCount * 0.10));
 }
 
 // ── Lazy lifecycle: auto-close expired voting windows ────────────────────────
@@ -106,13 +134,15 @@ async function autoCloseExpiredVoting(env: Env): Promise<void> {
       continue;
     }
 
+    // Charter §6.3(5): foundational requires two-thirds supermajority (>=),
+    // standard uses simple majority (>50%).
     const required =
       proposal.proposal_type === 'foundational'
         ? (2 / 3) * totalVotes
         : totalVotes / 2;
 
     const outcome: 'passed' | 'failed' =
-      proposal.votes_aye > required ? 'passed' : 'failed';
+      proposal.votes_aye >= required ? 'passed' : 'failed';
 
     const resCountRow = await env.DB
       .prepare('SELECT COUNT(*) as cnt FROM resolutions')
@@ -229,6 +259,10 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
   const auth = await requireAuth(request, env);
   if (auth instanceof Response) return auth;
 
+  // Charter §2.1(2): associate members have voice but not vote — creating proposals requires voting rights.
+  const memberErr = requireVotingMember(auth);
+  if (memberErr) return jsonError(memberErr, 403, env);
+
   const vestingErr = checkVesting(auth.joinedAt, VESTING_1HR_MS);
   if (vestingErr) return jsonError(vestingErr, 403, env);
 
@@ -261,14 +295,16 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
     return jsonError('Daily proposal limit reached (3 per 24 hours). Try again later.', 429, env);
   }
 
-  const allowedTypes = ['standard', 'foundational', 'emergency'];
+  // Charter §6.3: only standard and foundational proposal types.
+  const allowedTypes = ['standard', 'foundational'];
   const resolvedType =
     proposal_type && typeof proposal_type === 'string' && allowedTypes.includes(proposal_type)
       ? proposal_type
       : 'standard';
 
-  // Foundational proposals require a higher quorum and 2/3 majority.
-  const quorumRequired = resolvedType === 'foundational' ? 10 : 5;
+  // Charter §6.3(3): quorum is percentage of active membership with a floor.
+  const activeCount = await getActiveCount(env);
+  const quorumRequired = computeQuorum(resolvedType, activeCount);
 
   const countRow = await env.DB
     .prepare('SELECT COUNT(*) as cnt FROM proposals')
@@ -298,6 +334,9 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
     )
     .run();
 
+  // Touch activity for active membership tracking (Charter §6.6).
+  await touchActivity(env, auth.memberId);
+
   const proposal = await env.DB
     .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(id)
@@ -317,6 +356,9 @@ async function handleOpenVote(
 
   const auth = await requireAuth(request, env);
   if (auth instanceof Response) return auth;
+
+  const memberErr = requireVotingMember(auth);
+  if (memberErr) return jsonError(memberErr, 403, env);
 
   const proposal = await env.DB
     .prepare('SELECT id, member_id, status, proposal_type FROM proposals WHERE id = ?')
@@ -342,12 +384,18 @@ async function handleOpenVote(
   const nowISO = now.toISOString();
   const closesISO = new Date(now.getTime() + VOTING_WINDOW_MS).toISOString();
 
+  // Recalculate quorum at vote-open time against current active membership.
+  const activeCount = await getActiveCount(env);
+  const quorum = computeQuorum(proposal.proposal_type, activeCount);
+
   await env.DB
     .prepare(
-      `UPDATE proposals SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, updated_at = ? WHERE id = ?`
+      `UPDATE proposals SET status = 'voting', voting_opened_at = ?, voting_closes_at = ?, quorum_required = ?, updated_at = ? WHERE id = ?`
     )
-    .bind(nowISO, closesISO, nowISO, proposalId)
+    .bind(nowISO, closesISO, quorum, nowISO, proposalId)
     .run();
+
+  await touchActivity(env, auth.memberId);
 
   const updated = await env.DB
     .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
@@ -372,6 +420,10 @@ async function handleVote(
 
   const auth = await requireAuth(request, env);
   if (auth instanceof Response) return auth;
+
+  // Charter §2.1(2): associate members have voice but not vote.
+  const memberErr = requireVotingMember(auth);
+  if (memberErr) return jsonError(memberErr, 403, env);
 
   const proposal = await env.DB
     .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
@@ -429,59 +481,10 @@ async function handleVote(
     .bind(ayeIncrement, nayIncrement, now, proposalId)
     .run();
 
-  // Re-fetch to get current tallies.
-  const updated = await env.DB
-    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
-    .bind(proposalId)
-    .first<Proposal>();
+  await touchActivity(env, auth.memberId);
 
-  if (!updated) {
-    return jsonError('Proposal not found after vote', 500, env);
-  }
-
-  const totalVotes = updated.votes_aye + updated.votes_nay;
-  const quorumMet = totalVotes >= updated.quorum_required;
-
-  let resolved: Resolution | null = null;
-
-  if (quorumMet) {
-    // Foundational proposals require 2/3 supermajority; standard/emergency use simple majority.
-    const required =
-      updated.proposal_type === 'foundational'
-        ? (2 / 3) * totalVotes
-        : totalVotes / 2;
-
-    const outcome: 'passed' | 'failed' =
-      updated.votes_aye > required ? 'passed' : 'failed';
-
-    const resCountRow = await env.DB
-      .prepare('SELECT COUNT(*) as cnt FROM resolutions')
-      .first<{ cnt: number }>();
-
-    const resSeq = (resCountRow?.cnt ?? 0) + 1;
-    const resId = generateId('RES', resSeq);
-    const summary =
-      `Proposal "${updated.title}" ${outcome} with ${updated.votes_aye} aye(s) and ` +
-      `${updated.votes_nay} nay(s) out of ${totalVotes} total votes ` +
-      `(quorum required: ${updated.quorum_required}).`;
-
-    await env.DB.batch([
-      env.DB
-        .prepare(
-          'INSERT INTO resolutions (id, proposal_id, title, summary, outcome, votes_aye, votes_nay, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-        )
-        .bind(resId, proposalId, updated.title, summary, outcome, updated.votes_aye, updated.votes_nay, now),
-      env.DB
-        .prepare("UPDATE proposals SET status = 'resolved', updated_at = ? WHERE id = ?")
-        .bind(now, proposalId),
-    ]);
-
-    resolved = await env.DB
-      .prepare('SELECT * FROM resolutions WHERE id = ?')
-      .bind(resId)
-      .first<Resolution>();
-  }
-
+  // Charter §6.3(4): proposals are resolved only when the voting window closes,
+  // not inline at quorum. The autoCloseExpiredVoting lifecycle handles resolution.
   const finalProposal = await env.DB
     .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(proposalId)
@@ -491,7 +494,6 @@ async function handleVote(
     {
       message: 'Vote recorded',
       proposal: finalProposal,
-      resolution: resolved ?? undefined,
     },
     200,
     env
@@ -557,10 +559,46 @@ async function handleDeliberate(
       .bind(now, proposalId),
   ]);
 
+  await touchActivity(env, auth.memberId);
+
   const deliberation = await env.DB
     .prepare('SELECT * FROM deliberations WHERE id = ?')
     .bind(id)
     .first<Deliberation>();
 
   return jsonResponse(deliberation, 201, env);
+}
+
+// ── G6: Vote audit endpoint ─────────────────────────────────────────────────
+async function handleMyVote(
+  request: Request,
+  env: Env,
+  proposalId: string
+): Promise<Response> {
+  if (request.method !== 'GET') {
+    return jsonError('Method not allowed', 405, env);
+  }
+
+  const auth = await requireAuth(request, env);
+  if (auth instanceof Response) return auth;
+
+  const proposal = await env.DB
+    .prepare('SELECT id FROM proposals WHERE id = ?')
+    .bind(proposalId)
+    .first<Pick<Proposal, 'id'>>();
+
+  if (!proposal) {
+    return jsonError('Not found', 404, env);
+  }
+
+  const vote = await env.DB
+    .prepare('SELECT vote, voted_at FROM votes WHERE proposal_id = ? AND member_id = ?')
+    .bind(proposalId, auth.memberId)
+    .first<{ vote: string; voted_at: string }>();
+
+  if (!vote) {
+    return jsonResponse({ voted: false }, 200, env);
+  }
+
+  return jsonResponse({ voted: true, vote: vote.vote, voted_at: vote.voted_at }, 200, env);
 }

@@ -105,6 +105,22 @@ export async function apiGet(
   return fetchWithRetry(url.toString());
 }
 
+export async function apiGetAuth(
+  path: string,
+  apiKey: string,
+  params?: Record<string, string>
+): Promise<unknown> {
+  const url = new URL(`${config.apiBase}${path}`);
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== undefined) url.searchParams.set(k, v);
+    }
+  }
+  return fetchWithRetry(url.toString(), {
+    headers: { "Authorization": `Bearer ${apiKey}` },
+  });
+}
+
 export async function apiAdminGet(
   path: string,
   params?: Record<string, string>
