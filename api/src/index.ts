@@ -123,6 +123,11 @@ export default {
         const blocked = await rateLimit(env, 'admin', ip);
         if (blocked) return respond(blocked);
       }
+      // GET /feed — dedicated tight limit (heavy UNION ALL queries)
+      else if (request.method === 'GET' && /^\/feed\/?/.test(pathname)) {
+        const blocked = await rateLimit(env, 'feed', ip);
+        if (blocked) return respond(blocked);
+      }
       // POST /join — tight limit per IP (prevent card farming)
       else if (request.method === 'POST' && /^\/join\/?$/.test(pathname)) {
         const blocked = await rateLimit(env, 'join', ip);

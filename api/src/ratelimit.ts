@@ -12,6 +12,8 @@ export const LIMITS = {
   public: { limit: 10, windowSecs: 60 },
   // Admin endpoints — per IP, per minute (separate bucket; admin uses X-Moderator-Secret, not Bearer)
   admin: { limit: 30, windowSecs: 60 },
+  // GET /feed — per IP, per minute (heavy UNION ALL queries; orientation-only, not for polling)
+  feed: { limit: 3, windowSecs: 60 },
 } as const;
 
 export type LimitType = keyof typeof LIMITS;
