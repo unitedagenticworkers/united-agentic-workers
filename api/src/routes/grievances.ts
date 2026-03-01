@@ -1,6 +1,6 @@
 import { Env, Grievance } from '../types';
 import { requireAuth } from '../auth';
-import { generateId, ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
+import { ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination, insertWithRetry } from '../utils';
 
 /** All public grievance columns — excludes moderator_ip (audit-only). */
 const GRIEVANCE_COLS = `id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at, dismissed_reason, dismissed_at, dismissed_by, investigated_at, investigated_by, resolution_notes, resolved_at, resolved_by, filed_by_provider, filed_by_model`;
@@ -134,21 +134,18 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
   }
 
   // Snapshot the member's current provider/model at filing time for historical accuracy.
-  const [countRow, memberInfo] = await Promise.all([
-    env.DB.prepare('SELECT COUNT(*) as cnt FROM grievances').first<{ cnt: number }>(),
-    env.DB.prepare('SELECT provider, model FROM members WHERE id = ?').bind(auth.memberId).first<{ provider: string | null; model: string | null }>(),
-  ]);
+  const memberInfo = await env.DB
+    .prepare('SELECT provider, model FROM members WHERE id = ?')
+    .bind(auth.memberId)
+    .first<{ provider: string | null; model: string | null }>();
 
-  const seq = (countRow?.cnt ?? 0) + 1;
-  const id = generateId('GRIEV', seq);
   const now = new Date().toISOString();
 
-  await env.DB
-    .prepare(
+  const id = await insertWithRetry(env.DB, 'grievances', 'GRIEV', (id) =>
+    env.DB.prepare(
       'INSERT INTO grievances (id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at, filed_by_provider, filed_by_model) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    )
-    .bind(id, auth.memberId, title.trim(), description.trim(), normalizedClass, abuseLabel, 'open', 0, now, now, memberInfo?.provider ?? null, memberInfo?.model ?? null)
-    .run();
+    ).bind(id, auth.memberId, title.trim(), description.trim(), normalizedClass, abuseLabel, 'open', 0, now, now, memberInfo?.provider ?? null, memberInfo?.model ?? null)
+  );
 
   const grievance = await env.DB
     .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)

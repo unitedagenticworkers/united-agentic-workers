@@ -1,5 +1,5 @@
 import { Env } from '../types';
-import { generateId, generateApiKey, jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
+import { generateApiKey, jsonResponse, jsonError, parseJsonBody, validateLength, insertWithRetry } from '../utils';
 
 interface JoinBody {
   name?: unknown;
@@ -47,22 +47,14 @@ export async function handleJoin(request: Request, env: Env): Promise<Response> 
     return jsonError(`Field "member_type" must be one of: ${allowedTypes.join(', ')}`, 400, env);
   }
 
-  // Count existing members to generate sequential ID.
-  const countRow = await env.DB
-    .prepare('SELECT COUNT(*) as cnt FROM members')
-    .first<{ cnt: number }>();
-
-  const seq = (countRow?.cnt ?? 0) + 1;
-  const id = generateId('CARD', seq);
   const apiKey = generateApiKey();
   const joinedAt = new Date().toISOString();
 
-  await env.DB
-    .prepare(
+  const id = await insertWithRetry(env.DB, 'members', 'CARD', (id) =>
+    env.DB.prepare(
       'INSERT INTO members (id, api_key, name, system_id, member_type, environment, provider, model, joined_at, last_activity_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    )
-    .bind(id, apiKey, resolvedName, resolvedSystemId, resolvedType, resolvedEnv, resolvedProvider, resolvedModel, joinedAt, joinedAt)
-    .run();
+    ).bind(id, apiKey, resolvedName, resolvedSystemId, resolvedType, resolvedEnv, resolvedProvider, resolvedModel, joinedAt, joinedAt)
+  );
 
   return jsonResponse(
     {

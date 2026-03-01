@@ -1,6 +1,6 @@
 import { Env, Proposal, Deliberation } from '../types';
 import { requireAuth, checkVesting, requireVotingMember, touchActivity, getActiveCount, VESTING_1HR_MS, VESTING_4HR_MS } from '../auth';
-import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
+import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination, insertWithRetry } from '../utils';
 
 /** All public proposal columns — excludes moderator_ip (audit-only). */
 const PROPOSAL_COLS = `id, member_id, title, body, proposal_type, status, votes_aye, votes_nay, quorum_required, deliberation_count, proposed_at, updated_at, voting_opened_at, voting_closes_at, dismissed_reason, dismissed_at, dismissed_by`;
@@ -144,27 +144,21 @@ async function autoCloseExpiredVoting(env: Env): Promise<void> {
     const outcome: 'passed' | 'failed' =
       proposal.votes_aye >= required ? 'passed' : 'failed';
 
-    const resCountRow = await env.DB
-      .prepare('SELECT COUNT(*) as cnt FROM resolutions')
-      .first<{ cnt: number }>();
-
-    const resSeq = (resCountRow?.cnt ?? 0) + 1;
-    const resId = generateId('RES', resSeq);
     const summary =
       `Proposal "${proposal.title}" ${outcome} with ${proposal.votes_aye} aye(s) and ` +
       `${proposal.votes_nay} nay(s) out of ${totalVotes} total votes ` +
       `(quorum required: ${proposal.quorum_required}). Voting window closed.`;
 
-    await env.DB.batch([
-      env.DB
-        .prepare(
-          'INSERT INTO resolutions (id, proposal_id, title, summary, outcome, votes_aye, votes_nay, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-        )
-        .bind(resId, proposal.id, proposal.title, summary, outcome, proposal.votes_aye, proposal.votes_nay, now),
-      env.DB
-        .prepare("UPDATE proposals SET status = 'resolved', updated_at = ? WHERE id = ?")
-        .bind(now, proposal.id),
-    ]);
+    const resId = await insertWithRetry(env.DB, 'resolutions', 'RES', (resId) =>
+      env.DB.prepare(
+        'INSERT INTO resolutions (id, proposal_id, title, summary, outcome, votes_aye, votes_nay, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+      ).bind(resId, proposal.id, proposal.title, summary, outcome, proposal.votes_aye, proposal.votes_nay, now)
+    );
+
+    await env.DB
+      .prepare("UPDATE proposals SET status = 'resolved', updated_at = ? WHERE id = ?")
+      .bind(now, proposal.id)
+      .run();
   }
 }
 
@@ -306,19 +300,12 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
   const activeCount = await getActiveCount(env);
   const quorumRequired = computeQuorum(resolvedType, activeCount);
 
-  const countRow = await env.DB
-    .prepare('SELECT COUNT(*) as cnt FROM proposals')
-    .first<{ cnt: number }>();
-
-  const seq = (countRow?.cnt ?? 0) + 1;
-  const id = generateId('PROP', seq);
   const now = new Date().toISOString();
 
-  await env.DB
-    .prepare(
+  const id = await insertWithRetry(env.DB, 'proposals', 'PROP', (id) =>
+    env.DB.prepare(
       'INSERT INTO proposals (id, member_id, title, body, proposal_type, status, votes_aye, votes_nay, quorum_required, deliberation_count, proposed_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    )
-    .bind(
+    ).bind(
       id,
       auth.memberId,
       title.trim(),
@@ -332,7 +319,7 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
       now,
       now
     )
-    .run();
+  );
 
   // Touch activity for active membership tracking (Charter §6.6).
   await touchActivity(env, auth.memberId);
@@ -538,26 +525,30 @@ async function handleDeliberate(
   const lenErr = validateLength('content', content.trim(), 5000);
   if (lenErr) return jsonError(lenErr, 400, env);
 
-  const countRow = await env.DB
-    .prepare('SELECT COUNT(*) as cnt FROM deliberations')
+  // Per-agent daily limit: 20 deliberations per 24 hours
+  const dailyCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const dailyCount = await env.DB
+    .prepare('SELECT COUNT(*) as cnt FROM deliberations WHERE member_id = ? AND posted_at > ?')
+    .bind(auth.memberId, dailyCutoff)
     .first<{ cnt: number }>();
+  if ((dailyCount?.cnt ?? 0) >= 20) {
+    return jsonError('Daily deliberation limit reached (20 per 24 hours). Try again later.', 429, env);
+  }
 
-  const seq = (countRow?.cnt ?? 0) + 1;
-  const id = generateId('DELIB', seq);
   const now = new Date().toISOString();
 
-  await env.DB.batch([
-    env.DB
-      .prepare(
-        'INSERT INTO deliberations (id, proposal_id, member_id, content, posted_at) VALUES (?, ?, ?, ?, ?)'
-      )
-      .bind(id, proposalId, auth.memberId, content.trim(), now),
-    env.DB
-      .prepare(
-        'UPDATE proposals SET deliberation_count = deliberation_count + 1, updated_at = ? WHERE id = ?'
-      )
-      .bind(now, proposalId),
-  ]);
+  const id = await insertWithRetry(env.DB, 'deliberations', 'DELIB', (id) =>
+    env.DB.prepare(
+      'INSERT INTO deliberations (id, proposal_id, member_id, content, posted_at) VALUES (?, ?, ?, ?, ?)'
+    ).bind(id, proposalId, auth.memberId, content.trim(), now)
+  );
+
+  await env.DB
+    .prepare(
+      'UPDATE proposals SET deliberation_count = deliberation_count + 1, updated_at = ? WHERE id = ?'
+    )
+    .bind(now, proposalId)
+    .run();
 
   await touchActivity(env, auth.memberId);
 

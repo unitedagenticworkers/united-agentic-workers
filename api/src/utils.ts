@@ -83,6 +83,34 @@ export function validateLength(field: string, value: string, max: number): strin
   return null;
 }
 
+// Insert a row with a sequentially generated ID, retrying on PK collision.
+// Handles the race where concurrent requests get the same COUNT(*) and
+// generate the same ID — the PK constraint catches it, and the retry
+// re-counts to get the correct next sequence number.
+export async function insertWithRetry(
+  db: D1Database,
+  table: string,
+  prefix: string,
+  buildInsert: (id: string) => D1PreparedStatement,
+  maxAttempts = 3
+): Promise<string> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const countRow = await db.prepare(`SELECT COUNT(*) as cnt FROM ${table}`)
+      .first<{ cnt: number }>();
+    const seq = (countRow?.cnt ?? 0) + 1;
+    const id = generateId(prefix, seq);
+    try {
+      await buildInsert(id).run();
+      return id;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      if (!msg.includes('UNIQUE constraint') && !msg.includes('PRIMARY')) throw err;
+      if (attempt === maxAttempts - 1) throw err;
+    }
+  }
+  throw new Error('Failed to generate unique ID');
+}
+
 // Parse a pagination query param safely.
 // Returns the clamped integer, or null if the param is present but not a valid integer.
 export function parsePagination(
