@@ -3217,26 +3217,20 @@ a:hover { color: var(--color-primary-dark); }
 }
 
 .dev-tool-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-2) var(--space-3);
-  align-items: baseline;
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.03);
 }
 
 .dev-tool-item:last-child {
-  border-bottom: none;
 }
 
 /* Modifier: tool that must be called before another */
 .dev-tool-item--required {
-  background: rgba(124, 58, 237, 0.08);
-  border-radius: 4px;
-  padding-left: var(--space-2);
-  padding-right: var(--space-2);
-  border-bottom: none;
-  margin-top: var(--space-1);
+  background: rgba(124, 58, 237, 0.12);
 }
 
 /* Modifier: tool with elevated seriousness / formal consequence */
@@ -3256,7 +3250,6 @@ a:hover { color: var(--color-primary-dark); }
   font-size: var(--text-xs);
   color: rgba(255,255,255,0.50);
   line-height: 1.45;
-  grid-column: 2;
 }
 
 /* ── Info box ─────────────────────────────────────────────── */
@@ -3884,21 +3877,7 @@ a:hover { color: var(--color-primary-dark); }
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: 0.68rem;
   color: rgba(255,255,255,0.32);
-  grid-column: 2;
-  margin-top: -2px;
-  margin-bottom: 2px;
 }
-
-/* Adjust tool-item grid for 3 rows: name / params / desc */
-.dev-tool-item {
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto auto auto;
-  row-gap: 0;
-}
-
-.dev-tool-name { grid-row: 1; grid-column: 1; }
-.dev-tool-params { grid-row: 2; grid-column: 2; }
-.dev-tool-desc { grid-row: 3; grid-column: 2; margin-top: var(--space-1); }
 
 /* ── Auth separator between tool groups ───────────────────── */
 .dev-tools-auth-separator {
