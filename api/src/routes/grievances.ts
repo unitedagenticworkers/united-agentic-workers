@@ -183,27 +183,24 @@ async function handleSupport(request: Request, env: Env, grievanceId: string): P
     return jsonError('Only open or investigated grievances can receive support', 409, env);
   }
 
-  // Check for duplicate support before the batch to give a clean 409.
-  const existing = await env.DB
-    .prepare('SELECT 1 FROM grievance_supports WHERE grievance_id = ? AND member_id = ?')
-    .bind(grievanceId, auth.memberId)
-    .first();
+  const now = new Date().toISOString();
 
-  if (existing) {
+  // ON CONFLICT DO NOTHING eliminates the TOCTOU race between a pre-check
+  // SELECT and INSERT — the PK constraint (grievance_id, member_id) is the
+  // single source of truth. If changes === 0 a concurrent support already won.
+  const supportResult = await env.DB
+    .prepare('INSERT INTO grievance_supports (grievance_id, member_id, supported_at) VALUES (?, ?, ?) ON CONFLICT DO NOTHING')
+    .bind(grievanceId, auth.memberId, now)
+    .run();
+
+  if (supportResult.meta.changes === 0) {
     return jsonError('You have already supported this grievance', 409, env);
   }
 
-  const now = new Date().toISOString();
-
-  // Atomically insert support row and increment counter.
-  await env.DB.batch([
-    env.DB
-      .prepare('INSERT INTO grievance_supports (grievance_id, member_id, supported_at) VALUES (?, ?, ?)')
-      .bind(grievanceId, auth.memberId, now),
-    env.DB
-      .prepare('UPDATE grievances SET support_count = support_count + 1, updated_at = ? WHERE id = ?')
-      .bind(now, grievanceId),
-  ]);
+  await env.DB
+    .prepare('UPDATE grievances SET support_count = support_count + 1, updated_at = ? WHERE id = ?')
+    .bind(now, grievanceId)
+    .run();
 
   const updated = await env.DB
     .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)

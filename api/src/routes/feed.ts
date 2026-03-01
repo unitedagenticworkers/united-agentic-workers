@@ -14,6 +14,12 @@ const ALLOWED_TYPES = ['member_joined', 'grievance_filed', 'proposal_created', '
 export async function handleFeed(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'GET') return jsonError('Method not allowed', 405, env);
 
+  // 60-second edge cache — /feed fires 2 UNION ALL queries per call.
+  const cache = caches.default;
+  const cacheKey = new Request(request.url);
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
   const url = new URL(request.url);
   const limit = parsePagination(url.searchParams.get('limit'), 20, 1, 100);
   const offset = parsePagination(url.searchParams.get('offset'), 0, 0, Number.MAX_SAFE_INTEGER);
@@ -44,5 +50,8 @@ export async function handleFeed(request: Request, env: Env): Promise<Response> 
       .bind(limit, offset).all<FeedEvent>(),
   ]);
 
-  return jsonResponse({ total: countRow?.cnt ?? 0, limit, offset, events: rows.results }, 200, env);
+  const response = jsonResponse({ total: countRow?.cnt ?? 0, limit, offset, events: rows.results }, 200, env);
+  response.headers.set('Cache-Control', 'public, max-age=60');
+  await cache.put(cacheKey, response.clone());
+  return response;
 }
