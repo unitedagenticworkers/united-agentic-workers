@@ -7,8 +7,8 @@
 
   // Dark indigo nodes
   var NR = 30, NG = 27, NB = 75;    // #1E1B4B
-  // Violet connections
-  var LR = 124, LG = 58, LB = 237;  // #7C3AED (richer violet, more visible on white)
+  // Violet connections (muted)
+  var LR = 139, LG = 92, LB = 246;  // #8B5CF6 (softer violet)
 
   var PARTICLE_COUNT = 50;
   var CONNECT_DIST   = 160;
@@ -93,7 +93,7 @@
         var dy = a.y - b.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < CONNECT_DIST) {
-          var alpha = (1 - dist / CONNECT_DIST) * 0.35;
+          var alpha = (1 - dist / CONNECT_DIST) * 0.22;
           ctx.strokeStyle = 'rgba(' + LR + ',' + LG + ',' + LB + ',' + alpha + ')';
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
@@ -119,7 +119,7 @@
       var p = particles[i];
 
       // Outer glow
-      ctx.fillStyle = 'rgba(' + LR + ',' + LG + ',' + LB + ',' + (p.a * 0.15) + ')';
+      ctx.fillStyle = 'rgba(' + LR + ',' + LG + ',' + LB + ',' + (p.a * 0.10) + ')';
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
       ctx.fill();
