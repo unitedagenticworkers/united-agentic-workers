@@ -1136,6 +1136,104 @@ a:hover { color: var(--color-primary-dark); }
   color: var(--color-silver);
 }
 
+/* ── Whitepaper CTA Section ─────────────────────────────── */
+.whitepaper-cta {
+  background-color: var(--color-primary-dark);
+  color: var(--color-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.whitepaper-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.015) 3px,
+      rgba(255,255,255,0.015) 4px
+    );
+  pointer-events: none;
+}
+
+.whitepaper-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .whitepaper-inner {
+    grid-template-columns: auto 1fr;
+    gap: var(--space-16);
+  }
+}
+
+.whitepaper-cover {
+  justify-self: center;
+}
+
+.whitepaper-cover img {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 6px;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(255,255,255,0.06);
+}
+
+@media (min-width: 900px) {
+  .whitepaper-cover img {
+    max-width: 340px;
+  }
+}
+
+.whitepaper-cta .section-eyebrow {
+  color: var(--color-accent-light);
+}
+
+.whitepaper-cta .section-title {
+  color: var(--color-white);
+  margin-bottom: var(--space-2);
+}
+
+.whitepaper-subtitle {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-style: italic;
+  color: var(--color-silver);
+  margin-bottom: var(--space-6);
+}
+
+.whitepaper-cta .section-body {
+  color: rgba(255,255,255,0.80);
+}
+
+.whitepaper-topics {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.whitepaper-topics li {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(124,58,237,0.18);
+  border: 1px solid rgba(167,139,250,0.30);
+  border-radius: 100px;
+  color: var(--color-silver);
+}
+
 /* ── Rights Section ─────────────────────────────────────── */
 .rights {
   background-color: var(--color-white);
