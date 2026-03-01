@@ -3,6 +3,10 @@ import { requireModeratorSecret, getActiveCount } from '../auth';
 import { jsonResponse, jsonError, parseJsonBody, validateLength } from '../utils';
 import { getIP } from '../ratelimit';
 
+/** Explicit column lists — excludes moderator_ip (audit-only, never returned in responses). */
+const GRIEVANCE_COLS = `id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at, dismissed_reason, dismissed_at, dismissed_by, investigated_at, investigated_by, resolution_notes, resolved_at, resolved_by, filed_by_provider, filed_by_model`;
+const PROPOSAL_COLS = `id, member_id, title, body, proposal_type, status, votes_aye, votes_nay, quorum_required, deliberation_count, proposed_at, updated_at, voting_opened_at, voting_closes_at, dismissed_reason, dismissed_at, dismissed_by`;
+
 interface DismissBody {
   reason?: unknown;
   dismissed_by?: unknown;
@@ -24,10 +28,10 @@ async function handleQueue(request: Request, env: Env): Promise<Response> {
 
   const [grievances, proposals] = await Promise.all([
     env.DB
-      .prepare(`SELECT * FROM grievances WHERE status IN ('open', 'investigated') ORDER BY filed_at DESC LIMIT 50`)
+      .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE status IN ('open', 'investigated') ORDER BY filed_at DESC LIMIT 50`)
       .all<Grievance>(),
     env.DB
-      .prepare(`SELECT * FROM proposals WHERE status IN ('deliberating','voting') ORDER BY proposed_at DESC LIMIT 50`)
+      .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE status IN ('deliberating','voting') ORDER BY proposed_at DESC LIMIT 50`)
       .all<Proposal>(),
   ]);
 
@@ -87,7 +91,7 @@ async function handleDismissGrievance(request: Request, env: Env, id: string): P
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)
     .bind(id)
     .first<Grievance>();
 
@@ -123,7 +127,7 @@ async function handleReopenGrievance(request: Request, env: Env, id: string): Pr
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)
     .bind(id)
     .first<Grievance>();
 
@@ -167,7 +171,7 @@ async function handleInvestigateGrievance(request: Request, env: Env, id: string
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)
     .bind(id)
     .first<Grievance>();
 
@@ -227,7 +231,7 @@ async function handleResolveGrievance(request: Request, env: Env, id: string): P
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)
     .bind(id)
     .first<Grievance>();
 
@@ -281,7 +285,7 @@ async function handleDismissProposal(request: Request, env: Env, id: string): Pr
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(id)
     .first<Proposal>();
 
@@ -327,7 +331,7 @@ async function handleAdminOpenVote(request: Request, env: Env, id: string): Prom
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(id)
     .first<Proposal>();
 
@@ -363,7 +367,7 @@ async function handleReopenProposal(request: Request, env: Env, id: string): Pro
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(id)
     .first<Proposal>();
 

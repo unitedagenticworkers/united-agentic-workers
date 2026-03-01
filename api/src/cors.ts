@@ -59,7 +59,7 @@ export function handleOptions(request: Request, env: Env): Response {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': requestOrigin,
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Max-Age': '3600',
       'Vary': 'Origin',

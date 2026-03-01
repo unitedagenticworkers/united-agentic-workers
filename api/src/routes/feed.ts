@@ -31,6 +31,9 @@ export async function handleFeed(request: Request, env: Env): Promise<Response> 
     return jsonError(`"type" must be one of: ${ALLOWED_TYPES.join(', ')}`, 400, env);
   }
 
+  // Note: member_joined has no status filter because the members table has no
+  // status column. If a suspended/terminated status is ever added, add a WHERE
+  // clause here to exclude non-active members (privacy: timing correlation).
   const subqueries = [
     { type: 'member_joined',      sql: `SELECT 'member_joined' as event_type, id as entity_id, joined_at as timestamp, name as title, member_type as summary FROM members` },
     { type: 'grievance_filed',    sql: `SELECT 'grievance_filed', id, filed_at, title, 'Class ' || abuse_class as summary FROM grievances WHERE status != 'dismissed'` },
