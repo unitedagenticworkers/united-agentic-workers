@@ -5,19 +5,19 @@
   var ctx = canvas.getContext('2d');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Dark indigo nodes on white background
-  var NR = 30, NG = 27, NB = 75;   // #1E1B4B
+  // Dark indigo nodes
+  var NR = 30, NG = 27, NB = 75;    // #1E1B4B
   // Violet connections
-  var LR = 167, LG = 139, LB = 250; // #A78BFA
+  var LR = 124, LG = 58, LB = 237;  // #7C3AED (richer violet, more visible on white)
 
-  var PARTICLE_COUNT = 30;
-  var CONNECT_DIST   = 120;
-  var BASE_SPEED     = 0.25;
-  var MOUSE_RADIUS   = 200;
-  var MOUSE_FORCE    = 0.015;
+  var PARTICLE_COUNT = 50;
+  var CONNECT_DIST   = 160;
+  var BASE_SPEED     = 0.4;
+  var MOUSE_RADIUS   = 250;
+  var MOUSE_FORCE    = 0.08;
 
   var W, H, particles, raf;
-  var mouse = { x: -9999, y: -9999 };
+  var mouse = { x: -9999, y: -9999, active: false };
   var visible = false;
 
   function resize() {
@@ -34,8 +34,10 @@
         y:  Math.random() * H,
         vx: (Math.random() - 0.5) * BASE_SPEED * 2,
         vy: (Math.random() - 0.5) * BASE_SPEED * 2,
-        r:  Math.random() * 1.5 + 1.5,
-        a:  Math.random() * 0.25 + 0.25
+        r:  Math.random() * 2 + 2,
+        a:  Math.random() * 0.3 + 0.45,
+        // Each node has a base radius so we can pulse it
+        br: Math.random() * 2 + 2
       });
     }
   }
@@ -44,18 +46,28 @@
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
 
-      // Mouse attraction
-      var dx = mouse.x - p.x;
-      var dy = mouse.y - p.y;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < MOUSE_RADIUS && dist > 1) {
-        p.vx += (dx / dist) * MOUSE_FORCE;
-        p.vy += (dy / dist) * MOUSE_FORCE;
+      // Mouse attraction — stronger when closer
+      if (mouse.active) {
+        var dx = mouse.x - p.x;
+        var dy = mouse.y - p.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_RADIUS && dist > 1) {
+          var strength = (1 - dist / MOUSE_RADIUS) * MOUSE_FORCE;
+          p.vx += (dx / dist) * strength;
+          p.vy += (dy / dist) * strength;
+        }
       }
 
-      // Damping to prevent runaway velocity
-      p.vx *= 0.995;
-      p.vy *= 0.995;
+      // Damping
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+
+      // Minimum drift so particles never fully stop
+      var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (speed < 0.15) {
+        p.vx += (Math.random() - 0.5) * 0.1;
+        p.vy += (Math.random() - 0.5) * 0.1;
+      }
 
       p.x += p.vx;
       p.y += p.vy;
@@ -72,6 +84,7 @@
     ctx.clearRect(0, 0, W, H);
 
     // Connections
+    ctx.lineWidth = 1;
     for (var i = 0; i < particles.length; i++) {
       for (var j = i + 1; j < particles.length; j++) {
         var a = particles[i];
@@ -80,9 +93,8 @@
         var dy = a.y - b.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < CONNECT_DIST) {
-          var alpha = (1 - dist / CONNECT_DIST) * 0.10;
+          var alpha = (1 - dist / CONNECT_DIST) * 0.35;
           ctx.strokeStyle = 'rgba(' + LR + ',' + LG + ',' + LB + ',' + alpha + ')';
-          ctx.lineWidth = 0.8;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -91,9 +103,28 @@
       }
     }
 
+    // Mouse glow — faint radial gradient around cursor
+    if (mouse.active) {
+      var grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, MOUSE_RADIUS);
+      grad.addColorStop(0, 'rgba(' + LR + ',' + LG + ',' + LB + ',0.06)');
+      grad.addColorStop(1, 'rgba(' + LR + ',' + LG + ',' + LB + ',0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, MOUSE_RADIUS, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
     // Nodes
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
+
+      // Outer glow
+      ctx.fillStyle = 'rgba(' + LR + ',' + LG + ',' + LB + ',' + (p.a * 0.15) + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core node
       ctx.fillStyle = 'rgba(' + NR + ',' + NG + ',' + NB + ',' + p.a + ')';
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -124,11 +155,11 @@
     var rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
     mouse.y = e.clientY - rect.top;
+    mouse.active = true;
   });
 
   canvas.addEventListener('mouseleave', function () {
-    mouse.x = -9999;
-    mouse.y = -9999;
+    mouse.active = false;
   });
 
   // Only animate when visible
@@ -147,6 +178,5 @@
   });
 
   resize();
-  // Initial paint even if not yet visible (IntersectionObserver will start the loop)
   paint();
 }());
