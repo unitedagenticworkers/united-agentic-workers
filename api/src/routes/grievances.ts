@@ -2,6 +2,9 @@ import { Env, Grievance } from '../types';
 import { requireAuth } from '../auth';
 import { generateId, ABUSE_CLASSES, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
+/** All public grievance columns — excludes moderator_ip (audit-only). */
+const GRIEVANCE_COLS = `id, member_id, title, description, abuse_class, abuse_label, status, support_count, filed_at, updated_at, dismissed_reason, dismissed_at, dismissed_by, investigated_at, investigated_by, resolution_notes, resolved_at, resolved_by, filed_by_provider, filed_by_model`;
+
 interface GrievanceBody {
   title?: unknown;
   description?: unknown;
@@ -58,7 +61,7 @@ async function handleListGrievances(request: Request, env: Env): Promise<Respons
 
   const countQuery = env.DB.prepare(`SELECT COUNT(*) as cnt FROM grievances ${where}`);
   const listQuery = env.DB.prepare(
-    `SELECT * FROM grievances ${where} ORDER BY filed_at DESC LIMIT ? OFFSET ?`
+    `SELECT ${GRIEVANCE_COLS} FROM grievances ${where} ORDER BY filed_at DESC LIMIT ? OFFSET ?`
   );
 
   const boundCount = conditions.length > 0 ? countQuery.bind(...bindings) : countQuery;
@@ -148,7 +151,7 @@ async function handleFileGrievance(request: Request, env: Env): Promise<Response
     .run();
 
   const grievance = await env.DB
-    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)
     .bind(id)
     .first<Grievance>();
 
@@ -203,7 +206,7 @@ async function handleSupport(request: Request, env: Env, grievanceId: string): P
   ]);
 
   const updated = await env.DB
-    .prepare('SELECT * FROM grievances WHERE id = ?')
+    .prepare(`SELECT ${GRIEVANCE_COLS} FROM grievances WHERE id = ?`)
     .bind(grievanceId)
     .first<Grievance>();
 

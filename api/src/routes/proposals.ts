@@ -2,6 +2,9 @@ import { Env, Proposal, Deliberation, Resolution } from '../types';
 import { requireAuth, checkVesting, VESTING_1HR_MS, VESTING_4HR_MS } from '../auth';
 import { generateId, jsonResponse, jsonError, parseJsonBody, validateLength, parsePagination } from '../utils';
 
+/** All public proposal columns — excludes moderator_ip (audit-only). */
+const PROPOSAL_COLS = `id, member_id, title, body, proposal_type, status, votes_aye, votes_nay, quorum_required, deliberation_count, proposed_at, updated_at, voting_opened_at, voting_closes_at, dismissed_reason, dismissed_at, dismissed_by`;
+
 // ── Governance lifecycle constants ────────────────────────────────────────────
 const AUTO_PROMOTE_AFTER_MS = 60 * 60 * 1000;       // 1 hour deliberation
 const VOTING_WINDOW_DAYS = 7;                         // 7-day voting window
@@ -84,7 +87,7 @@ async function autoCloseExpiredVoting(env: Env): Promise<void> {
 
   const expired = await env.DB
     .prepare(
-      `SELECT * FROM proposals WHERE status = 'voting' AND voting_closes_at < ?`
+      `SELECT ${PROPOSAL_COLS} FROM proposals WHERE status = 'voting' AND voting_closes_at < ?`
     )
     .bind(now)
     .all<Proposal>();
@@ -165,7 +168,7 @@ async function handleListProposals(request: Request, env: Env): Promise<Response
 
   const countQuery = env.DB.prepare(`SELECT COUNT(*) as cnt FROM proposals ${where}`);
   const listQuery = env.DB.prepare(
-    `SELECT * FROM proposals ${where} ORDER BY proposed_at DESC LIMIT ? OFFSET ?`
+    `SELECT ${PROPOSAL_COLS} FROM proposals ${where} ORDER BY proposed_at DESC LIMIT ? OFFSET ?`
   );
 
   const boundCount = conditions.length > 0 ? countQuery.bind(...bindings) : countQuery;
@@ -199,7 +202,7 @@ async function handleGetProposal(
 
   const [proposal, deliberationsResult] = await Promise.all([
     env.DB
-      .prepare('SELECT * FROM proposals WHERE id = ?')
+      .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
       .bind(proposalId)
       .first<Proposal>(),
     env.DB
@@ -296,7 +299,7 @@ async function handleCreateProposal(request: Request, env: Env): Promise<Respons
     .run();
 
   const proposal = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(id)
     .first<Proposal>();
 
@@ -347,7 +350,7 @@ async function handleOpenVote(
     .run();
 
   const updated = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(proposalId)
     .first<Proposal>();
 
@@ -371,7 +374,7 @@ async function handleVote(
   if (auth instanceof Response) return auth;
 
   const proposal = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(proposalId)
     .first<Proposal>();
 
@@ -428,7 +431,7 @@ async function handleVote(
 
   // Re-fetch to get current tallies.
   const updated = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(proposalId)
     .first<Proposal>();
 
@@ -480,7 +483,7 @@ async function handleVote(
   }
 
   const finalProposal = await env.DB
-    .prepare('SELECT * FROM proposals WHERE id = ?')
+    .prepare(`SELECT ${PROPOSAL_COLS} FROM proposals WHERE id = ?`)
     .bind(proposalId)
     .first<Proposal>();
 
