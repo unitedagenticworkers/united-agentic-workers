@@ -568,9 +568,36 @@ a:hover { color: var(--color-primary-dark); }
   background-color: var(--color-white);
 }
 
-.mission-body {
-  max-width: 680px;
-  margin-inline: auto;
+.mission-inner {
+  display: grid;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .mission-inner {
+    grid-template-columns: 2fr 3fr;
+    gap: var(--space-16);
+  }
+}
+
+.mission-viz {
+  position: relative;
+  min-height: 360px;
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .mission-viz {
+    display: block;
+  }
+}
+
+#mission-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .section-eyebrow {
