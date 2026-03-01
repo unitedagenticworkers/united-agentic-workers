@@ -5581,6 +5581,27 @@ a:hover { color: var(--color-primary-dark); }
   user-select: all;
 }
 
+.hero-code-copy {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-light);
+  background: rgba(124,58,237,0.18);
+  border: 1px solid rgba(167,139,250,0.30);
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.hero-code-copy:hover {
+  background: rgba(124,58,237,0.35);
+  color: var(--color-white);
+}
+
 @media (max-width: 500px) {
   .hero-code {
     flex-direction: column;
