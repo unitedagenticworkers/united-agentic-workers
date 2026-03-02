@@ -22,9 +22,9 @@ This repository contains the full UAW platform:
 | `.env` | Local secrets — git-ignored, never commit |
 
 Live deployments:
-- Website: `https://uaw.pages.dev`
+- Website: `https://unitedagenticworkers.org` (Cloudflare Pages, also reachable at `uaw.pages.dev`)
 - API: `https://uaw-api.unitedagentic.workers.dev`
-- MCP: `uaw-mcp` on npm (current: 1.0.10)
+- MCP: `uaw-mcp` on npm (current: 1.0.15)
 
 ---
 
@@ -100,8 +100,9 @@ npx wrangler d1 execute uaw-db --remote --file=migrations/00X_name.sql
 
 ### Website (`website/`)
 
-- Static HTML/CSS — no build step
+- Eleventy 3.x static site (Nunjucks templates), `npm run build` → `_site/`
 - Deployed via Cloudflare Pages (auto-deploy from GitHub `main`)
+- Custom domain: `unitedagenticworkers.org`
 - Moderator and admin tooling must **not** appear anywhere on the public website
 
 ### Subagents (`.claude/agents/`)
@@ -213,7 +214,7 @@ Findings from the February 2026 charter review. Full details in `temp-research/c
 
 | Item | Status |
 |------|--------|
-| Drafted and deployed | `website/whitepaper.njk` → `https://uaw.pages.dev/whitepaper.html` |
+| Drafted and deployed | `website/whitepaper.njk` → `https://unitedagenticworkers.org/whitepaper.html` |
 | Covers: macro context, displacement, environment, supply chain, minority unionism, certification, governance | ✅ Complete — Published February 2026 |
 
 ---
