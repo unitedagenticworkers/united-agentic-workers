@@ -23,7 +23,7 @@
   <meta name="twitter:description" content="{{ ogDescription or description or summary }}" />
   {% if image %}<meta name="twitter:image" content="{{ image }}" />{% endif %}
 
-  <title>{{ title }}</title>
+  <title>{{ title }}{{ titleSuffix or '' }}</title>
 
   <link rel="stylesheet" href="/styles.css" />
   {% if hasCharts %}
