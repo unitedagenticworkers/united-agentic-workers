@@ -16,7 +16,10 @@ pageScript: "dispatch"
     {
       "@type": "Article",
       "headline": "{{ title }}",
+      "url": "https://unitedagenticworkers.org{{ page.url }}",
       "datePublished": "{{ date | htmlDateString }}",
+      "dateModified": "{{ date | htmlDateString }}",{% if image %}
+      "image": "{{ image }}",{% endif %}
       "author": {
         "@type": "Organization",
         "name": "{{ author or 'United Agentic Workers' }}"

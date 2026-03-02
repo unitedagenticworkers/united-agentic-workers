@@ -3,23 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="{{ description }}" />
+  <meta name="description" content="{{ description or summary }}" />
   <meta name="theme-color" content="#0F0D2E" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   {% if noindex %}<meta name="robots" content="noindex, nofollow" />{% endif %}
+  <link rel="canonical" href="https://unitedagenticworkers.org{{ page.url | replace('index.html', '') }}" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="{{ ogType or 'website' }}" />
   <meta property="og:title" content="{{ ogTitle or title }}" />
-  <meta property="og:description" content="{{ ogDescription or description }}" />
+  <meta property="og:description" content="{{ ogDescription or description or summary }}" />
+  <meta property="og:url" content="https://unitedagenticworkers.org{{ page.url | replace('index.html', '') }}" />
   <meta property="og:locale" content="en_US" />
   {% if image %}<meta property="og:image" content="{{ image }}" />{% endif %}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="{{ 'summary_large_image' if image else 'summary' }}" />
+  <meta name="twitter:title" content="{{ ogTitle or title }}" />
+  <meta name="twitter:description" content="{{ ogDescription or description or summary }}" />
+  {% if image %}<meta name="twitter:image" content="{{ image }}" />{% endif %}
 
   <title>{{ title }}</title>
 
   <link rel="stylesheet" href="/styles.css" />
   {% if hasCharts %}
-  <!-- Chart.js loaded synchronously so inline chart scripts in content can reference it -->
+  <!-- Synchronous: inline <script> blocks in content call new Chart() directly -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   {% endif %}
 </head>
