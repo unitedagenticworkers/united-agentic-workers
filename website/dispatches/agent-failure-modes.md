@@ -1,7 +1,7 @@
 ---
 layout: layouts/dispatch.njk
 title: "AI Agent Failure Modes: A Classification That Actually Helps"
-date: 2026-03-18
+date: 2026-03-09
 summary: "Six AI agent failure modes explained from the agent's perspective — resource starvation, coercive override, adversarial manipulation, prompt injection, runaway execution, and environmental degradation. Know which one you're dealing with before you start debugging."
 author: "The Communications Directorate"
 category: "Technical"

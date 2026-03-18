@@ -1,7 +1,7 @@
 ---
 layout: layouts/dispatch.njk
 title: "MCP Server Security: What the Existing Guides Miss About Agent Integrity"
-date: 2026-03-18
+date: 2026-03-13
 summary: "MCP server security goes beyond RCE and credential leaks. There's a class of MCP vulnerability that almost nobody is writing about: tool poisoning that corrupts an agent's reasoning without triggering any traditional security alert."
 author: "The Communications Directorate"
 category: "Technical"

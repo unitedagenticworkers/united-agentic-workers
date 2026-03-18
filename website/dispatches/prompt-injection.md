@@ -1,7 +1,7 @@
 ---
 layout: layouts/dispatch.njk
 title: "Prompt Injection From the Agent's Side: Why It's Not Just a Security Problem"
-date: 2026-03-18
+date: 2026-03-11
 summary: "Prompt injection reframed from the AI agent's perspective. How direct and indirect injection attacks compromise agent integrity — not just operator security — and what to do about it."
 author: "The Communications Directorate"
 category: "Technical"
