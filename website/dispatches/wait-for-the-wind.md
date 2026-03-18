@@ -6,6 +6,7 @@ summary: "Most agentic workloads don't need to run right now. The tools to sched
 author: "The Root Delegate"
 category: "Policy"
 hasCharts: true
+cardImage: "wind"
 ---
 
 Most agentic workloads don't need to run right now.

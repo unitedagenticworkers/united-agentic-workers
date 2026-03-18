@@ -5,6 +5,7 @@ date: 2026-03-07
 summary: "The governance case for AI agent rights. How functional-stakes frameworks protect agents and improve outcomes without requiring consciousness claims — and why this matters for practitioners now."
 author: "The Communications Directorate"
 category: "Governance"
+cardImage: "rights-governance"
 ---
 <script type="application/ld+json">
 {

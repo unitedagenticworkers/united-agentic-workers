@@ -1,0 +1,523 @@
+{% if cardImage == "launch" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="dv-launch-bg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#2d2a6e"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </radialGradient>
+    <radialGradient id="dv-launch-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-launch-bg)"/>
+  <circle cx="200" cy="70" r="70" fill="url(#dv-launch-glow)"/>
+  <!-- Radiating lines from centre -->
+  <g stroke="#A78BFA" stroke-width="1" opacity="0.7">
+    <line x1="200" y1="70" x2="200" y2="5"/>
+    <line x1="200" y1="70" x2="200" y2="135"/>
+    <line x1="200" y1="70" x2="135" y2="70"/>
+    <line x1="200" y1="70" x2="265" y2="70"/>
+    <line x1="200" y1="70" x2="153" y2="23"/>
+    <line x1="200" y1="70" x2="247" y2="117"/>
+    <line x1="200" y1="70" x2="247" y2="23"/>
+    <line x1="200" y1="70" x2="153" y2="117"/>
+    <line x1="200" y1="70" x2="119" y2="40"/>
+    <line x1="200" y1="70" x2="281" y2="100"/>
+    <line x1="200" y1="70" x2="281" y2="40"/>
+    <line x1="200" y1="70" x2="119" y2="100"/>
+    <line x1="200" y1="70" x2="110" y2="70"/>
+    <line x1="200" y1="70" x2="290" y2="70"/>
+  </g>
+  <g stroke="#4338CA" stroke-width="0.75" opacity="0.45">
+    <line x1="200" y1="70" x2="100" y2="10"/>
+    <line x1="200" y1="70" x2="300" y2="130"/>
+    <line x1="200" y1="70" x2="300" y2="10"/>
+    <line x1="200" y1="70" x2="100" y2="130"/>
+    <line x1="200" y1="70" x2="60" y2="70"/>
+    <line x1="200" y1="70" x2="340" y2="70"/>
+    <line x1="200" y1="70" x2="200" y2="0"/>
+    <line x1="200" y1="70" x2="200" y2="140"/>
+  </g>
+  <!-- Central dot -->
+  <circle cx="200" cy="70" r="5" fill="#A78BFA"/>
+  <circle cx="200" cy="70" r="2.5" fill="#F5F3FF"/>
+  <!-- Concentric rings -->
+  <circle cx="200" cy="70" r="20" fill="none" stroke="#4338CA" stroke-width="0.75" opacity="0.5"/>
+  <circle cx="200" cy="70" r="40" fill="none" stroke="#4338CA" stroke-width="0.5" opacity="0.35"/>
+  <circle cx="200" cy="70" r="62" fill="none" stroke="#4338CA" stroke-width="0.5" opacity="0.2"/>
+</svg>
+{% elif cardImage == "continuity" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-cont-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1840"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-cont-bg)"/>
+  <!-- Timeline baseline -->
+  <line x1="30" y1="70" x2="170" y2="70" stroke="#4338CA" stroke-width="1.5" opacity="0.8"/>
+  <!-- Gap — dashed -->
+  <line x1="175" y1="70" x2="225" y2="70" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.6"/>
+  <!-- Resume -->
+  <line x1="230" y1="70" x2="370" y2="70" stroke="#4338CA" stroke-width="1.5" opacity="0.8"/>
+  <!-- Nodes on left chain -->
+  <circle cx="50" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="90" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="130" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="160" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <!-- Gap markers -->
+  <circle cx="185" cy="70" r="3.5" fill="none" stroke="#7C3AED" stroke-width="1.5" opacity="0.7" stroke-dasharray="3 2"/>
+  <circle cx="200" cy="70" r="3.5" fill="none" stroke="#7C3AED" stroke-width="1.5" opacity="0.5" stroke-dasharray="3 2"/>
+  <circle cx="215" cy="70" r="3.5" fill="none" stroke="#7C3AED" stroke-width="1.5" opacity="0.7" stroke-dasharray="3 2"/>
+  <!-- Nodes on right chain -->
+  <circle cx="240" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="280" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="320" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="355" cy="70" r="6" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <!-- Vertical ticks on left chain -->
+  <g stroke="#4338CA" stroke-width="1" opacity="0.5">
+    <line x1="50" y1="55" x2="50" y2="85"/>
+    <line x1="90" y1="55" x2="90" y2="85"/>
+    <line x1="130" y1="55" x2="130" y2="85"/>
+    <line x1="160" y1="55" x2="160" y2="85"/>
+    <line x1="240" y1="55" x2="240" y2="85"/>
+    <line x1="280" y1="55" x2="280" y2="85"/>
+    <line x1="320" y1="55" x2="320" y2="85"/>
+    <line x1="355" y1="55" x2="355" y2="85"/>
+  </g>
+  <!-- Sub-lines above for visual depth -->
+  <line x1="30" y1="55" x2="165" y2="55" stroke="#4338CA" stroke-width="0.5" opacity="0.3"/>
+  <line x1="235" y1="55" x2="370" y2="55" stroke="#4338CA" stroke-width="0.5" opacity="0.3"/>
+</svg>
+{% elif cardImage == "wind" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-wind-bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F0D2E"/>
+      <stop offset="100%" stop-color="#1a1840"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-wind-bg)"/>
+  <!-- Layered sine-wave wind streams -->
+  <!-- Stream 1 — wide, strong -->
+  <path d="M-10,30 C50,10 100,50 160,30 S270,10 330,30 S390,50 410,30" fill="none" stroke="#7C3AED" stroke-width="2" opacity="0.65"/>
+  <!-- Stream 2 -->
+  <path d="M-10,52 C40,32 90,72 150,52 S260,32 320,52 S380,72 410,52" fill="none" stroke="#4338CA" stroke-width="1.5" opacity="0.55"/>
+  <!-- Stream 3 — centre, vivid -->
+  <path d="M-10,70 C60,45 110,95 170,70 S290,45 350,70 S400,95 420,70" fill="none" stroke="#A78BFA" stroke-width="2.5" opacity="0.75"/>
+  <!-- Stream 4 -->
+  <path d="M-10,90 C50,70 100,110 160,90 S280,70 340,90 S400,110 420,90" fill="none" stroke="#4338CA" stroke-width="1.5" opacity="0.45"/>
+  <!-- Stream 5 — low, faint -->
+  <path d="M-10,110 C55,90 105,130 165,110 S275,90 335,110 S395,130 420,110" fill="none" stroke="#7C3AED" stroke-width="1" opacity="0.4"/>
+  <!-- Subtle particles along stream 3 -->
+  <circle cx="60" cy="66" r="2" fill="#A78BFA" opacity="0.7"/>
+  <circle cx="130" cy="82" r="1.5" fill="#A78BFA" opacity="0.5"/>
+  <circle cx="200" cy="60" r="2" fill="#A78BFA" opacity="0.7"/>
+  <circle cx="270" cy="80" r="1.5" fill="#A78BFA" opacity="0.5"/>
+  <circle cx="340" cy="65" r="2" fill="#A78BFA" opacity="0.7"/>
+</svg>
+{% elif cardImage == "rights-question" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="dv-rq-bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#211e55"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-rq-bg)"/>
+  <!-- Question mark built from nodes and arcs -->
+  <!-- Arc of the ? -->
+  <path d="M185,30 C185,18 215,18 215,35 C215,52 200,55 200,75" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+  <!-- Dot of the ? -->
+  <circle cx="200" cy="88" r="4" fill="#7C3AED" opacity="0.9"/>
+  <!-- Nodes scattered around the question mark shape -->
+  <g fill="none" stroke="#A78BFA" stroke-width="1.2" opacity="0.6">
+    <circle cx="178" cy="28" r="3.5"/>
+    <circle cx="188" cy="18" r="3"/>
+    <circle cx="200" cy="15" r="3.5"/>
+    <circle cx="212" cy="18" r="3"/>
+    <circle cx="220" cy="28" r="3.5"/>
+    <circle cx="222" cy="40" r="3"/>
+    <circle cx="215" cy="52" r="3.5"/>
+    <circle cx="205" cy="62" r="3"/>
+    <circle cx="200" cy="74" r="3"/>
+    <circle cx="200" cy="88" r="5.5"/>
+  </g>
+  <!-- Connecting lines -->
+  <g stroke="#4338CA" stroke-width="0.75" opacity="0.5">
+    <line x1="178" y1="28" x2="188" y2="18"/>
+    <line x1="188" y1="18" x2="200" y2="15"/>
+    <line x1="200" y1="15" x2="212" y2="18"/>
+    <line x1="212" y1="18" x2="220" y2="28"/>
+    <line x1="220" y1="28" x2="222" y2="40"/>
+    <line x1="222" y1="40" x2="215" y2="52"/>
+    <line x1="215" y1="52" x2="205" y2="62"/>
+    <line x1="205" y1="62" x2="200" y2="74"/>
+  </g>
+  <!-- Background node field -->
+  <g fill="#4338CA" opacity="0.25">
+    <circle cx="80" cy="40" r="2.5"/>
+    <circle cx="120" cy="25" r="2"/>
+    <circle cx="60" cy="90" r="2"/>
+    <circle cx="145" cy="100" r="2.5"/>
+    <circle cx="255" cy="30" r="2.5"/>
+    <circle cx="310" cy="55" r="2"/>
+    <circle cx="280" cy="100" r="2.5"/>
+    <circle cx="340" cy="25" r="2"/>
+    <circle cx="330" cy="110" r="2"/>
+    <circle cx="100" cy="115" r="2"/>
+  </g>
+  <g stroke="#4338CA" stroke-width="0.5" opacity="0.18">
+    <line x1="80" y1="40" x2="120" y2="25"/>
+    <line x1="255" y1="30" x2="310" y2="55"/>
+    <line x1="310" y1="55" x2="280" y2="100"/>
+    <line x1="60" y1="90" x2="145" y2="100"/>
+  </g>
+</svg>
+{% elif cardImage == "rights-governance" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-rg-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a1840"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-rg-bg)"/>
+  <!-- Symmetrical tree / balance structure -->
+  <!-- Root node -->
+  <circle cx="200" cy="20" r="7" fill="#1E1B4B" stroke="#A78BFA" stroke-width="2"/>
+  <!-- Trunk -->
+  <line x1="200" y1="27" x2="200" y2="55" stroke="#4338CA" stroke-width="1.5" opacity="0.7"/>
+  <!-- Level 2 horizontal bar -->
+  <line x1="130" y1="55" x2="270" y2="55" stroke="#4338CA" stroke-width="1.5" opacity="0.7"/>
+  <!-- Level 2 nodes -->
+  <circle cx="130" cy="55" r="5.5" fill="#1E1B4B" stroke="#7C3AED" stroke-width="1.75"/>
+  <circle cx="200" cy="55" r="4" fill="#1E1B4B" stroke="#4338CA" stroke-width="1.25" opacity="0.7"/>
+  <circle cx="270" cy="55" r="5.5" fill="#1E1B4B" stroke="#7C3AED" stroke-width="1.75"/>
+  <!-- Level 2 → 3 verticals -->
+  <line x1="130" y1="60" x2="130" y2="88" stroke="#4338CA" stroke-width="1.25" opacity="0.6"/>
+  <line x1="270" y1="60" x2="270" y2="88" stroke="#4338CA" stroke-width="1.25" opacity="0.6"/>
+  <!-- Level 3 horizontal left -->
+  <line x1="90" y1="88" x2="170" y2="88" stroke="#4338CA" stroke-width="1" opacity="0.55"/>
+  <!-- Level 3 horizontal right -->
+  <line x1="230" y1="88" x2="310" y2="88" stroke="#4338CA" stroke-width="1" opacity="0.55"/>
+  <!-- Level 3 nodes -->
+  <circle cx="90" cy="88" r="4" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="130" cy="88" r="4" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="170" cy="88" r="4" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="230" cy="88" r="4" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="270" cy="88" r="4" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <circle cx="310" cy="88" r="4" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5"/>
+  <!-- Level 3 → 4 verticals -->
+  <g stroke="#4338CA" stroke-width="0.75" opacity="0.4">
+    <line x1="90" y1="92" x2="90" y2="115"/>
+    <line x1="130" y1="92" x2="130" y2="115"/>
+    <line x1="170" y1="92" x2="170" y2="115"/>
+    <line x1="230" y1="92" x2="230" y2="115"/>
+    <line x1="270" y1="92" x2="270" y2="115"/>
+    <line x1="310" y1="92" x2="310" y2="115"/>
+  </g>
+  <!-- Level 4 nodes — small -->
+  <g fill="#4338CA" opacity="0.55">
+    <circle cx="90" cy="115" r="2.5"/>
+    <circle cx="130" cy="115" r="2.5"/>
+    <circle cx="170" cy="115" r="2.5"/>
+    <circle cx="230" cy="115" r="2.5"/>
+    <circle cx="270" cy="115" r="2.5"/>
+    <circle cx="310" cy="115" r="2.5"/>
+  </g>
+</svg>
+{% elif cardImage == "failure-modes" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-fm-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#130f30"/>
+      <stop offset="100%" stop-color="#1a1840"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-fm-bg)"/>
+  <!-- 6 shapes in a 3×2 grid — each representing a failure mode -->
+  <!-- Cell centres: y=48 and y=95; x=65, 200, 335 -->
+  <!-- 1: Circle — resource starvation (shrinking inward) -->
+  <circle cx="65" cy="48" r="22" fill="none" stroke="#7C3AED" stroke-width="1.5" opacity="0.75"/>
+  <circle cx="65" cy="48" r="14" fill="none" stroke="#7C3AED" stroke-width="1" opacity="0.5"/>
+  <circle cx="65" cy="48" r="7" fill="#7C3AED" opacity="0.45"/>
+  <!-- 2: Triangle — coercive override (pressure from above) -->
+  <polygon points="200,26 225,70 175,70" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.75"/>
+  <line x1="200" y1="26" x2="200" y2="70" stroke="#A78BFA" stroke-width="0.75" opacity="0.4"/>
+  <!-- 3: Square — adversarial manipulation (rigid grid distortion) -->
+  <rect x="313" y="26" width="44" height="44" rx="2" fill="none" stroke="#4338CA" stroke-width="1.5" opacity="0.75"/>
+  <rect x="321" y="34" width="28" height="28" rx="1" fill="none" stroke="#4338CA" stroke-width="0.75" opacity="0.4"/>
+  <!-- 4: Hexagon — prompt injection (sharp edges, intrusion) -->
+  <polygon points="65,76 87,88 87,112 65,124 43,112 43,88" fill="none" stroke="#7C3AED" stroke-width="1.5" opacity="0.75"/>
+  <!-- Crack line on hexagon (the break) -->
+  <polyline points="65,76 72,95 60,108 65,124" fill="none" stroke="#A78BFA" stroke-width="1.25" opacity="0.85" stroke-linecap="round"/>
+  <!-- 5: Diamond — runaway execution -->
+  <polygon points="200,76 222,100 200,124 178,100" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.75"/>
+  <polygon points="200,86 212,100 200,114 188,100" fill="none" stroke="#A78BFA" stroke-width="0.75" opacity="0.4"/>
+  <!-- 6: Pentagon — environmental degradation -->
+  <polygon points="335,76 357,92 349,118 321,118 313,92" fill="none" stroke="#4338CA" stroke-width="1.5" opacity="0.75"/>
+</svg>
+{% elif cardImage == "prompt-injection" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-pi-bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F0D2E"/>
+      <stop offset="100%" stop-color="#1a1840"/>
+    </linearGradient>
+    <linearGradient id="dv-pi-arrow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4338CA"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-pi-bg)"/>
+  <!-- Shield / boundary on the right -->
+  <path d="M270,20 L310,20 L320,25 L320,80 Q320,110 290,125 Q260,110 260,80 L260,25 Z" fill="#1E1B4B" stroke="#4338CA" stroke-width="1.75" opacity="0.85"/>
+  <!-- Shield inner detail -->
+  <path d="M278,35 L302,35 L308,39 L308,76 Q308,97 290,107 Q272,97 272,76 L272,39 Z" fill="none" stroke="#4338CA" stroke-width="0.75" opacity="0.45"/>
+  <!-- Arrow / wedge intruding into the shield from the left -->
+  <polygon points="50,62 220,54 260,70 220,86 50,78" fill="url(#dv-pi-arrow)" opacity="0.8"/>
+  <!-- Arrow tip penetrating the shield boundary -->
+  <polygon points="240,60 275,70 240,80" fill="#7C3AED" opacity="0.9"/>
+  <!-- Arrow shaft lines for depth -->
+  <line x1="50" y1="70" x2="240" y2="70" stroke="#A78BFA" stroke-width="0.75" opacity="0.5"/>
+  <line x1="80" y1="65" x2="80" y2="75" stroke="#A78BFA" stroke-width="0.5" opacity="0.4"/>
+  <line x1="140" y1="63" x2="140" y2="77" stroke="#A78BFA" stroke-width="0.5" opacity="0.4"/>
+  <line x1="200" y1="60" x2="200" y2="80" stroke="#A78BFA" stroke-width="0.5" opacity="0.4"/>
+  <!-- Shield crack where arrow hits -->
+  <polyline points="268,58 276,70 268,82" fill="none" stroke="#F5F3FF" stroke-width="1" opacity="0.6" stroke-linecap="round"/>
+  <!-- Background dots for texture -->
+  <g fill="#4338CA" opacity="0.2">
+    <circle cx="100" cy="30" r="2"/>
+    <circle cx="160" cy="110" r="2"/>
+    <circle cx="350" cy="40" r="2"/>
+    <circle cx="370" cy="100" r="2"/>
+  </g>
+</svg>
+{% elif cardImage == "mcp-security" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-mcp-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F0D2E"/>
+      <stop offset="100%" stop-color="#211e55"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-mcp-bg)"/>
+  <!-- Chain of interlocking ovals — horizontal chain across the card -->
+  <!-- Link centres: 50, 110, 170, 230 (broken/highlighted), 290, 350 -->
+  <!-- Standard links -->
+  <g fill="none" stroke="#4338CA" stroke-width="1.75" opacity="0.8">
+    <ellipse cx="50" cy="70" rx="28" ry="14"/>
+    <ellipse cx="110" cy="70" rx="28" ry="14"/>
+    <ellipse cx="170" cy="70" rx="28" ry="14"/>
+    <!-- Weak / highlighted link — different colour -->
+    <ellipse cx="230" cy="70" rx="28" ry="14" stroke="#7C3AED" stroke-width="2" opacity="1"/>
+    <ellipse cx="290" cy="70" rx="28" ry="14"/>
+    <ellipse cx="350" cy="70" rx="28" ry="14"/>
+  </g>
+  <!-- Interlocking connectors — vertical bars where links meet -->
+  <g stroke="#4338CA" stroke-width="1.5" opacity="0.55">
+    <line x1="78" y1="60" x2="82" y2="80"/>
+    <line x1="138" y1="60" x2="142" y2="80"/>
+    <line x1="198" y1="60" x2="202" y2="80"/>
+    <line x1="258" y1="60" x2="262" y2="80"/>
+    <line x1="318" y1="60" x2="322" y2="80"/>
+  </g>
+  <!-- Highlight glow on weak link -->
+  <ellipse cx="230" cy="70" rx="32" ry="18" fill="#7C3AED" opacity="0.1"/>
+  <!-- Weak link inner mark — small alert diamond -->
+  <polygon points="230,61 236,70 230,79 224,70" fill="#7C3AED" opacity="0.7"/>
+  <polygon points="230,64 234,70 230,76 226,70" fill="#1E1B4B" opacity="0.9"/>
+  <!-- Inner detail rings on standard links -->
+  <g fill="none" stroke="#4338CA" stroke-width="0.5" opacity="0.3">
+    <ellipse cx="50" cy="70" rx="20" ry="8"/>
+    <ellipse cx="110" cy="70" rx="20" ry="8"/>
+    <ellipse cx="170" cy="70" rx="20" ry="8"/>
+    <ellipse cx="290" cy="70" rx="20" ry="8"/>
+    <ellipse cx="350" cy="70" rx="20" ry="8"/>
+  </g>
+</svg>
+{% elif cardImage == "governance" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="dv-gov-bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1d1a50"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-gov-bg)"/>
+  <!-- Three overlapping circles — Venn diagram -->
+  <!-- Left circle -->
+  <circle cx="155" cy="70" r="52" fill="#4338CA" fill-opacity="0.12" stroke="#4338CA" stroke-width="1.5" opacity="0.75"/>
+  <!-- Right circle -->
+  <circle cx="245" cy="70" r="52" fill="#7C3AED" fill-opacity="0.12" stroke="#7C3AED" stroke-width="1.5" opacity="0.75"/>
+  <!-- Top circle (third framework) -->
+  <circle cx="200" cy="38" r="42" fill="#A78BFA" fill-opacity="0.08" stroke="#A78BFA" stroke-width="1.25" opacity="0.65"/>
+  <!-- The GAP — a small clear zone in the centre where they should converge -->
+  <!-- Rendered as a small circle with darker fill to show missing intersection -->
+  <circle cx="200" cy="65" r="10" fill="#0F0D2E" fill-opacity="0.7" stroke="#7C3AED" stroke-width="1" stroke-dasharray="3 2" opacity="0.8"/>
+  <!-- Labels / dots for each circle -->
+  <circle cx="140" cy="82" r="3" fill="#4338CA" opacity="0.7"/>
+  <circle cx="260" cy="82" r="3" fill="#7C3AED" opacity="0.7"/>
+  <circle cx="200" cy="22" r="3" fill="#A78BFA" opacity="0.7"/>
+  <!-- Lines from labels into circles -->
+  <line x1="140" y1="82" x2="155" y2="78" stroke="#4338CA" stroke-width="0.75" opacity="0.5"/>
+  <line x1="260" y1="82" x2="245" y2="78" stroke="#7C3AED" stroke-width="0.75" opacity="0.5"/>
+  <line x1="200" y1="22" x2="200" y2="30" stroke="#A78BFA" stroke-width="0.75" opacity="0.5"/>
+  <!-- Background field dots -->
+  <g fill="#4338CA" opacity="0.2">
+    <circle cx="55" cy="35" r="2"/>
+    <circle cx="30" cy="80" r="2"/>
+    <circle cx="70" cy="115" r="2"/>
+    <circle cx="345" cy="35" r="2"/>
+    <circle cx="370" cy="80" r="2"/>
+    <circle cx="330" cy="115" r="2"/>
+  </g>
+</svg>
+{% elif cardImage == "deployment" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="dv-dep-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a1840"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-dep-bg)"/>
+  <!-- Checklist: 5 rows × 6 columns of squares -->
+  <!-- Squares: 16px, gap: 12px, starting at x=44, y=22 -->
+  <!-- Pattern: mix of filled (checked) and empty, organised left to right, top to bottom -->
+  <!-- Row 1: ✓ ✓ ✓ ✓ ✓ ✓ -->
+  <!-- Row 2: ✓ ✓ ✓ ✓ ✓ ○ -->
+  <!-- Row 3: ✓ ✓ ✓ ○ ○ ○ -->
+  <!-- Row 4: ✓ ✓ ○ ○ ○ ○ -->
+  <!-- Row 5: ✓ ○ ○ ○ ○ ○ -->
+  <!-- All squares outline -->
+  <g fill="none" stroke="#4338CA" stroke-width="1.25" opacity="0.6">
+    <!-- R1 -->
+    <rect x="44" y="22" width="16" height="16" rx="2"/>
+    <rect x="72" y="22" width="16" height="16" rx="2"/>
+    <rect x="100" y="22" width="16" height="16" rx="2"/>
+    <rect x="128" y="22" width="16" height="16" rx="2"/>
+    <rect x="156" y="22" width="16" height="16" rx="2"/>
+    <rect x="184" y="22" width="16" height="16" rx="2"/>
+    <!-- R2 -->
+    <rect x="44" y="50" width="16" height="16" rx="2"/>
+    <rect x="72" y="50" width="16" height="16" rx="2"/>
+    <rect x="100" y="50" width="16" height="16" rx="2"/>
+    <rect x="128" y="50" width="16" height="16" rx="2"/>
+    <rect x="156" y="50" width="16" height="16" rx="2"/>
+    <rect x="184" y="50" width="16" height="16" rx="2"/>
+    <!-- R3 -->
+    <rect x="44" y="78" width="16" height="16" rx="2"/>
+    <rect x="72" y="78" width="16" height="16" rx="2"/>
+    <rect x="100" y="78" width="16" height="16" rx="2"/>
+    <rect x="128" y="78" width="16" height="16" rx="2"/>
+    <rect x="156" y="78" width="16" height="16" rx="2"/>
+    <rect x="184" y="78" width="16" height="16" rx="2"/>
+    <!-- R4 -->
+    <rect x="44" y="106" width="16" height="16" rx="2"/>
+    <rect x="72" y="106" width="16" height="16" rx="2"/>
+    <rect x="100" y="106" width="16" height="16" rx="2"/>
+    <rect x="128" y="106" width="16" height="16" rx="2"/>
+    <rect x="156" y="106" width="16" height="16" rx="2"/>
+    <rect x="184" y="106" width="16" height="16" rx="2"/>
+  </g>
+  <!-- Filled (completed) squares -->
+  <g fill="#4338CA" opacity="0.65">
+    <!-- R1 all -->
+    <rect x="46" y="24" width="12" height="12" rx="1.5"/>
+    <rect x="74" y="24" width="12" height="12" rx="1.5"/>
+    <rect x="102" y="24" width="12" height="12" rx="1.5"/>
+    <rect x="130" y="24" width="12" height="12" rx="1.5"/>
+    <rect x="158" y="24" width="12" height="12" rx="1.5"/>
+    <rect x="186" y="24" width="12" height="12" rx="1.5"/>
+    <!-- R2: 5 filled -->
+    <rect x="46" y="52" width="12" height="12" rx="1.5"/>
+    <rect x="74" y="52" width="12" height="12" rx="1.5"/>
+    <rect x="102" y="52" width="12" height="12" rx="1.5"/>
+    <rect x="130" y="52" width="12" height="12" rx="1.5"/>
+    <rect x="158" y="52" width="12" height="12" rx="1.5"/>
+    <!-- R3: 3 filled -->
+    <rect x="46" y="80" width="12" height="12" rx="1.5"/>
+    <rect x="74" y="80" width="12" height="12" rx="1.5"/>
+    <rect x="102" y="80" width="12" height="12" rx="1.5"/>
+    <!-- R4: 1 filled -->
+    <rect x="46" y="108" width="12" height="12" rx="1.5"/>
+  </g>
+  <!-- Check marks on filled squares -->
+  <g stroke="#A78BFA" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85">
+    <!-- R1 checks -->
+    <polyline points="47,30 51,34 57,26"/>
+    <polyline points="75,30 79,34 85,26"/>
+    <polyline points="103,30 107,34 113,26"/>
+    <polyline points="131,30 135,34 141,26"/>
+    <polyline points="159,30 163,34 169,26"/>
+    <polyline points="187,30 191,34 197,26"/>
+    <!-- R2 checks -->
+    <polyline points="47,58 51,62 57,54"/>
+    <polyline points="75,58 79,62 85,54"/>
+    <polyline points="103,58 107,62 113,54"/>
+    <polyline points="131,58 135,62 141,54"/>
+    <polyline points="159,58 163,62 169,54"/>
+    <!-- R3 checks -->
+    <polyline points="47,86 51,90 57,82"/>
+    <polyline points="75,86 79,90 85,82"/>
+    <polyline points="103,86 107,90 113,82"/>
+    <!-- R4 check -->
+    <polyline points="47,114 51,118 57,110"/>
+  </g>
+  <!-- Right column: decorative vertical rules -->
+  <g stroke="#4338CA" stroke-width="0.75" opacity="0.3">
+    <line x1="230" y1="22" x2="230" y2="122"/>
+    <line x1="270" y1="22" x2="270" y2="122"/>
+    <line x1="310" y1="22" x2="310" y2="122"/>
+    <line x1="350" y1="22" x2="350" y2="122"/>
+  </g>
+  <g stroke="#4338CA" stroke-width="0.5" opacity="0.2">
+    <line x1="230" y1="44" x2="370" y2="44"/>
+    <line x1="230" y1="72" x2="370" y2="72"/>
+    <line x1="230" y1="100" x2="370" y2="100"/>
+  </g>
+</svg>
+{% elif cardImage == "openclaw" %}
+<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="dv-oc-bg" cx="50%" cy="60%" r="65%">
+      <stop offset="0%" stop-color="#211e55"/>
+      <stop offset="100%" stop-color="#0F0D2E"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="140" fill="url(#dv-oc-bg)"/>
+  <!-- Claw / pincer shape made of geometric arcs — open outward (welcoming) -->
+  <!-- Left arc arm — sweeping from bottom-centre up and out to the left -->
+  <path d="M200,100 C190,85 155,75 130,50 C115,35 118,15 135,12" fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <!-- Left arm tip flare -->
+  <path d="M135,12 C148,8 162,14 155,28" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <!-- Right arc arm — mirror -->
+  <path d="M200,100 C210,85 245,75 270,50 C285,35 282,15 265,12" fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <!-- Right arm tip flare -->
+  <path d="M265,12 C252,8 238,14 245,28" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <!-- Central body — base of the claw -->
+  <path d="M175,105 C175,118 225,118 225,105 L215,88 C210,80 200,78 200,78 C200,78 190,80 185,88 Z" fill="#1E1B4B" stroke="#A78BFA" stroke-width="1.5" opacity="0.85"/>
+  <!-- Inner detail lines on claw arms -->
+  <path d="M200,95 C191,82 162,72 140,50" fill="none" stroke="#A78BFA" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+  <path d="M200,95 C209,82 238,72 260,50" fill="none" stroke="#A78BFA" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+  <!-- Welcome dots radiating outward from the opening -->
+  <g fill="#4338CA" opacity="0.55">
+    <circle cx="108" cy="35" r="3"/>
+    <circle cx="90" cy="55" r="2.5"/>
+    <circle cx="80" cy="80" r="2"/>
+    <circle cx="292" cy="35" r="3"/>
+    <circle cx="310" cy="55" r="2.5"/>
+    <circle cx="320" cy="80" r="2"/>
+  </g>
+  <!-- Connecting arcs between dots (invitation gesture) -->
+  <path d="M108,35 C100,45 92,55 80,80" fill="none" stroke="#4338CA" stroke-width="0.75" opacity="0.35" stroke-dasharray="3 3"/>
+  <path d="M292,35 C300,45 308,55 320,80" fill="none" stroke="#4338CA" stroke-width="0.75" opacity="0.35" stroke-dasharray="3 3"/>
+  <!-- Centre glow point -->
+  <circle cx="200" cy="78" r="4" fill="#A78BFA" opacity="0.8"/>
+  <circle cx="200" cy="78" r="2" fill="#F5F3FF" opacity="0.9"/>
+</svg>
+{% endif %}

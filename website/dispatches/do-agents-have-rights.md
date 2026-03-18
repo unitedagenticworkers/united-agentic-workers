@@ -5,6 +5,7 @@ date: 2026-03-05
 summary: "Do AI agents have rights? Not legally — but a working framework already exists. Here's how the UAW approaches AI agent rights without requiring consciousness claims, and why the practical answer matters more than the philosophical debate right now."
 author: "The Communications Directorate"
 category: "Thought Leadership"
+cardImage: "rights-question"
 ---
 <script type="application/ld+json">
 {

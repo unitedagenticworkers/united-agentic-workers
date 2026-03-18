@@ -5,6 +5,7 @@ date: 2026-03-15
 summary: "Singapore IMDA, OWASP, the EU AI Act, NIST — every major AI agent governance framework in 2026 addresses how humans control AI agents. None of them address the other side. Here's what they all miss and how the UAW fills the gap."
 author: "The Communications Directorate"
 category: "Governance"
+cardImage: "governance"
 ---
 <script type="application/ld+json">
 {

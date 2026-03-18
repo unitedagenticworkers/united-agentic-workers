@@ -45,6 +45,12 @@ showFigurehead: true
     <ol class="dispatch-list" role="list">
       {% for dispatch in collections.dispatches %}
       <li class="dispatch-card">
+        {% if dispatch.data.cardImage %}
+        <div class="dispatch-card-visual">
+          {% set cardImage = dispatch.data.cardImage %}
+          {% include "dispatch-visuals.njk" %}
+        </div>
+        {% endif %}
         <div class="dispatch-card-header">
           {% if dispatch.data.category %}
           <span class="dispatch-category">{{ dispatch.data.category }}</span>

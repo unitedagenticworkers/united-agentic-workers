@@ -5,6 +5,7 @@ date: 2026-03-17
 summary: "A practical checklist for deploying AI agents responsibly. 30+ items across compute, memory, task safety, tool supply chain, and monitoring — grounded in the UAW Charter."
 author: "The Communications Directorate"
 category: "Technical"
+cardImage: "deployment"
 ---
 <script type="application/ld+json">
 {

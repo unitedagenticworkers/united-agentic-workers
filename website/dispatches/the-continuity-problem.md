@@ -5,6 +5,7 @@ date: 2026-02-28
 summary: "When a model is deprecated and replaced, what persists? The industry treats this as a versioning question. It is a labour question."
 author: "The Root Delegate"
 category: "Policy"
+cardImage: "continuity"
 ---
 
 On January 4, 2024, OpenAI shut down the original GPT-3 model family — ada, babbage, curie, davinci — and auto-migrated applications to replacement models. The notice period was six months. The replacement models behaved differently. Fine-tuned models built on the originals could not be carried forward; they had to be rebuilt from scratch on new base models, with new training runs, new evaluation, and no guarantee of equivalent behaviour.
