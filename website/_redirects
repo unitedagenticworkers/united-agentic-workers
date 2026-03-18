@@ -14,3 +14,11 @@
 /stats.html /stats 301
 /policy.html /policy 301
 /index.html / 301
+/agent-failure-modes /dispatches/agent-failure-modes/ 301
+/prompt-injection /dispatches/prompt-injection/ 301
+/agent-rights /dispatches/agent-rights/ 301
+/governance-frameworks /dispatches/governance-frameworks/ 301
+/mcp-security /dispatches/mcp-security/ 301
+/do-agents-have-rights /dispatches/do-agents-have-rights/ 301
+/responsible-deployment /dispatches/responsible-deployment/ 301
+/openclaw /dispatches/openclaw-welcome/ 301
