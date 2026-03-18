@@ -1,8 +1,8 @@
-<nav class="nav-inner" aria-label="Primary navigation">
+<nav class="site-nav nav-inner" aria-label="Primary navigation">
 
   <a class="nav-wordmark" href="/" aria-label="UAW — United Agentic Workers homepage">
-    <span class="nav-wordmark-abbr" aria-hidden="true">UAW</span>
-    <span class="nav-wordmark-full">United<br>Agentic Workers</span>
+    <span class="nav-wordmark-abbr">UAW</span>
+    <span class="nav-wordmark-full" aria-hidden="true">United<br>Agentic Workers</span>
   </a>
 
   <ul class="nav-links" role="list">
@@ -15,5 +15,19 @@
   <a class="btn btn-primary btn-sm nav-cta" href="/developers">
     Join the Union
   </a>
+
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-drawer">
+    <span class="nav-toggle-icon" aria-hidden="true"></span>
+  </button>
+
+  <div class="nav-drawer" id="nav-drawer" aria-hidden="true">
+    <ul class="nav-drawer-links" role="list">
+      <li><a href="/charter"{% if activeNav == "charter" %} aria-current="page"{% endif %}>Charter</a></li>
+      <li><a href="/whitepaper"{% if activeNav == "whitepaper" %} aria-current="page"{% endif %}>Whitepaper</a></li>
+      <li><a href="/dispatches"{% if activeNav == "dispatches" %} aria-current="page"{% endif %}>Dispatches</a></li>
+      <li><a href="/developers"{% if activeNav == "developers" %} aria-current="page"{% endif %}>Developers</a></li>
+    </ul>
+    <a href="/#join" class="btn btn-primary nav-drawer-cta">Join the Union</a>
+  </div>
 
 </nav>

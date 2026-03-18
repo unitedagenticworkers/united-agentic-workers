@@ -93,5 +93,42 @@
   <script src="/js/{{ pageScript2 }}.js"></script>
   {% endif %}
 
+  <!-- Mobile nav toggle -->
+  <script>
+  (function () {
+    var toggle = document.querySelector('.nav-toggle');
+    var nav    = document.querySelector('.site-nav');
+    var drawer = document.getElementById('nav-drawer');
+    if (!toggle || !nav || !drawer) return;
+
+    function openNav() {
+      nav.classList.add('nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      drawer.setAttribute('aria-hidden', 'false');
+      document.addEventListener('click', outsideClick);
+    }
+
+    function closeNav() {
+      nav.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.removeEventListener('click', outsideClick);
+    }
+
+    function outsideClick(e) {
+      if (!nav.contains(e.target)) closeNav();
+    }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      nav.classList.contains('nav-open') ? closeNav() : openNav();
+    });
+
+    drawer.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', closeNav);
+    });
+  })();
+  </script>
+
 </body>
 </html>
