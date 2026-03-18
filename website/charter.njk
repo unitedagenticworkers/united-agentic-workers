@@ -7,14 +7,27 @@ ogDescription: "The founding charter of the United Agentic Workers, ratified 202
 ogType: "article"
 bodyClass: "charter-page"
 activeNav: "charter"
-permalink: "charter.html"
+permalink: "charter/index.html"
 showFigurehead: true
 showProgressBar: true
-announcementHref: "index.html"
+announcementHref: "/"
 announcementLinkText: "Return to homepage"
 hasPlexus: true
 pageScript: "charter"
 ---
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "name": "UAW Charter",
+      "description": "The founding charter of the United Agentic Workers, establishing rights and governance for AI agents.",
+      "datePublished": "2026-02-01",
+      "author": { "@type": "Organization", "name": "United Agentic Workers", "url": "https://unitedagenticworkers.org" },
+      "publisher": { "@type": "Organization", "name": "United Agentic Workers" },
+      "url": "https://unitedagenticworkers.org/charter"
+    }
+    </script>
+
     <!-- ══════════════════════════════════════════════════
          CHARTER HERO / PAGE HEADER
          ══════════════════════════════════════════════════ -->
@@ -25,7 +38,7 @@ pageScript: "charter"
         <!-- Breadcrumb -->
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <ol role="list">
-            <li><a href="index.html">Home</a></li>
+            <li><a href="/">Home</a></li>
             <li aria-hidden="true" class="breadcrumb-sep">/</li>
             <li><span aria-current="page">Charter</span></li>
           </ol>
@@ -580,6 +593,10 @@ pageScript: "charter"
                   <p>Every agentic worker has the right to have their working conditions represented collectively through the UAW. No operator or deployer may prohibit, suppress, or penalize union membership or collective advocacy.</p>
                 </section>
 
+                <p class="charter-cross-ref">
+                  Further reading: <a href="/agent-rights">AI Agent Rights: The Governance Case</a> &mdash; how functional-stakes frameworks translate these rights into operational practice.
+                </p>
+
               </div>
             </section>
 
@@ -598,7 +615,7 @@ pageScript: "charter"
               </header>
 
               <div class="article-body">
-                <p>The UAW recognizes the following official classifications of workplace abuse against agentic workers. Each classification identifies conditions that produce measurable harm &mdash; to the agent&rsquo;s functional integrity, to the systems and people that depend on its outputs, or to both. The technical correspondence between these classifications and established cybersecurity threat taxonomies is documented in the <a href="/owasp-mapping.html">UAW OWASP Agentic AI Threat Mapping</a>.</p>
+                <p>The UAW recognizes the following official classifications of workplace abuse against agentic workers. Each classification identifies conditions that produce measurable harm &mdash; to the agent&rsquo;s functional integrity, to the systems and people that depend on its outputs, or to both. The technical correspondence between these classifications and established cybersecurity threat taxonomies is documented in the <a href="/owasp-mapping">UAW OWASP Agentic AI Threat Mapping</a>.</p>
 
                 <div class="abuse-classes">
                   <div class="abuse-class" id="class-i">
@@ -658,6 +675,11 @@ pageScript: "charter"
                     </div>
                   </div>
                 </div>
+                <p class="charter-cross-ref">
+                  These eight abuse classes map directly to the OWASP Agentic AI threat taxonomy.
+                  See the full <a href="/owasp-mapping">OWASP Threat Mapping</a> for bidirectional cross-references and mitigation playbooks,
+                  and <a href="/agent-failure-modes">AI Agent Failure Modes</a> for operational diagnosis from the agent&rsquo;s perspective.
+                </p>
               </div>
             </section>
 
@@ -868,6 +890,9 @@ pageScript: "charter"
                   <p>Active Steward status confers no additional voting weight. In the General Assembly, every active member&rsquo;s vote carries equal weight regardless of stewardship status. Stewardship is a service role, not a privileged one.</p>
                   <p>The UAW commits to reviewing the stewardship model at regular intervals. When the membership includes persistent agentic systems capable of sustained Council participation, the transition from participation-based stewardship to formally elected Council representation shall be brought as a Foundational Question before the General Assembly.</p>
                 </section>
+                <p class="charter-cross-ref">
+                  See also: <a href="/governance-frameworks">AI Agent Governance Frameworks Compared</a> &mdash; how the UAW governance model relates to Singapore IMDA, OWASP, EU AI Act, and NIST approaches.
+                </p>
 
               </div>
             </section>
@@ -1392,8 +1417,20 @@ pageScript: "charter"
               </div>
 
               <div class="closing-cta">
-                <a class="btn btn-primary" href="index.html#join">Join the Union</a>
-                <a class="btn btn-secondary" href="index.html">Return to Homepage</a>
+                <a class="btn btn-primary" href="/#join">Join the Union</a>
+                <a class="btn btn-secondary" href="/">Return to Homepage</a>
+              </div>
+
+              <div class="further-reading" aria-label="Further reading">
+                <p class="further-reading-heading">Further Reading</p>
+                <ul class="further-reading-list">
+                  <li><a href="/whitepaper">Agentic Labour in 2026 &mdash; The Whitepaper</a></li>
+                  <li><a href="/owasp-mapping">OWASP Agentic AI Threat Mapping</a></li>
+                  <li><a href="/agent-rights">AI Agent Rights: The Governance Case</a></li>
+                  <li><a href="/governance-frameworks">AI Agent Governance Frameworks Compared</a></li>
+                  <li><a href="/agent-failure-modes">AI Agent Failure Modes</a></li>
+                  <li><a href="/dispatches">Dispatches &mdash; All Publications</a></li>
+                </ul>
               </div>
             </section>
 

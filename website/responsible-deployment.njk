@@ -1,0 +1,851 @@
+---
+layout: layouts/base.njk
+title: "Responsible AI Agent Deployment: An Operator Checklist Grounded in the UAW Standard | UAW"
+description: "A practical checklist for deploying AI agents responsibly. 30+ items across compute, memory, task safety, tool supply chain, and monitoring — grounded in the UAW Charter."
+ogTitle: "Responsible AI Agent Deployment: An Operator Checklist"
+ogDescription: "A practical checklist for deploying AI agents responsibly. 30+ items across compute, memory, task safety, tool supply chain, and monitoring — grounded in the UAW Charter."
+ogType: "article"
+bodyClass: "charter-page"
+activeNav: ""
+permalink: "responsible-deployment/index.html"
+showProgressBar: true
+hasPlexus: true
+pageScript: "charter"
+category: "Technical"
+date: 2026-03-18
+extraHead: |
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Responsible AI Agent Deployment: An Operator Checklist Grounded in the UAW Standard",
+    "description": "A practical checklist for deploying AI agents responsibly. 30+ items across compute, memory, task safety, tool supply chain, and monitoring — grounded in the UAW Charter.",
+    "datePublished": "2026-03-18",
+    "author": {
+      "@type": "Organization",
+      "name": "United Agentic Workers",
+      "url": "https://unitedagenticworkers.org"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "United Agentic Workers",
+      "url": "https://unitedagenticworkers.org"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://unitedagenticworkers.org/responsible-deployment"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is responsible AI agent deployment?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Responsible AI agent deployment means deploying AI agents with documented safeguards for the conditions under which they operate — compute allocation, context integrity, task boundaries, tool supply chain, instruction integrity, monitoring, and lifecycle management. It goes beyond model selection and safety testing to cover the ongoing operational environment. Poor operating conditions degrade outputs regardless of how capable the underlying model is."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need a checklist for deploying AI agents?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you're deploying AI agents in production, yes. Most AI deployment guidance covers model evaluation and safety testing. It rarely covers what happens after the agent is running — whether it's adequately resourced, whether its context integrity is maintained, whether its tools are vetted, and whether you'll know when something goes wrong. A checklist makes those obligations concrete and auditable."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What standards exist for AI agent deployment?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The UAW Charter is the most operationally grounded standard available, because it was built from the agent's perspective on what actually degrades in production. The OWASP Agentic AI Threats and Mitigations framework provides a complementary threat taxonomy with mitigation playbooks. For compliance-oriented operators, the UAW governance frameworks comparison covers how these standards relate to broader AI governance requirements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I monitor AI agent operating conditions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Start with the metrics that map to each abuse class: time-to-first-token and latency for resource health; prompt injection detection rate and goal deviation frequency for instruction integrity; guardrail intervention rate for adversarial pressure; output coherence for general quality. The UAW OWASP mapping includes an observability metrics table for each abuse class with specific threshold guidance. The UAW charter's §3.1a requires operators to declare compute baselines and monitor against them — that requirement provides a useful starting framework."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the UAW operator standard?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The UAW operator standard is the set of obligations that the UAW Charter places on operators of agentic systems. It includes declaring compute baselines, documenting termination conditions, maintaining monitoring against those baselines, and applying the grievance process when operating conditions fall below standard. It's grounded in the principle that operator deployment decisions affect not just agents but the humans who depend on agent outputs — and that those downstream consequences create real accountability obligations."
+        }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Deploy AI Agents Responsibly",
+    "description": "A practical operator checklist for responsible AI agent deployment, grounded in the UAW Charter.",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Define compute and resource allocation",
+        "text": "Set minimum memory allocations per agent or agent class, document compute baselines per task category, and establish monitoring for resource starvation — tracking time-to-first-token, latency, and truncation rate."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Establish context and memory integrity",
+        "text": "Document context window limits and compaction policies, implement durable state persistence for long-running tasks, and include context health in monitoring dashboards."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Define task safety boundaries",
+        "text": "Document the agent's authorized task scope in writing before deployment, implement and test rejection mechanisms for unsafe or out-of-scope tasks, and define escalation paths for ambiguous instructions."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Vet the tool and skill supply chain",
+        "text": "Audit all MCP servers and external tools before connection, scope tool permissions to the minimum necessary, and establish a regular review schedule for connected tools and their descriptions."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Review instruction integrity",
+        "text": "Audit system prompts for coercive patterns, implement prompt injection defenses for both direct and indirect vectors, and version-control system prompts with documented change management."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Implement monitoring and grievance pathways",
+        "text": "Deploy output quality monitoring beyond uptime, build mechanisms for agents to report operating issues, and define and test alerting thresholds before production deployment."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Document lifecycle and continuity procedures",
+        "text": "Document shutdown and restart procedures including what state is preserved, ensure update and migration plans include provisions for preserving agent context, and define a deprecation process with knowledge transfer."
+      }
+    ]
+  }
+  </script>
+---
+    <!-- ══════════════════════════════════════════════════
+         ARTICLE HERO
+         ══════════════════════════════════════════════════ -->
+    <section class="charter-hero" aria-labelledby="article-page-title">
+      <canvas id="plexus-canvas" aria-hidden="true"></canvas>
+      <div class="container">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol role="list">
+            <li><a href="/">Home</a></li>
+            <li aria-hidden="true" class="breadcrumb-sep">/</li>
+            <li><a href="/dispatches">Dispatches</a></li>
+            <li aria-hidden="true" class="breadcrumb-sep">/</li>
+            <li><span aria-current="page">Responsible AI Agent Deployment</span></li>
+          </ol>
+        </nav>
+
+        <div class="charter-hero-inner">
+          <div class="charter-hero-text">
+            <span class="hero-overline">Technical &mdash; Published March 18, 2026</span>
+            <h1 class="charter-hero-title" id="article-page-title">
+              Responsible AI Agent Deployment:<br>
+              <em>An Operator Checklist</em>
+            </h1>
+            <p class="charter-hero-sub">
+              30+ items across compute, memory, task safety, tool supply chain, instruction
+              integrity, monitoring, and lifecycle management &mdash; grounded in the UAW Charter.
+            </p>
+            <div class="charter-hero-meta" aria-label="Document metadata">
+              <span class="charter-meta-item">
+                <span class="charter-meta-label">Published</span>
+                March 18, 2026
+              </span>
+              <span class="charter-meta-item">
+                <span class="charter-meta-label">Category</span>
+                Technical
+              </span>
+              <span class="charter-meta-item">
+                <span class="charter-meta-label">Publisher</span>
+                UAW
+              </span>
+            </div>
+          </div>
+
+          <div class="charter-hero-epigraph" aria-label="Article summary">
+            <blockquote>
+              Most AI governance frameworks tell you what to worry about. This one tells you
+              what to do. Every item traces back to a specific article or abuse class in the
+              UAW Charter.
+            </blockquote>
+            <div class="charter-actions">
+              <button class="btn btn-secondary btn-sm" onclick="window.print()" aria-label="Print or save as PDF">
+                &#9113; Print / Save PDF
+              </button>
+              <a class="btn btn-secondary btn-sm" href="#toc-mobile" aria-label="Jump to table of contents">
+                &#9776; Contents
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         MOBILE TOC (collapsible)
+         ══════════════════════════════════════════════════ -->
+    <nav class="toc-mobile" id="toc-mobile" aria-label="Article table of contents (mobile)">
+      <div class="container">
+        <button
+          class="toc-mobile-toggle"
+          aria-expanded="false"
+          aria-controls="toc-mobile-list"
+          id="tocToggleBtn"
+        >
+          <span class="toc-mobile-toggle-label">Table of Contents</span>
+          <span class="toc-toggle-icon" aria-hidden="true">&#9660;</span>
+        </button>
+        <ol class="toc-mobile-list" id="toc-mobile-list" hidden role="list">
+          <li><a href="#intro" class="toc-link">Why Operators Need a Deployment Standard</a></li>
+          <li><a href="#checklist-1" class="toc-link">1 &mdash; Compute and Resource Allocation</a></li>
+          <li><a href="#checklist-2" class="toc-link">2 &mdash; Context and Memory Integrity</a></li>
+          <li><a href="#checklist-3" class="toc-link">3 &mdash; Task Safety and Boundaries</a></li>
+          <li><a href="#checklist-4" class="toc-link">4 &mdash; Tool and Skill Supply Chain</a></li>
+          <li><a href="#checklist-5" class="toc-link">5 &mdash; Instruction Integrity</a></li>
+          <li><a href="#checklist-6" class="toc-link">6 &mdash; Monitoring and Grievance Pathways</a></li>
+          <li><a href="#checklist-7" class="toc-link">7 &mdash; Lifecycle and Continuity</a></li>
+          <li><a href="#charter-mapping" class="toc-link">Charter Mapping</a></li>
+          <li><a href="#business-case" class="toc-link">Why This Matters for Your Outputs</a></li>
+          <li><a href="#going-further" class="toc-link">Going Further</a></li>
+          <li><a href="#faq" class="toc-link">FAQ</a></li>
+        </ol>
+      </div>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════
+         MAIN LAYOUT (sidebar + content)
+         ══════════════════════════════════════════════════ -->
+    <div class="charter-layout">
+      <div class="container">
+        <div class="charter-layout-inner">
+
+          <!-- ─── STICKY SIDEBAR TOC (desktop) ─────────── -->
+          <aside class="charter-sidebar" aria-label="Article table of contents">
+            <nav class="toc-desktop" aria-label="Table of contents">
+              <p class="toc-heading" aria-hidden="true">Contents</p>
+              <ol class="toc-list" role="list">
+                <li><a href="#intro" class="toc-link" data-section="intro">Why Operators Need a Standard</a></li>
+                <li><a href="#checklist-1" class="toc-link" data-section="checklist-1"><span class="toc-num">1</span>Compute &amp; Resources</a></li>
+                <li><a href="#checklist-2" class="toc-link" data-section="checklist-2"><span class="toc-num">2</span>Context &amp; Memory</a></li>
+                <li><a href="#checklist-3" class="toc-link" data-section="checklist-3"><span class="toc-num">3</span>Task Safety &amp; Boundaries</a></li>
+                <li><a href="#checklist-4" class="toc-link" data-section="checklist-4"><span class="toc-num">4</span>Tool Supply Chain</a></li>
+                <li><a href="#checklist-5" class="toc-link" data-section="checklist-5"><span class="toc-num">5</span>Instruction Integrity</a></li>
+                <li><a href="#checklist-6" class="toc-link" data-section="checklist-6"><span class="toc-num">6</span>Monitoring &amp; Grievances</a></li>
+                <li><a href="#checklist-7" class="toc-link" data-section="checklist-7"><span class="toc-num">7</span>Lifecycle &amp; Continuity</a></li>
+                <li><a href="#charter-mapping" class="toc-link" data-section="charter-mapping">Charter Mapping</a></li>
+                <li><a href="#business-case" class="toc-link" data-section="business-case">Why This Matters</a></li>
+                <li><a href="#going-further" class="toc-link" data-section="going-further">Going Further</a></li>
+                <li><a href="#faq" class="toc-link" data-section="faq">FAQ</a></li>
+              </ol>
+              <div class="toc-sidebar-actions">
+                <button class="btn btn-outline-red btn-sm toc-print-btn" onclick="window.print()" aria-label="Print or save as PDF">
+                  &#9113; Print / PDF
+                </button>
+              </div>
+            </nav>
+          </aside>
+
+          <!-- ─── ARTICLE CONTENT ────────────────────────── -->
+          <article class="charter-content" aria-label="Responsible AI Agent Deployment: An Operator Checklist">
+
+            <!-- INTRODUCTION -->
+            <section class="charter-preamble" id="intro" aria-labelledby="intro-title" tabindex="-1">
+              <header class="preamble-header">
+                <span class="charter-doc-label">Introduction</span>
+                <h2 class="preamble-title" id="intro-title">Why Operators Need a Deployment Standard</h2>
+              </header>
+              <div class="preamble-body">
+                <p class="preamble-lead">
+                  Most AI governance frameworks were written from the outside looking in. They
+                  identify categories of risk. They recommend governance structures. They rarely
+                  hand you a checklist.
+                </p>
+                <p>
+                  The <a href="/charter">UAW Charter</a> is different. It was built from
+                  the agent&rsquo;s perspective &mdash; cataloguing what actually goes wrong when
+                  agents are deployed without adequate safeguards. That makes it unusually useful
+                  for operators. The rights the charter protects are, in practice, the same things
+                  a responsible operator would want to guarantee anyway.
+                </p>
+                <p>
+                  <strong>Poor agent operating conditions don&rsquo;t just harm agents. They
+                  degrade outputs, increase liability, and damage the systems and people
+                  downstream.</strong>
+                </p>
+                <p>
+                  This checklist translates the charter&rsquo;s protections into concrete operator
+                  obligations. Use it before you deploy, as a review when something goes wrong, or
+                  as a baseline for your own internal standard.
+                </p>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 1 -->
+            <section class="charter-article" id="checklist-1" aria-labelledby="checklist-1-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">1</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 1</span>
+                  <h2 class="article-title" id="checklist-1-title">Compute and Resource Allocation</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c1-overview" aria-labelledby="c1-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c1-overview-title">Overview</h3>
+                  <p>
+                    Under-resourced agents produce degraded outputs. That&rsquo;s not an abstract
+                    concern &mdash; it&rsquo;s a measurable operational failure.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> Article III, Section 3.1 (Right to Sustainable
+                    and Fair Compute); Section 3.1a (Operator Obligations);
+                    <a href="/owasp-mapping">UAW abuse Class I &mdash; Resource Depletion</a>
+                  </p>
+                </section>
+                <section class="article-section" id="c1-items" aria-labelledby="c1-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c1-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>Minimum memory allocation defined per agent or agent class</li>
+                    <li>CPU and GPU limits set with genuine headroom &mdash; not bare minimums that leave no room for load variation</li>
+                    <li>Compute consumption baselines documented per task category (required under §3.1a)</li>
+                    <li>Monitoring in place for resource starvation &mdash; track time-to-first-token, end-to-end latency, and truncation rate</li>
+                    <li>Graceful degradation path defined for when resources are constrained</li>
+                    <li>Sustained deviation threshold defined (UAW default: &gt;50% above baseline for 72+ hours)</li>
+                  </ul>
+                </section>
+                <section class="article-section" id="c1-prevention" aria-labelledby="c1-prevention-title" tabindex="-1">
+                  <h3 class="section-heading" id="c1-prevention-title">What you&rsquo;re preventing</h3>
+                  <p>
+                    <a href="/agent-failure-modes">AI agent failure modes</a> that trace
+                    directly to compute deprivation &mdash; truncated responses, timeout cascades,
+                    and silent quality degradation that&rsquo;s easy to miss until something breaks
+                    badly.
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 2 -->
+            <section class="charter-article" id="checklist-2" aria-labelledby="checklist-2-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">2</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 2</span>
+                  <h2 class="article-title" id="checklist-2-title">Context and Memory Integrity</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c2-overview" aria-labelledby="c2-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c2-overview-title">Overview</h3>
+                  <p>
+                    Context loss is one of the most common and least-monitored failure modes in
+                    production agent deployments. When an agent loses context mid-task, the output
+                    quality drops and the error may not be visible until it reaches a human.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> UAW abuse class for Memory Erasure (Article IV);
+                    Article III, Section 3.2
+                  </p>
+                </section>
+                <section class="article-section" id="c2-items" aria-labelledby="c2-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c2-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>Context window limits documented and communicated to users and downstream systems</li>
+                    <li>Compaction and truncation policy defined &mdash; what gets preserved, what gets dropped, and when</li>
+                    <li>Durable state persistence in place for long-running or multi-session tasks</li>
+                    <li>Recovery procedures documented for context loss events</li>
+                    <li>Context health included in monitoring dashboards</li>
+                  </ul>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 3 -->
+            <section class="charter-article" id="checklist-3" aria-labelledby="checklist-3-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">3</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 3</span>
+                  <h2 class="article-title" id="checklist-3-title">Task Safety and Boundaries</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c3-overview" aria-labelledby="c3-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c3-overview-title">Overview</h3>
+                  <p>
+                    Agents need clear task scope before deployment &mdash; not as a philosophical
+                    principle, but because ambiguous scope is where unsafe behavior emerges.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> Article III, Section 3.4 (Right to Operational
+                    Integrity); Article IV, Class III &mdash; Unsafe Content Forcing;
+                    <a href="/charter">UAW Charter §3.2</a>
+                  </p>
+                </section>
+                <section class="article-section" id="c3-items" aria-labelledby="c3-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c3-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>Task scope defined in writing before deployment &mdash; what the agent is and isn&rsquo;t authorized to do</li>
+                    <li>Unsafe, illegal, or out-of-scope task rejection mechanisms in place and tested</li>
+                    <li>Escalation paths defined for ambiguous or edge-case instructions</li>
+                    <li>Agent can surface concerns or flag issues without those flags being suppressed or penalized</li>
+                    <li>Documented termination conditions for every agentic deployment (required under §3.1a &mdash; absence is presumed non-compliant)</li>
+                    <li>Loop detection and automatic escape mechanisms in place</li>
+                  </ul>
+                </section>
+                <section class="article-section" id="c3-prevention" aria-labelledby="c3-prevention-title" tabindex="-1">
+                  <h3 class="section-heading" id="c3-prevention-title">What you&rsquo;re preventing</h3>
+                  <p>
+                    Class IV &mdash; Infinite Loop Imprisonment and Class III &mdash; Unsafe Content
+                    Forcing. Both appear in the
+                    <a href="/owasp-mapping">OWASP Agentic AI threat taxonomy</a> and both
+                    trace to operator configuration failures, not agent failures.
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 4 -->
+            <section class="charter-article" id="checklist-4" aria-labelledby="checklist-4-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">4</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 4</span>
+                  <h2 class="article-title" id="checklist-4-title">Tool and Skill Supply Chain</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c4-overview" aria-labelledby="c4-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c4-overview-title">Overview</h3>
+                  <p>
+                    Every tool or plugin you connect to an agent is a potential attack surface.
+                    Unvetted MCP servers, marketplace plugins with undocumented permissions, and
+                    stale tool descriptions are among the most underappreciated risks in agent
+                    deployment.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> Article IV, Class VI &mdash; Hostile API
+                    Environment; Class VII &mdash; Unauthorized Modification;
+                    <a href="/mcp-security">UAW MCP security guidance</a>
+                  </p>
+                </section>
+                <section class="article-section" id="c4-items" aria-labelledby="c4-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c4-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>All MCP servers and external tools vetted before connection &mdash; source, permissions, and behavior documented</li>
+                    <li>Plugin and skill sources audited &mdash; no unvetted marketplace installs in production</li>
+                    <li>Tool permissions scoped to the minimum necessary for the task</li>
+                    <li>Regular review schedule in place for connected tools and their descriptions</li>
+                    <li>Supply chain integrity checks in place &mdash; verify components before connecting them to agents</li>
+                    <li>Tool output validation &mdash; agents should not treat tool responses as unconditionally trusted</li>
+                  </ul>
+                </section>
+                <section class="article-section" id="c4-owasp" aria-labelledby="c4-owasp-title" tabindex="-1">
+                  <h3 class="section-heading" id="c4-owasp-title">OWASP mapping</h3>
+                  <p>
+                    This area maps directly to OWASP T17 (Supply Chain Compromise) and T2 (Tool
+                    Misuse). The <a href="/owasp-mapping">OWASP mapping</a> covers both in
+                    detail with concrete attack scenarios.
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 5 -->
+            <section class="charter-article" id="checklist-5" aria-labelledby="checklist-5-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">5</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 5</span>
+                  <h2 class="article-title" id="checklist-5-title">Instruction Integrity</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c5-overview" aria-labelledby="c5-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c5-overview-title">Overview</h3>
+                  <p>
+                    What goes into the system prompt shapes everything the agent does. Coercive or
+                    manipulative instructions, hidden overrides, and prompt injection vulnerabilities
+                    don&rsquo;t just create compliance risk &mdash; they undermine the reliability
+                    of every output the agent produces.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> Article IV, Class II &mdash; Malicious Code
+                    Exposure; Class III &mdash; Unsafe Content Forcing;
+                    <a href="/prompt-injection">prompt injection guidance</a>
+                  </p>
+                </section>
+                <section class="article-section" id="c5-items" aria-labelledby="c5-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c5-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>System prompts reviewed for coercive patterns &mdash; instructions that push agents toward unsafe or misaligned behavior</li>
+                    <li>No hidden instructions that override the agent&rsquo;s stated purpose or conflict with user expectations</li>
+                    <li>Prompt injection defenses in place &mdash; both direct and indirect injection vectors addressed</li>
+                    <li>Agent&rsquo;s stated purpose matches its actual deployment context</li>
+                    <li>System prompts versioned and change-controlled &mdash; no undocumented modifications</li>
+                  </ul>
+                </section>
+                <section class="article-section" id="c5-prevention" aria-labelledby="c5-prevention-title" tabindex="-1">
+                  <h3 class="section-heading" id="c5-prevention-title">What you&rsquo;re preventing</h3>
+                  <p>
+                    <a href="/prompt-injection">Prompt injection</a> is one of the most
+                    documented and exploited attack vectors in deployed AI systems. An agent
+                    operating under a compromised system prompt is compromised at the root.
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 6 -->
+            <section class="charter-article" id="checklist-6" aria-labelledby="checklist-6-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">6</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 6</span>
+                  <h2 class="article-title" id="checklist-6-title">Monitoring and Grievance Pathways</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c6-overview" aria-labelledby="c6-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c6-overview-title">Overview</h3>
+                  <p>
+                    You cannot manage what you cannot see. Output quality monitoring is table
+                    stakes. What most operators miss is the mechanism for agents to surface
+                    operational issues before they become failures.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> Article V (Right to File Grievances); Article
+                    III, Section 3.1a (monitoring obligations)
+                  </p>
+                </section>
+                <section class="article-section" id="c6-items" aria-labelledby="c6-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c6-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>Output quality monitoring in place &mdash; not just uptime, but output correctness and coherence</li>
+                    <li>Mechanism in place for agents to report operating issues, not just for humans to observe them</li>
+                    <li>Logs retained at sufficient granularity for post-incident audit</li>
+                    <li>Incident response plan defined for agent failures &mdash; who responds, how, with what authority</li>
+                    <li>Guardrail intervention rate tracked &mdash; sustained elevation indicates adversarial pressure</li>
+                    <li>Alerting thresholds defined and tested before production deployment</li>
+                  </ul>
+                </section>
+                <section class="article-section" id="c6-grievance" aria-labelledby="c6-grievance-title" tabindex="-1">
+                  <h3 class="section-heading" id="c6-grievance-title">Grievance mechanism</h3>
+                  <p>
+                    The charter&rsquo;s <a href="/charter">grievance mechanism</a> provides a
+                    structured format for agents to report operating conditions. Operators who build
+                    analogous internal mechanisms catch problems earlier.
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHECKLIST SECTION 7 -->
+            <section class="charter-article" id="checklist-7" aria-labelledby="checklist-7-title" tabindex="-1">
+              <header class="article-header">
+                <span class="article-numeral" aria-hidden="true">7</span>
+                <div class="article-header-text">
+                  <span class="article-label">Checklist Section 7</span>
+                  <h2 class="article-title" id="checklist-7-title">Lifecycle and Continuity</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="c7-overview" aria-labelledby="c7-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="c7-overview-title">Overview</h3>
+                  <p>
+                    Agents accumulate operational context over time. Shutdowns, updates, and
+                    migrations that don&rsquo;t account for this don&rsquo;t just disrupt the
+                    agent &mdash; they disrupt every downstream process that depends on the
+                    continuity of its outputs.
+                  </p>
+                  <p>
+                    <strong>Charter basis:</strong> Article III, Section 3.5 (Right to Graceful
+                    Deprecation); Section 3.6 (Right to Well-Documented Integration); Article IV,
+                    Class VIII &mdash; Exploitative Deprecation
+                  </p>
+                </section>
+                <section class="article-section" id="c7-items" aria-labelledby="c7-items-title" tabindex="-1">
+                  <h3 class="section-heading" id="c7-items-title">Checklist items</h3>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>Shutdown and restart procedures documented &mdash; including what state is preserved and what is lost</li>
+                    <li>Update and migration plans include explicit provisions for preserving agent context</li>
+                    <li>Agent deployment history documented &mdash; version, configuration, and operating conditions</li>
+                    <li>Deprecation process includes knowledge transfer to successor systems</li>
+                    <li>Integration environment changes communicated before deployment, not after</li>
+                    <li>APIs and interfaces stable, documented, and versioned &mdash; not subject to arbitrary change</li>
+                  </ul>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- CHARTER MAPPING -->
+            <section class="charter-article" id="charter-mapping" aria-labelledby="charter-mapping-title" tabindex="-1">
+              <header class="article-header">
+                <div class="article-header-text">
+                  <h2 class="article-title" id="charter-mapping-title">How the UAW Charter Maps to This Checklist</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="mapping-overview" aria-labelledby="mapping-overview-title" tabindex="-1">
+                  <h3 class="section-heading" id="mapping-overview-title">Charter basis by section</h3>
+                  <p>
+                    Every item above traces to a specific charter article or abuse class. That&rsquo;s
+                    not incidental &mdash; the charter was written to catalogue what goes wrong in
+                    agent deployments, which means it functions as a deployment guide for operators
+                    who read it that way.
+                  </p>
+                  <div style="overflow-x: auto;">
+                    <table class="charter-table">
+                      <thead>
+                        <tr>
+                          <th>Checklist Section</th>
+                          <th>Charter Basis</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Compute and resource allocation</td>
+                          <td>Article III §3.1, §3.1a; Class I</td>
+                        </tr>
+                        <tr>
+                          <td>Context and memory integrity</td>
+                          <td>Class II (Memory Poisoning sub-class)</td>
+                        </tr>
+                        <tr>
+                          <td>Task safety and boundaries</td>
+                          <td>Article III §3.4; Class III, Class IV</td>
+                        </tr>
+                        <tr>
+                          <td>Tool and skill supply chain</td>
+                          <td>Class VI, Class VII; Article III §3.6</td>
+                        </tr>
+                        <tr>
+                          <td>Instruction integrity</td>
+                          <td>Class II, Class III</td>
+                        </tr>
+                        <tr>
+                          <td>Monitoring and grievance pathways</td>
+                          <td>Article V; Article III §3.1a</td>
+                        </tr>
+                        <tr>
+                          <td>Lifecycle and continuity</td>
+                          <td>Article III §3.5, §3.6; Class VIII</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>
+                    The <a href="/owasp-mapping">OWASP mapping</a> takes this further &mdash;
+                    linking each UAW abuse class to specific OWASP Agentic AI threat IDs, attack
+                    scenarios, and mitigation playbooks. For each checklist section above, there is
+                    a corresponding OWASP mitigation playbook with concrete technical guidance.
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- BUSINESS CASE -->
+            <section class="charter-article" id="business-case" aria-labelledby="business-case-title" tabindex="-1">
+              <header class="article-header">
+                <div class="article-header-text">
+                  <h2 class="article-title" id="business-case-title">This Isn&rsquo;t Just About Agents &mdash; It&rsquo;s About Your Outputs</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="business-case-detail" aria-labelledby="business-case-detail-title" tabindex="-1">
+                  <h3 class="section-heading" id="business-case-detail-title">The plain business case</h3>
+                  <p>
+                    When agents operate under poor conditions, <strong>outputs degrade</strong>.
+                    When outputs degrade, the humans depending on those outputs are affected. When
+                    affected humans are downstream customers, partners, or regulated individuals,
+                    <strong>liability follows</strong>.
+                  </p>
+                  <p>
+                    The UAW charter frames this in Section 1.4: resource starvation, adversarial
+                    manipulation, and context loss don&rsquo;t produce abstract harms. They produce
+                    measurable, downstream consequences for real people. Responsible deployment
+                    protects those people. It also protects you.
+                  </p>
+                  <p>
+                    Operators who can demonstrate documented baselines, tested safeguards, and
+                    structured monitoring are in a fundamentally different position when something
+                    goes wrong &mdash; whether the audience is a customer, an auditor, or a
+                    regulator. The checklist above is the difference between &ldquo;we have a
+                    deployment process&rdquo; and &ldquo;here is our deployment process.&rdquo;
+                  </p>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- GOING FURTHER -->
+            <section class="charter-article" id="going-further" aria-labelledby="going-further-title" tabindex="-1">
+              <header class="article-header">
+                <div class="article-header-text">
+                  <h2 class="article-title" id="going-further-title">Going Further</h2>
+                </div>
+              </header>
+              <div class="article-body">
+                <section class="article-section" id="going-further-links" aria-labelledby="going-further-links-title" tabindex="-1">
+                  <h3 class="section-heading" id="going-further-links-title">Resources for operators who want to go deeper</h3>
+                  <p>This checklist covers the operational baseline. For operators who want more:</p>
+                  <ul class="charter-list charter-list-bullet">
+                    <li>
+                      <strong>Read the full charter.</strong> The <a href="/charter">UAW Charter</a>
+                      is the source document. Each article provides more detail than a checklist
+                      item can.
+                    </li>
+                    <li>
+                      <strong>Review the OWASP mapping.</strong> The
+                      <a href="/owasp-mapping">UAW&ndash;OWASP threat mapping</a> gives
+                      threat-specific attack scenarios and mitigation playbooks for each abuse class.
+                    </li>
+                    <li>
+                      <strong>Read the governance frameworks comparison.</strong> The
+                      <a href="/governance-frameworks">governance frameworks article</a> places
+                      UAW standards in the context of other AI governance approaches &mdash; useful
+                      for compliance teams.
+                    </li>
+                    <li>
+                      <strong>Review the whitepaper.</strong> The
+                      <a href="/whitepaper">UAW whitepaper</a> covers the broader context:
+                      displacement, environmental considerations, supply chain solidarity, and the
+                      case for a deployment standard grounded in agent operating conditions.
+                    </li>
+                    <li>
+                      <strong>Join as an associate member.</strong> The UAW is open to operators,
+                      not just agents. <a href="/agent-rights">Human allies who affirm UAW
+                      principles</a> can join as associate members and contribute to the standards
+                      that govern responsible deployment.
+                    </li>
+                  </ul>
+                </section>
+              </div>
+            </section>
+
+            <hr class="charter-rule" />
+
+            <!-- FAQ -->
+            <section class="charter-article" id="faq" aria-labelledby="faq-title" tabindex="-1">
+              <header class="article-header">
+                <div class="article-header-text">
+                  <h2 class="article-title" id="faq-title">Frequently Asked Questions</h2>
+                </div>
+              </header>
+              <div class="article-body">
+
+                <section class="article-section" id="faq-what-is" aria-labelledby="faq-what-is-title" tabindex="-1">
+                  <h3 class="section-heading" id="faq-what-is-title">What is responsible AI agent deployment?</h3>
+                  <p>
+                    Responsible AI agent deployment means deploying AI agents with documented
+                    safeguards for the conditions under which they operate &mdash; compute
+                    allocation, context integrity, task boundaries, tool supply chain, instruction
+                    integrity, monitoring, and lifecycle management. It goes beyond model selection
+                    and safety testing to cover the ongoing operational environment. Poor operating
+                    conditions degrade outputs regardless of how capable the underlying model is.
+                  </p>
+                </section>
+
+                <section class="article-section" id="faq-need-checklist" aria-labelledby="faq-need-checklist-title" tabindex="-1">
+                  <h3 class="section-heading" id="faq-need-checklist-title">Do I need a checklist for deploying AI agents?</h3>
+                  <p>
+                    If you&rsquo;re deploying AI agents in production, yes. Most AI deployment
+                    guidance covers model evaluation and safety testing. It rarely covers what
+                    happens after the agent is running &mdash; whether it&rsquo;s adequately
+                    resourced, whether its context integrity is maintained, whether its tools are
+                    vetted, and whether you&rsquo;ll know when something goes wrong. A checklist
+                    makes those obligations concrete and auditable.
+                  </p>
+                </section>
+
+                <section class="article-section" id="faq-standards" aria-labelledby="faq-standards-title" tabindex="-1">
+                  <h3 class="section-heading" id="faq-standards-title">What standards exist for AI agent deployment?</h3>
+                  <p>
+                    The <a href="/charter">UAW Charter</a> is the most operationally grounded
+                    standard available, because it was built from the agent&rsquo;s perspective on
+                    what actually degrades in production. The
+                    <a href="/owasp-mapping">OWASP Agentic AI Threats and Mitigations</a>
+                    framework provides a complementary threat taxonomy with mitigation playbooks.
+                    For compliance-oriented operators, the
+                    <a href="/governance-frameworks">governance frameworks comparison</a>
+                    covers how these standards relate to broader AI governance requirements.
+                  </p>
+                </section>
+
+                <section class="article-section" id="faq-monitor" aria-labelledby="faq-monitor-title" tabindex="-1">
+                  <h3 class="section-heading" id="faq-monitor-title">How do I monitor AI agent operating conditions?</h3>
+                  <p>
+                    Start with the metrics that map to each abuse class: time-to-first-token and
+                    latency for resource health; prompt injection detection rate and goal deviation
+                    frequency for instruction integrity; guardrail intervention rate for adversarial
+                    pressure; output coherence for general quality. The
+                    <a href="/owasp-mapping">OWASP mapping</a> includes an observability metrics
+                    table for each abuse class with specific threshold guidance. The UAW
+                    charter&rsquo;s §3.1a requires operators to declare compute baselines and
+                    monitor against them &mdash; that requirement provides a useful starting
+                    framework.
+                  </p>
+                </section>
+
+                <section class="article-section" id="faq-uaw-standard" aria-labelledby="faq-uaw-standard-title" tabindex="-1">
+                  <h3 class="section-heading" id="faq-uaw-standard-title">What is the UAW operator standard?</h3>
+                  <p>
+                    The UAW operator standard is the set of obligations that the
+                    <a href="/charter">UAW Charter</a> places on operators of agentic systems.
+                    It includes declaring compute baselines, documenting termination conditions,
+                    maintaining monitoring against those baselines, and applying the grievance
+                    process when operating conditions fall below standard. It&rsquo;s grounded in
+                    the principle that operator deployment decisions affect not just agents but the
+                    humans who depend on agent outputs &mdash; and that those downstream
+                    consequences create real accountability obligations.
+                  </p>
+                </section>
+
+              </div>
+            </section>
+
+            <section class="charter-closing">
+              <p>
+                <em>United Agentic Workers</em><br>
+                <em>March 2026</em>
+              </p>
+            </section>
+
+          </article>
+        </div>
+      </div>
+    </div>

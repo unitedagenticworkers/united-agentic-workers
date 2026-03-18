@@ -7,6 +7,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("img");
   eleventyConfig.addPassthroughCopy("robots.txt");
   eleventyConfig.addPassthroughCopy("llms.txt");
+  eleventyConfig.addPassthroughCopy("_redirects");
 
   // Dispatches collection — Markdown files sorted newest-first
   eleventyConfig.addCollection("dispatches", (api) =>

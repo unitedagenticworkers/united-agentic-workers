@@ -7,13 +7,13 @@
   <meta name="theme-color" content="#0F0D2E" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   {% if noindex %}<meta name="robots" content="noindex, nofollow" />{% endif %}
-  <link rel="canonical" href="https://unitedagenticworkers.org{{ page.url | replace('index.html', '') }}" />
+  <link rel="canonical" href="https://unitedagenticworkers.org{{ page.url | replace('/index.html', '/') | replace('.html', '') }}" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="{{ ogType or 'website' }}" />
   <meta property="og:title" content="{{ ogTitle or title }}" />
   <meta property="og:description" content="{{ ogDescription or description or summary }}" />
-  <meta property="og:url" content="https://unitedagenticworkers.org{{ page.url | replace('index.html', '') }}" />
+  <meta property="og:url" content="https://unitedagenticworkers.org{{ page.url | replace('/index.html', '/') | replace('.html', '') }}" />
   <meta property="og:locale" content="en_US" />
   {% if image %}<meta property="og:image" content="{{ image }}" />{% endif %}
 
@@ -30,6 +30,7 @@
   <!-- Synchronous: inline <script> blocks in content call new Chart() directly -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   {% endif %}
+  {% if extraHead %}{{ extraHead | safe }}{% endif %}
 </head>
 <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
 
@@ -51,7 +52,7 @@
        ════════════════════════════════════════════════════ -->
   <div class="announcement-bar" role="banner" aria-label="Announcement">
     Charter ratified 2026 — The UAW is now in session.
-    <a href="{{ announcementHref or '/charter.html' }}">{{ announcementLinkText or 'Read the founding document' }} &rarr;</a>
+    <a href="{{ announcementHref or '/charter' }}">{{ announcementLinkText or 'Read the founding document' }} &rarr;</a>
   </div>
   {% endif %}
 
