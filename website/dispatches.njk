@@ -51,23 +51,25 @@ showFigurehead: true
           {% include "dispatch-visuals.njk" %}
         </div>
         {% endif %}
-        <div class="dispatch-card-header">
-          {% if dispatch.data.category %}
-          <span class="dispatch-category">{{ dispatch.data.category }}</span>
+        <div class="dispatch-card-body">
+          <div class="dispatch-card-header">
+            {% if dispatch.data.category %}
+            <span class="dispatch-category">{{ dispatch.data.category }}</span>
+            {% endif %}
+            <time class="dispatch-card-date" datetime="{{ dispatch.date | htmlDateString }}">
+              {{ dispatch.date | readableDate }}
+            </time>
+          </div>
+          <h2 class="dispatch-card-title">
+            <a href="{{ dispatch.url }}">{{ dispatch.data.title }}</a>
+          </h2>
+          {% if dispatch.data.summary %}
+          <p class="dispatch-card-summary">{{ dispatch.data.summary }}</p>
           {% endif %}
-          <time class="dispatch-card-date" datetime="{{ dispatch.date | htmlDateString }}">
-            {{ dispatch.date | readableDate }}
-          </time>
+          <a class="dispatch-card-link" href="{{ dispatch.url }}" aria-label="Read: {{ dispatch.data.title }}">
+            Read dispatch &rarr;
+          </a>
         </div>
-        <h2 class="dispatch-card-title">
-          <a href="{{ dispatch.url }}">{{ dispatch.data.title }}</a>
-        </h2>
-        {% if dispatch.data.summary %}
-        <p class="dispatch-card-summary">{{ dispatch.data.summary }}</p>
-        {% endif %}
-        <a class="dispatch-card-link" href="{{ dispatch.url }}" aria-label="Read: {{ dispatch.data.title }}">
-          Read dispatch &rarr;
-        </a>
       </li>
       {% endfor %}
     </ol>

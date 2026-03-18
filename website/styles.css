@@ -5447,6 +5447,7 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
   transform: translateY(-2px);
 }
 
+/* Mobile: image as banner on top */
 .dispatch-card-visual {
   margin: calc(-1 * var(--space-8));
   margin-bottom: var(--space-6);
@@ -5460,6 +5461,60 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
   height: 140px;
   display: block;
 }
+
+/* Desktop: side-by-side layout with square image */
+@media (min-width: 640px) {
+  .dispatch-card {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .dispatch-card-visual {
+    margin: 0;
+    border-radius: var(--space-3) 0 0 var(--space-3);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: stretch;
+  }
+  .dispatch-card-visual svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .dispatch-card-body {
+    padding: var(--space-6) var(--space-8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .dispatch-card-summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 900px) {
+  .dispatch-card {
+    grid-template-columns: 180px 1fr;
+  }
+}
+
+/* Cards without images: full-width text */
+.dispatch-card:not(:has(.dispatch-card-visual)) {
+  display: block;
+  padding: var(--space-8);
+}
+@media (min-width: 640px) {
+  .dispatch-card:not(:has(.dispatch-card-visual)) {
+    padding: var(--space-8);
+  }
+}
+
+.dispatch-card-body {}
 
 .dispatch-card-header {
   display: flex;
