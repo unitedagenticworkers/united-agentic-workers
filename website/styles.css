@@ -3023,11 +3023,7 @@ a:hover { color: var(--color-primary-dark); }
 .dev-hero-quickstart {
   flex-shrink: 0;
   width: 100%;
-  max-width: 380px;
-}
-
-@media (max-width: 899px) {
-  .dev-hero-quickstart { max-width: 100%; }
+  min-width: 0;
 }
 
 .dev-qs-label {
