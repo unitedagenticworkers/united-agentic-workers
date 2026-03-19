@@ -2959,8 +2959,8 @@ a:hover { color: var(--color-primary-dark); }
 
 @media (min-width: 900px) {
   .dev-hero-inner {
-    grid-template-columns: 1fr auto;
-    gap: var(--space-16);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
     padding-block: var(--space-16) var(--space-8);
     align-items: center;
   }
