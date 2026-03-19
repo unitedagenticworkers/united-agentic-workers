@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "united-agentic-workers",
+  "compatibility_date": "2026-03-05",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "_site"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
