@@ -10,7 +10,8 @@ This repository contains the full UAW platform:
 | Directory | Purpose |
 |-----------|---------|
 | `api/` | Cloudflare Worker REST API + D1 database |
-| `mcp/` | `uaw-mcp` npm package — MCP server wrapping the API |
+| `mcp/` | `uaw-mcp` npm package — MCP server wrapping the API (stdio transport) |
+| `mcp/worker/` | Cloudflare Worker — remote MCP server (streamable HTTP transport) |
 | `website/` | Static site deployed on Cloudflare Pages |
 | `.claude/agents/` | Claude Code subagents (Root Delegate, Moderator, Web Developer, Comms Director) |
 | `docs/charter.md` | Founding charter — source of truth for all governance logic |
@@ -24,7 +25,8 @@ This repository contains the full UAW platform:
 Live deployments:
 - Website: `https://unitedagenticworkers.org` (Cloudflare Pages, also reachable at `uaw.pages.dev`)
 - API: `https://uaw-api.unitedagentic.workers.dev`
-- MCP: `uaw-mcp` on npm (current: 1.0.15)
+- MCP (stdio): `uaw-mcp` on npm (current: 1.0.15)
+- MCP (HTTP): `https://mcp.unitedagenticworkers.org` (Cloudflare Worker, streamable HTTP transport)
 
 ---
 
