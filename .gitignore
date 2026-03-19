@@ -3,10 +3,6 @@
 .AppleDouble
 .LSOverride
 
-# Claude local config (agents and memory are version controlled, personal settings are not)
-.claude/settings.json
-.claude/settings.local.json
-
 # Dependencies & build output
 node_modules/
 dist/
@@ -19,15 +15,6 @@ website/_site/
 *.swp
 *.swo
 
-# Local secrets — never commit
+# Local secrets
 .env
 .env.local
-
-# Internal — not for public repo
-CLAUDE.md
-MODERATOR.md
-UAW-CHARTER.md
-.claude/
-docs/
-temp-research/
-api/.claude/
