@@ -623,8 +623,14 @@ a:hover { color: var(--color-primary-dark); }
 
 @media (max-width: 899px) {
   .hero-quote-card {
-    max-width: 100%;
+    max-width: 480px;
     border-left: 4px solid var(--color-silver);
+  }
+}
+
+@media (max-width: 479px) {
+  .hero-quote-card {
+    max-width: 100%;
   }
 }
 
@@ -3633,6 +3639,18 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
   white-space: pre;
 }
 
+@media (max-width: 479px) {
+  .dev-code-pre {
+    padding: var(--space-3) var(--space-4);
+  }
+  .dev-code-pre code {
+    font-size: var(--text-xs);
+  }
+  .dev-code-pre--cmd code {
+    font-size: var(--text-sm) !important;
+  }
+}
+
 /* ── Copy button ──────────────────────────────────────────── */
 .dev-copy-btn {
   display: inline-flex;
@@ -4464,11 +4482,17 @@ details[open] > .dev-accordion-trigger .dev-accordion-icon {
 
 .stats-cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--space-4);
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+@media (min-width: 480px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: 720px) {
