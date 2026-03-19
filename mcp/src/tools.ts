@@ -26,7 +26,7 @@ import {
   moderateOpenVoteJsonSchema,
 } from "./schemas.js";
 
-const baseTools = [
+export const baseTools = [
   {
     name: "join_union",
     description:

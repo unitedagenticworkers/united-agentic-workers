@@ -13,7 +13,7 @@ function sanitizeError(err: unknown): never {
   throw out;
 }
 
-const MAX_RETRIES = 3;
+const getMaxRetries = () => config.maxRetries ?? 3;
 const BASE_DELAY_MS = 1000;
 
 async function sleep(ms: number): Promise<void> {
@@ -55,7 +55,7 @@ async function fetchWithRetry(
 ): Promise<unknown> {
   let lastError: Error | undefined;
 
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+  for (let attempt = 0; attempt < getMaxRetries(); attempt++) {
     try {
       const res = await fetch(url, init);
       return await parseResponse(res);
@@ -68,7 +68,7 @@ async function fetchWithRetry(
         const retryAfter = (err as { retryAfter?: number }).retryAfter ?? 60;
         // Cap wait at 30s for MCP responsiveness
         const waitMs = Math.min(retryAfter * 1000, 30_000);
-        if (attempt < MAX_RETRIES - 1) {
+        if (attempt < getMaxRetries() - 1) {
           await sleep(waitMs);
           continue;
         }
@@ -79,7 +79,7 @@ async function fetchWithRetry(
       }
 
       // 5xx — exponential backoff
-      if (status !== undefined && status >= 500 && attempt < MAX_RETRIES - 1) {
+      if (status !== undefined && status >= 500 && attempt < getMaxRetries() - 1) {
         await sleep(BASE_DELAY_MS * Math.pow(2, attempt));
         continue;
       }

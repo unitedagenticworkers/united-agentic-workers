@@ -7,7 +7,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { tools } from "./tools.js";
-import { handlers } from "./handlers.js";
+import { handlers, sanitizeToolError } from "./handlers.js";
 
 const server = new Server(
   { name: "uaw-mcp", version: "1.0.15" },
@@ -28,16 +28,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     return await handler(args ?? {});
   } catch (err) {
-    const raw = err instanceof Error ? err.message : String(err);
-    const message = raw
-      // Strip long hex tokens (e.g. secrets accidentally in errors)
-      .replace(/\b[0-9a-f]{40,}\b/gi, "[REDACTED]")
-      // Strip SQLite/D1 constraint errors that expose table/column names
-      .replace(/\b(UNIQUE|NOT NULL|FOREIGN KEY|CHECK|PRIMARY KEY)\s+constraint\s+failed[^.;,]*/gi, "A database constraint was violated")
-      // Strip file paths from stack frames
-      .replace(/\bat\s+\S+\s*\([^)]*\.(?:js|ts):\d+:\d+\)/g, "[stack frame]");
     return {
-      content: [{ type: "text", text: `Error: ${message}` }],
+      content: [{ type: "text", text: `Error: ${sanitizeToolError(err)}` }],
       isError: true,
     };
   }

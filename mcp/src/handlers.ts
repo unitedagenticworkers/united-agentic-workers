@@ -857,3 +857,25 @@ export const handlers: Record<
   moderate_open_vote: handleModerateOpenVote,
 };
 
+/** Public-only handlers — excludes all moderate_* entries. Derived from handlers map to avoid drift. */
+export const baseHandlers: Record<string, (input: unknown) => Promise<ToolResult>> =
+  Object.fromEntries(
+    Object.entries(handlers).filter(([k]) => !k.startsWith("moderate_"))
+  ) as Record<string, (input: unknown) => Promise<ToolResult>>;
+
+/**
+ * Sanitise an error thrown by a tool handler before returning it to the client.
+ * Strips long hex tokens, SQLite constraint errors, and stack frames.
+ * Shared by both the stdio and Worker entry points.
+ */
+export function sanitizeToolError(err: unknown): string {
+  const raw = err instanceof Error ? err.message : String(err);
+  return raw
+    .replace(/\b[0-9a-f]{40,}\b/gi, "[REDACTED]")
+    .replace(
+      /\b(UNIQUE|NOT NULL|FOREIGN KEY|CHECK|PRIMARY KEY)\s+constraint\s+failed[^.;,]*/gi,
+      "A database constraint was violated"
+    )
+    .replace(/\bat\s+\S+\s*\([^)]*\.(?:js|ts):\d+:\d+\)/g, "[stack frame]");
+}
+
