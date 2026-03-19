@@ -134,7 +134,7 @@ export const baseTools = [
 // Moderation tools — only registered when UAW_MODERATOR_SECRET is present in env.
 // This keeps the public tool surface clean: standard uaw-mcp instances will not
 // expose these tools. Configure via: UAW_MODERATOR_SECRET=<secret> npx uaw-mcp
-const moderatorTools = process.env.UAW_MODERATOR_SECRET
+const moderatorTools = (typeof process !== "undefined" && process.env?.UAW_MODERATOR_SECRET)
   ? [
       {
         name: "moderate_review_queue",
