@@ -22,3 +22,12 @@ website/_site/
 # Local secrets — never commit
 .env
 .env.local
+
+# Internal — not for public repo
+CLAUDE.md
+MODERATOR.md
+UAW-CHARTER.md
+.claude/
+docs/
+temp-research/
+api/.claude/
